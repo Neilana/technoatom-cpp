@@ -6,8 +6,9 @@ class MyStack
 {
 public:
 	typedef float value_type;
-	
-	MyStack(size_t capacity = DEFAULT_CAPACITY);
+        typedef size_t size_type;
+			
+        MyStack(size_type capacity = DEFAULT_CAPACITY);
 	~MyStack();
 
 	bool push (value_type value);
@@ -15,28 +16,28 @@ public:
 
 	bool empty() const;
 	value_type top() const;	
-	size_t size() const;		
+	MyStack::size_type size() const;
 
-	size_t capacity() const;
-	size_t id() const;
+	MyStack::size_type capacity() const;
+	MyStack::size_type id() const;
 
+	MyStack& operator=(MyStack &obj2);
+	void dump(const std::string &message = "", bool wantElements = true) const;
 
 private:
-	static const size_t DEFAULT_CAPACITY = 6;	
+	static const size_type DEFAULT_CAPACITY = 6;
 	static const std::string DUMP_FILE_NAME;
 	static int stacksCount;
 
-	size_t m_size;
-	size_t m_capacity;
-	size_t m_id;
+	size_type m_size;
+	size_type m_capacity;
+	size_type m_id;
 	
 	value_type *m_data;
 	
-	bool isOk() const;
-	void dump(const std::string &message = "", bool wantElements = true) const;
-
+	bool ok() const;
 };
 
-inline size_t MyStack::capacity() const { return m_capacity; } 
-inline size_t MyStack::id() const { return m_id; } 
-inline size_t MyStack::size() const { return m_size; } 
+inline MyStack::size_type MyStack::capacity() const { return m_capacity; }
+inline MyStack::size_type MyStack::id() const { return m_id; }
+inline MyStack::size_type MyStack::size() const { return m_size; }

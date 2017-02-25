@@ -13,9 +13,9 @@ const string MyStack::DUMP_FILE_NAME = "dumpFile.txt";
 
 int MyStack::stacksCount = 0;
 
-MyStack::MyStack(size_t capacity) : m_size(0), m_capacity(0), m_id(stacksCount), m_data(NULL)
+MyStack::MyStack(MyStack::size_type capacity) : m_size(0), m_capacity(0), m_id(stacksCount), m_data(NULL)
 {
-	cout << capacity << endl;if (stacksCount == 0)
+	if (stacksCount == 0)
 		remove("dumpFile.txt");
 	string message = "Creating stack...";	
 	try 
@@ -84,9 +84,9 @@ else
 	return result;
 }
 
-bool MyStack::isOk() const
+bool MyStack::ok() const
 {
-	return (m_size <= m_capacity);
+	return ( (m_capacity > 0) && (m_size <= m_capacity) );
 }
 
 void MyStack::dump(const string &message, bool wantElements) const
@@ -100,7 +100,7 @@ void MyStack::dump(const string &message, bool wantElements) const
 		if (m_size == 0) 
 			elements = "No elements.\n";
 		else
-			for (int i = 0; i < m_size; i++)
+			for (size_type i = 0; i < m_size; i++)
 				elements += "[" +to_string(i) + "] = " + to_string(m_data[i]) + "\n";
 		dumpFile << elements;
 	}
@@ -125,4 +125,22 @@ MyStack::value_type MyStack::top() const
 	else
 		dump("Trying to top() for empty stack.\n", true);
 	return result; 
+}
+
+MyStack& MyStack::operator=(MyStack &obj2)
+{
+	string message = "Assignment to stack #" + to_string( obj2.id() ) + "...\n";
+	dump(message, true);
+	if (this != &obj2) // исключение самоприсваивания
+	{      
+        	m_size = obj2.m_size;
+        	m_capacity = obj2.m_capacity;
+        if (m_data) delete[] m_data; // очистка памяти
+        m_data = new value_type [m_capacity];
+        for (MyStack::size_type i = 0; i < m_size; i++) 
+        	m_data[i] = obj2.m_data[i];
+    }
+	
+	dump("...assignment completed.\n", true);
+	return *this;
 }
