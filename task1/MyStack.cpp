@@ -13,7 +13,8 @@ const string MyStack::DUMP_FILE_NAME = "dumpFile.txt";
 
 int MyStack::stacksCount = 0;
 
-MyStack::MyStack(MyStack::size_type capacity) : m_size(0), m_capacity(0), m_id(stacksCount), m_data(NULL)
+MyStack::MyStack(MyStack::size_type capacity) : m_size(0), m_capacity(0), 
+		                        				m_id(stacksCount), m_data(NULL)
 {
 	if (stacksCount == 0)
 		remove("dumpFile.txt");
@@ -28,9 +29,35 @@ MyStack::MyStack(MyStack::size_type capacity) : m_size(0), m_capacity(0), m_id(s
 	} catch (exception& e)
 	{					 
 		string error = e.what();
-    		message += " Hey, sth is wrong! Exception caught: " + error + ". (Input capacity:  " + to_string(capacity) + ")\n";
+    		message += " Hey, sth is wrong! Exception caught: " + error + 
+			   ". (Input capacity:  " + to_string(capacity) + ")\n";
 	}
 	dump(message, false);
+}
+
+// Конструктор копирования
+MyStack::MyStack(const MyStack &obj)
+{
+	stacksCount++;
+	string message = "Creating stack from copy constructor (copy stack #" + 
+			 to_string( obj.id() ) + ")... ";
+
+	m_id = stacksCount;
+	m_size = obj.m_size;
+	m_capacity = obj.m_capacity;
+	try
+	{
+		m_data = new value_type [m_capacity];
+
+		for (size_type i = 0; i < m_size; i++)
+			m_data[i] = obj.m_data[i];
+		message += "Success!\n";
+	} catch (exception &e)
+	{
+		string error = e.what();
+		message = "We-ve got some problems! Exception caught: " + error + ".\n";
+	}
+	dump(message);
 }
 
 MyStack::~MyStack()
@@ -50,7 +77,7 @@ MyStack::~MyStack()
 }
 
 
-bool MyStack::push(value_type value)
+bool MyStack::push(const value_type& value)
 {
 	bool ok = false;
 	if (m_capacity == 0)
@@ -117,14 +144,17 @@ bool MyStack::empty() const
 		return false;
 }
 
-MyStack::value_type MyStack::top() const
+MyStack::value_type& MyStack::top()
 {
-	value_type result = 0;
+    string message = "Trying top()... ";
+	value_type *result = NULL;
 	if (m_size > 0 && m_capacity > 0)
-		result = m_data[m_size]; 
+		result = &m_data[m_size-1],
+        message += "Success! Top element is: " + to_string(*result) +  ".\n"; 
 	else
-		dump("Trying to top() for empty stack.\n", true);
-	return result; 
+        message = "Stack is empty!\n", result = 0;
+    dump(message);
+	return *result; 
 }
 
 MyStack& MyStack::operator=(MyStack &obj2)
