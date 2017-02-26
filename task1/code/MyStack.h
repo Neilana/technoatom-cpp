@@ -6,7 +6,6 @@
 // headers
 #include <iostream>
 
-
 /**
 *   @class MyStack MyStack.h "MyStack.h"
 *   @brief MyStack class.
@@ -55,8 +54,7 @@ private:
 	
     // check and debug functions
 	bool ok() const;                           ///< check if the stack is valid
-	void dump(const std::string &message = "", 
-              bool wantElements = true) const; ///< write debug info in the file
+	void dump(const std::string &message = "" ) const; ///< write debug info in the file
 };
 
 // inline functions implementation

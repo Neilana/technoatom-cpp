@@ -39,10 +39,10 @@ MyStack::MyStack(MyStack::size_type capacity) : m_size(0), m_capacity(0),
 	} catch (exception& e)
 	{					 
 		string error = e.what();
-    		message += " Hey, sth is wrong! Exception caught: " + error + 
-			   ". (Input capacity:  " + to_string(capacity) + ")\n";
+    	message += " Hey, sth is wrong! Exception caught: " + error + 
+	       		   ". (Input capacity:  " + to_string(capacity) + ")\n";
 	}
-	dump(message, false);
+	dump(message);
 }
 
 /**
@@ -54,7 +54,7 @@ MyStack::MyStack(const MyStack &obj)
 {
 	stacksCount++;
 	string message = "Creating stack from copy constructor (copy stack #" + 
-			 to_string( obj.id() ) + ")... ";
+        			 to_string( obj.id() ) + ")... ";
 
 	m_id = stacksCount;
 	m_size = obj.m_size;
@@ -65,6 +65,7 @@ MyStack::MyStack(const MyStack &obj)
 
 		for (size_type i = 0; i < m_size; i++)
 			m_data[i] = obj.m_data[i];
+
 		message += "Success!\n";
 	} catch (exception &e)
 	{
@@ -84,13 +85,13 @@ MyStack::~MyStack()
 	if (m_data != NULL)	
 	{
 		message += "Success!\n";
-		dump(message, true);
+		dump(message);
 		delete [] m_data;
 	}
 	else
 	{
 		message += "Nothing to free - memory wasn't allocated.\n";
-		dump(message, true);
+		dump(message);
 	}
 }
 
@@ -108,13 +109,13 @@ bool MyStack::push(const value_type& value)
 	bool ok = false;
 	if (m_capacity == 0)
 	{
-		dump("Trying to push. Hmmmm... Something wrong with this stack! Capacity is 0 :(\n", true);
+		dump("Trying to push. Hmmmm... Something wrong with this stack! Capacity is 0 :(\n");
 	}
 	else	
 	if (m_size >= m_capacity)
 	{	
 		string message = "Trying to push to full stack (value: " + to_string(value) + ").\n";	
-		dump(message, true);
+		dump(message);
 	}
 	else
 		m_data[m_size++] = value, ok = true;
@@ -132,12 +133,12 @@ MyStack::value_type MyStack::pop()
 {
 	value_type result = 0;	
 	if (m_capacity == 0)
-		dump("Trying to pop. Hmmmm... Something wrong with this stack! Capacity is 0 :(\n", true);
+		dump("Trying to pop. Hmmmm... Something wrong with this stack! Capacity is 0 :(\n");
 else	
 	if (m_size > 0)
 		result = m_data[--m_size];	
 	else
-		dump("Trying to pop from empty stack!\n", true);
+		dump("Trying to pop from empty stack!\n");
 
 	return result;
 }
@@ -189,43 +190,43 @@ bool MyStack::ok() const
 *   Writes debug messages to the file. File name is determined by the 
 *   MyStack::DUMP_FILE_NAME variable. 
 *   
-*   @param message - message to write in the file;
-*   @param wantElements - if @c true - write stack elements in the file; if @c false -
-*   don't write stack elements. 
+*   @param message - message to write in the file.
 */
-void MyStack::dump(const string &message, bool wantElements) const
+void MyStack::dump(const string &message) const
 {
+    // oopen dump file and write main info abot the stack
 	ofstream dumpFile(DUMP_FILE_NAME, std::ios_base::app);
 	dumpFile << "Stack #" << m_id << endl;
 	dumpFile << "(Size: " << m_size << ", capacity: " << m_capacity << ")\n";
-	if (wantElements)
-	{
-		string elements = "";
-		if (m_size == 0) 
-			elements = "No elements.\n";
-		else
-			for (size_type i = 0; i < m_size; i++)
-				elements += "[" +to_string(i) + "] = " + to_string(m_data[i]) + "\n";
-		dumpFile << elements;
-	}
-	dumpFile << message << endl;
+
+    // write elements of the stack into a string
+	string elements = "";
+	if (m_size == 0) 
+		elements = "No elements.\n";
+	else
+		for (size_type i = 0; i < m_size; i++)
+			elements += "[" +to_string(i) + "] = " + to_string(m_data[i]) + "\n";
+    
+    // write elements and message to the file and close it
+	dumpFile << elements << message << endl;
 	dumpFile.close();
 }
 
 MyStack& MyStack::operator=(MyStack &obj2)
 {
 	string message = "Assignment to stack #" + to_string( obj2.id() ) + "...\n";
-	dump(message, true);
+	dump(message);
 	if (this != &obj2)              // prevent self assignment
 	{      
-        	m_size = obj2.m_size;
-        	m_capacity = obj2.m_capacity;
-        if (m_data) delete[] m_data; 
+       	m_size = obj2.m_size;
+       	m_capacity = obj2.m_capacity;
+        if (m_data) 
+            delete[] m_data; 
         m_data = new value_type [m_capacity];
         for (MyStack::size_type i = 0; i < m_size; i++) 
         	m_data[i] = obj2.m_data[i];
     }
 	
-	dump("...assignment completed.\n", true);
+	dump("...assignment completed.\n");
 	return *this;
 }
