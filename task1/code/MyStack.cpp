@@ -132,13 +132,11 @@ bool MyStack::push(const value_type& value)
 MyStack::value_type MyStack::pop()
 {
 	value_type result = 0;	
-	if (m_capacity == 0)
-		dump("Trying to pop. Hmmmm... Something wrong with this stack! Capacity is 0 :(\n");
-else	
-	if (m_size > 0)
-		result = m_data[--m_size];	
-	else
-		dump("Trying to pop from empty stack!\n");
+	
+	if ( m_size > 0  )
+    	result = m_data[--m_size];	
+    else
+    	dump("Trying to pop from empty stack!\n");
 
 	return result;
 }
@@ -152,12 +150,14 @@ MyStack::value_type& MyStack::top()
 {
     string message = "Trying top()... ";
 	value_type *result = NULL;
-	if (m_size > 0 && m_capacity > 0)
+
+	if ( m_size > 0 )
 		result = &m_data[m_size-1],
         message += "Success! Top element is: " + to_string(*result) +  ".\n"; 
 	else
         message = "Stack is empty!\n", result = 0;
     dump(message);
+
 	return *result; 
 }
 
@@ -194,7 +194,7 @@ bool MyStack::ok() const
 */
 void MyStack::dump(const string &message) const
 {
-    // oopen dump file and write main info abot the stack
+    // open dump file and write main info abot the stack
 	ofstream dumpFile(DUMP_FILE_NAME, std::ios_base::app);
 	dumpFile << "Stack #" << m_id << endl;
 	dumpFile << "(Size: " << m_size << ", capacity: " << m_capacity << ")\n";
