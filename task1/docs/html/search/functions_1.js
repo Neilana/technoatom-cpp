@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['dump',['dump',['../class_my_stack.html#ac2c7329cc228ee255d98df9d9033daa3',1,'MyStack']]]
+  ['dump',['dump',['../class_my_stack.html#a74626170a79ad9392cc987ef711e2933',1,'MyStack']]]
 ];
