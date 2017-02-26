@@ -1,18 +1,28 @@
+/// @file MyStack.cpp
+
+// headers
 #include <iostream>
 #include <fstream>
 #include <limits>
 #include <exception>    // std::exception
 #include <new>  
+
+// my headers
 #include "MyStack.h"
 
 using namespace std;
 
 // initialize static members
-//const int DEFAULT_CAPACITY = 6;
 const string MyStack::DUMP_FILE_NAME = "dumpFile.txt";
-
 int MyStack::stacksCount = 0;
 
+/**
+*   Creates empty stack with given capacity. If capacity wasn't privided then capacity
+*   is equal to MyStack::DEFAULT_CAPACITY. Also assigns new id (MyStack::m_id) which is 
+*   equal to the number of already existing stacks.
+*
+*   @param capacity - maximum number of elements in the stack.
+*/
 MyStack::MyStack(MyStack::size_type capacity) : m_size(0), m_capacity(0), 
 		                        				m_id(stacksCount), m_data(NULL)
 {
@@ -35,7 +45,11 @@ MyStack::MyStack(MyStack::size_type capacity) : m_size(0), m_capacity(0),
 	dump(message, false);
 }
 
-// Конструктор копирования
+/**
+*   Creates new stack as a copy of other stack.
+*   
+*   @param obj - a reference to a stack that is being used to initialize new stack.  
+*/
 MyStack::MyStack(const MyStack &obj)
 {
 	stacksCount++;
@@ -55,11 +69,15 @@ MyStack::MyStack(const MyStack &obj)
 	} catch (exception &e)
 	{
 		string error = e.what();
-		message = "We-ve got some problems! Exception caught: " + error + ".\n";
+		message = "We've got some problems! Exception caught: " + error + ".\n";
 	}
 	dump(message);
 }
 
+/**
+*   Destroyes current stack. Frees allocated memory for stack elements. Writes result
+*   messages in the dump file.
+*/
 MyStack::~MyStack()
 {
 	string message = "Freeing memory... ";
@@ -76,7 +94,15 @@ MyStack::~MyStack()
 	}
 }
 
-
+/**
+*   Adds new value. In case of some problems writes messages in the dump file. Writes 
+*   error messages in the dump file.
+*   
+*   @param value - value to be added in the stack.
+*
+*   @return @c true - if value was added; 
+*   @return @c false - if value was not added. 
+*/
 bool MyStack::push(const value_type& value)
 {
 	bool ok = false;
@@ -94,9 +120,14 @@ bool MyStack::push(const value_type& value)
 		m_data[m_size++] = value, ok = true;
 
 	return ok;
-
 }
 
+/**
+*   Returns and removes the top value from the stack. Writes error messages in the dump 
+*   file.
+*   
+*   @return @c result - the value of the top removed element.
+*/
 MyStack::value_type MyStack::pop()
 {
 	value_type result = 0;	
@@ -111,11 +142,57 @@ else
 	return result;
 }
 
+/**
+*   Returns reference ont the top value. Writes error messages in the dump file.
+*
+*   @return @c result - the reference on the top element.
+*/
+MyStack::value_type& MyStack::top()
+{
+    string message = "Trying top()... ";
+	value_type *result = NULL;
+	if (m_size > 0 && m_capacity > 0)
+		result = &m_data[m_size-1],
+        message += "Success! Top element is: " + to_string(*result) +  ".\n"; 
+	else
+        message = "Stack is empty!\n", result = 0;
+    dump(message);
+	return *result; 
+}
+
+/**
+*   Checks whether there's any elements in the stack.
+*
+*   @return @c true - if stack is empty (no elements);
+*   @return @c false - if stack is not empty.
+*/
+bool MyStack::empty() const
+{
+	if (m_size == 0)
+		return true;
+	else 
+		return false;
+}
+
+/**
+*   Check whether stack is valid or not.
+*
+*   @return @c true - stack is valid;
+*   @return @c false - stack is bad :(
+*/
 bool MyStack::ok() const
 {
 	return ( (m_capacity > 0) && (m_size <= m_capacity) );
 }
 
+/**
+*   Writes debug messages to the file. File name is determined by the 
+*   MyStack::DUMP_FILE_NAME variable. 
+*   
+*   @param message - message to write in the file;
+*   @param wantElements - if @c true - write stack elements in the file; if @c false -
+*   don't write stack elements. 
+*/
 void MyStack::dump(const string &message, bool wantElements) const
 {
 	ofstream dumpFile(DUMP_FILE_NAME, std::ios_base::app);
@@ -131,41 +208,19 @@ void MyStack::dump(const string &message, bool wantElements) const
 				elements += "[" +to_string(i) + "] = " + to_string(m_data[i]) + "\n";
 		dumpFile << elements;
 	}
-	// write message + size, capacity
 	dumpFile << message << endl;
 	dumpFile.close();
-}
-
-bool MyStack::empty() const
-{
-	if (m_size == 0)
-		return true;
-	else 
-		return false;
-}
-
-MyStack::value_type& MyStack::top()
-{
-    string message = "Trying top()... ";
-	value_type *result = NULL;
-	if (m_size > 0 && m_capacity > 0)
-		result = &m_data[m_size-1],
-        message += "Success! Top element is: " + to_string(*result) +  ".\n"; 
-	else
-        message = "Stack is empty!\n", result = 0;
-    dump(message);
-	return *result; 
 }
 
 MyStack& MyStack::operator=(MyStack &obj2)
 {
 	string message = "Assignment to stack #" + to_string( obj2.id() ) + "...\n";
 	dump(message, true);
-	if (this != &obj2) // исключение самоприсваивания
+	if (this != &obj2)              // prevent self assignment
 	{      
         	m_size = obj2.m_size;
         	m_capacity = obj2.m_capacity;
-        if (m_data) delete[] m_data; // очистка памяти
+        if (m_data) delete[] m_data; 
         m_data = new value_type [m_capacity];
         for (MyStack::size_type i = 0; i < m_size; i++) 
         	m_data[i] = obj2.m_data[i];

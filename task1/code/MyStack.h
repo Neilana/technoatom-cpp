@@ -32,13 +32,13 @@ public:
 	value_type& top();                       ///< access the top element 	
 	bool empty() const;                      ///< check if there's elements in the stack
 
-    // getters	
-    MyStack::size_type size() const;
-	MyStack::size_type capacity() const;
-	MyStack::size_type id() const;
-    
     // operators overload
 	MyStack& operator=(MyStack &obj2);      ///< assignment operator overload
+
+    // getters	
+    MyStack::size_type size() const;        ///< returns current number of elemetns in the stack
+	MyStack::size_type capacity() const;    ///< returns the maximum number of elements
+	MyStack::size_type id() const;          ///< returns id of the stack
 
 private:
     // static class members
