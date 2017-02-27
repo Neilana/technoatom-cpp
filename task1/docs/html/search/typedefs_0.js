@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['size_5ftype',['size_type',['../class_my_stack.html#a6e8ab1801eb1cf3b66928e0c0f2fe0fe',1,'MyStack']]]
+  ['size_5ftype',['size_type',['../class_my_namespace_1_1_stack.html#a19c43f92e11d91ed645058833af88a86',1,'MyNamespace::Stack']]]
 ];

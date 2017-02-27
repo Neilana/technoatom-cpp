@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['capacity',['capacity',['../class_my_stack.html#a3248e4407d1f6ba16402707ff9462966',1,'MyStack']]]
+  ['dump',['dump',['../class_my_namespace_1_1_stack.html#a83672fc8b95f37236f3c40354abb6b79',1,'MyNamespace::Stack']]]
 ];

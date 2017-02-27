@@ -1,6 +1,4 @@
 var searchData=
 [
-  ['default_5fcapacity',['DEFAULT_CAPACITY',['../class_my_stack.html#a196ecbddd3e12d87fd29c8d61d04ba5b',1,'MyStack']]],
-  ['dump',['dump',['../class_my_stack.html#a74626170a79ad9392cc987ef711e2933',1,'MyStack']]],
-  ['dump_5ffile_5fname',['DUMP_FILE_NAME',['../class_my_stack.html#ab3912249fbbd11acf6f4016d3aba1b89',1,'MyStack']]]
+  ['empty',['empty',['../class_my_namespace_1_1_stack.html#ab76cbabd546dc4ab2859797676ae1a71',1,'MyNamespace::Stack']]]
 ];
