@@ -1,20 +1,49 @@
-#include "/usr/include/gtest/gtest.h"
+#include "gtest/gtest.h"
 #include "Stack.h"
 
 using MyNamespace::Stack;
 using namespace std;
 
-// основные функции класса
-TEST (StackTest, CheckConstructors)
+TEST(StackTest, CheckEmpty)
 {
-/*    // test 1
-    WordClass testWord1("word", "definition");
-    EXPECT_EQ ( "word", testWord1.getWord() );
-    EXPECT_EQ ( "definition", testWord1.getDefinition() );
+    Stack <int> stack1;
+    bool isEmpty = stack1.empty();
+    ASSERT_EQ(isEmpty, true);
 
-    // test 2
-    WordClass testWord2("not word but phrase", "here is very long definition");
-    EXPECT_EQ ( "not word but phrase", testWord2.getWord() );
-    EXPECT_EQ ( "here is very long definition", testWord2.getDefinition() );
-    */
+    stack1.push(1);
+    stack1.push(2);
+    stack1.push(3);
+    isEmpty = stack1.empty();
+    ASSERT_EQ(isEmpty, false);
+
+    stack1.pop();
+    stack1.pop();
+    stack1.pop();
+    isEmpty = stack1.empty();
+    ASSERT_EQ(isEmpty, true);
+}
+
+TEST (StackTest, BasicMethods)
+{
+    Stack <int> stack1;
+    stack1.push(1);
+    stack1.push(2);
+    stack1.push(3);
+    stack1.push(4);
+
+    int n = stack1.top();
+    ASSERT_EQ(n, 4);
+
+    stack1.pop();
+    n = stack1.top();
+    ASSERT_EQ(n, 3);
+
+    Stack <int> stack2(stack1);
+    stack2.pop();
+    n = stack2.top();
+    ASSERT_EQ(n, 2);
+
+    Stack <int> stack3;
+    n = stack3.top();
+    ASSERT_EQ(n, 666);
 }

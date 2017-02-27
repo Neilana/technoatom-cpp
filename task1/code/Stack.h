@@ -51,8 +51,8 @@ namespace MyNamespace
     private:
         // static class members
         static const size_type DEFAULT_CAPACITY = 6;///< is used in constructor when capacity wasn't defined
-        static const size_type INCREMENT_CAPACITY = 6;
-        static const T POISON_VALUE;
+        static const size_type INCREMENT_CAPACITY = 6;  ///< add this number to the current capacity when stack is full
+        static const T POISON_VALUE;                ///< instead of deleted elements
         static const std::string DUMP_FILE_NAME;    ///< name of the file where debug information is stored
         static int stacksCount;                     ///< total amount of created stacks 
 
@@ -100,7 +100,7 @@ int Stack<T>::stacksCount = 0;
 *   is equal to Stack::DEFAULT_CAPACITY. Also assigns new id (Stack::m_id) which is 
 *   equal to the number of already existing stacks.
 *
-*   @param capacity - maximum number of elements in the stack.
+*   @param capacity - number of elements in the stack.
 */
 template <class T>
 Stack<T>::Stack(Stack::size_type capacity) : m_size(0), m_capacity(capacity),
@@ -200,7 +200,7 @@ void Stack<T>::push(const T& value)
 }
 
 /**
-*   Returns and removes the top value from the stack. Writes error messages in the dump 
+*   Removes the top value from the stack. Writes error messages in the dump
 *   file.
 */
 template <class T>
@@ -213,7 +213,7 @@ void Stack<T>::pop()
 }
 
 /**
-*   Returns reference ont the top value. Writes error messages in the dump file.
+*   Returns reference on the top value. Writes error messages in the dump file.
 *
 *   @return @c result - the reference on the top element.
 */
