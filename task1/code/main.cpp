@@ -10,21 +10,22 @@
 #include<iostream>
 
 // my headers
-#include "MyStack.h"
+#include "Stack.h"
 
 // simple unit-test
 #define MY_TEST( condition )  \
     if ( ! (condition) )    \
     cout << "Test failed: " << #condition << endl;  
 
+using MyNamespace::Stack;
 using namespace std;
 
 int main()
 {
-    MyStack stack1(6);
+    Stack stack1(6);
     stack1.top();
     
-    MyStack stack2(-10);
+    Stack stack2(-10);
     stack2.pop();
     
 //  cout << stack1.top()++;

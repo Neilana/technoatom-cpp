@@ -1,4 +1,4 @@
-/// @file MyStack.cpp
+/// @file Stack.cpp
 
 // headers
 #include <iostream>
@@ -8,22 +8,23 @@
 #include <new>  
 
 // my headers
-#include "MyStack.h"
+#include "Stack.h"
 
+using MyNamespace::Stack;
 using namespace std;
 
 // initialize static members
-const string MyStack::DUMP_FILE_NAME = "dumpFile.txt";
-int MyStack::stacksCount = 0;
+const string Stack::DUMP_FILE_NAME = "dumpFile.txt";
+int Stack::stacksCount = 0;
 
 /**
 *   Creates empty stack with given capacity. If capacity wasn't privided then capacity
-*   is equal to MyStack::DEFAULT_CAPACITY. Also assigns new id (MyStack::m_id) which is 
+*   is equal to Stack::DEFAULT_CAPACITY. Also assigns new id (Stack::m_id) which is 
 *   equal to the number of already existing stacks.
 *
 *   @param capacity - maximum number of elements in the stack.
 */
-MyStack::MyStack(MyStack::size_type capacity) : m_size(0), m_capacity(0), 
+Stack::Stack(Stack::size_type capacity) : m_size(0), m_capacity(0), 
                                                 m_id(stacksCount), m_data(NULL)
 {
     if (stacksCount == 0)
@@ -50,7 +51,7 @@ MyStack::MyStack(MyStack::size_type capacity) : m_size(0), m_capacity(0),
 *   
 *   @param obj - a reference to a stack that is being used to initialize new stack.  
 */
-MyStack::MyStack(const MyStack &obj)
+Stack::Stack(const Stack &obj)
 {
     stacksCount++;
     string message = "Creating stack from copy constructor (copy stack #" + 
@@ -79,7 +80,7 @@ MyStack::MyStack(const MyStack &obj)
 *   Destroyes current stack. Frees allocated memory for stack elements. Writes result
 *   messages in the dump file.
 */
-MyStack::~MyStack()
+Stack::~Stack()
 {
     string message = "Freeing memory... ";
     if (m_data != NULL) 
@@ -104,7 +105,7 @@ MyStack::~MyStack()
 *   @return @c true - if value was added; 
 *   @return @c false - if value was not added. 
 */
-bool MyStack::push(const value_type& value)
+bool Stack::push(const value_type& value)
 {
     bool ok = false;
     if (m_capacity == 0)
@@ -129,7 +130,7 @@ bool MyStack::push(const value_type& value)
 *   
 *   @return @c result - the value of the top removed element.
 */
-MyStack::value_type MyStack::pop()
+Stack::value_type Stack::pop()
 {
     value_type result = 0;  
     
@@ -146,7 +147,7 @@ MyStack::value_type MyStack::pop()
 *
 *   @return @c result - the reference on the top element.
 */
-MyStack::value_type& MyStack::top()
+Stack::value_type& Stack::top()
 {
     string message = "Trying top()... ";
     value_type *result = NULL;
@@ -169,7 +170,7 @@ MyStack::value_type& MyStack::top()
 *   @return @c true - if stack is empty (no elements);
 *   @return @c false - if stack is not empty.
 */
-bool MyStack::empty() const
+bool Stack::empty() const
 {
     if (m_size == 0)
         return true;
@@ -183,18 +184,18 @@ bool MyStack::empty() const
 *   @return @c true - stack is valid;
 *   @return @c false - stack is bad :(
 */
-bool MyStack::ok() const
+bool Stack::ok() const
 {
     return ( (m_capacity > 0) && (m_size <= m_capacity) );
 }
 
 /**
 *   Writes debug messages to the file. File name is determined by the 
-*   MyStack::DUMP_FILE_NAME variable. 
+*   Stack::DUMP_FILE_NAME variable. 
 *   
 *   @param message - message to write in the file.
 */
-void MyStack::dump(const string &message) const
+void Stack::dump(const string &message) const
 {
     // open dump file and write main info abot the stack
     ofstream dumpFile(DUMP_FILE_NAME, std::ios_base::app);
@@ -214,7 +215,7 @@ void MyStack::dump(const string &message) const
     dumpFile.close();
 }
 
-MyStack& MyStack::operator=(MyStack &obj2)
+Stack& Stack::operator=(Stack &obj2)
 {
     string message = "Assignment to stack #" + to_string( obj2.id() ) + "...\n";
     dump(message);
@@ -225,7 +226,7 @@ MyStack& MyStack::operator=(MyStack &obj2)
         if (m_data) 
             delete[] m_data; 
         m_data = new value_type [m_capacity];
-        for (MyStack::size_type i = 0; i < m_size; i++) 
+        for (Stack::size_type i = 0; i < m_size; i++) 
             m_data[i] = obj2.m_data[i];
     }
 
