@@ -14,9 +14,14 @@ using MyNamespace::Stack;
 using namespace std;
 
 // initialize static members
-const string Stack::DUMP_FILE_NAME = "dumpFile.txt";
-const Stack::value_type Stack::POISON_VALUE = 666;
-int Stack::stacksCount = 0;
+template <class T>
+const string Stack<T>::DUMP_FILE_NAME = "dumpFile.txt";
+
+template <class T>
+const T Stack<T>::POISON_VALUE = 666;
+
+template <class T>
+int Stack<T>::stacksCount = 0;
 
 /**
 *   Creates empty stack with given capacity. If capacity wasn't privided then capacity
@@ -25,7 +30,10 @@ int Stack::stacksCount = 0;
 *
 *   @param capacity - maximum number of elements in the stack.
 */
-Stack::Stack(Stack::size_type capacity) : m_size(0), m_capacity(capacity),
+
+template <class T>
+Stack<T>::Stack(Stack::size_type capacity) : m_size(0), m_capacity(capacity),
+
                  m_id(stacksCount), m_data(NULL)
 {
     if (stacksCount == 0)
@@ -33,7 +41,7 @@ Stack::Stack(Stack::size_type capacity) : m_size(0), m_capacity(capacity),
     string message = "Creating stack...";   
     try 
     {
-        m_data = new value_type[DEFAULT_CAPACITY];
+        m_data = new T[DEFAULT_CAPACITY];
         stacksCount++;
 
         message += " Stack created!\n"; 
@@ -50,7 +58,8 @@ Stack::Stack(Stack::size_type capacity) : m_size(0), m_capacity(capacity),
 *   
 *   @param obj - a reference to a stack that is being used to initialize new stack.  
 */
-Stack::Stack(const Stack &obj)
+template <class T>
+Stack<T>::Stack(const Stack &obj)
 {
     stacksCount++;
     string message = "Creating stack from copy constructor (copy stack #" + 
@@ -61,11 +70,9 @@ Stack::Stack(const Stack &obj)
     m_capacity = obj.m_capacity;
     try
     {
-        m_data = new value_type [m_size];
-
+        m_data = new T [m_size];
         for (size_type i = 0; i < m_size; i++)
             m_data[i] = obj.m_data[i];
-
         message += "Success!\n";
     } catch (exception &e)
     {
@@ -79,7 +86,8 @@ Stack::Stack(const Stack &obj)
 *   Destroyes current stack. Frees allocated memory for stack elements. Writes result
 *   messages in the dump file.
 */
-Stack::~Stack()
+template <class T>
+Stack<T>::~Stack()
 {
     string message = "Freeing memory... ";
     if (m_data != NULL) 
@@ -101,16 +109,17 @@ Stack::~Stack()
 *   
 *   @param value - value to be added in the stack.
 */
-void Stack::push(const value_type& value)
+template <class T>
+void Stack<T>::push(const T& value)
 {
     bool ok = false;
     if  (m_size >= m_capacity)
     {
-        Stack bufStack(*this);
+        Stack <T> bufStack(*this);
         if (m_data) 
             delete [] m_data;
         m_capacity += INCREMENT_CAPACITY;
-        m_data = new value_type [m_capacity];
+        m_data = new T [m_capacity];
         for (size_type i = 0; i < bufStack.m_size; i++)
             m_data[i] = bufStack.m_data[i];
     }
@@ -137,7 +146,8 @@ void Stack::push(const value_type& value)
 *   Returns and removes the top value from the stack. Writes error messages in the dump 
 *   file.
 */
-void Stack::pop()
+template <class T>
+void Stack<T>::pop()
 {
     if (m_size > 0)
         m_data[m_size--] = POISON_VALUE;
@@ -150,10 +160,11 @@ void Stack::pop()
 *
 *   @return @c result - the reference on the top element.
 */
-Stack::value_type& Stack::top()
+template <class T>
+T& Stack<T>::top()
 {
     string message = "Trying top()... ";
-    value_type *result = &m_data[0];
+    T *result = &m_data[0];
 
     if (m_size > 0)
     {
@@ -180,7 +191,8 @@ Stack::value_type& Stack::top()
 *   @return @c true - if stack is empty (no elements);
 *   @return @c false - if stack is not empty.
 */
-bool Stack::empty() const
+template <class T>
+bool Stack<T>::empty() const
 {
     return (m_size == 0);
 }
@@ -191,7 +203,8 @@ bool Stack::empty() const
 *   @return @c true - stack is valid;
 *   @return @c false - stack is bad :(
 */
-bool Stack::ok() const
+template <class T>
+bool Stack<T>::ok() const
 {
     return (m_size <= m_capacity);
 }
@@ -202,7 +215,8 @@ bool Stack::ok() const
 *   
 *   @param message - message to write in the file.
 */
-void Stack::dump(const string &message) const
+template <class T>
+void Stack<T>::dump(const string &message) const
 {
     // open dump file and write main info abot the stack
     ofstream dumpFile(DUMP_FILE_NAME, std::ios_base::app);
@@ -222,7 +236,8 @@ void Stack::dump(const string &message) const
     dumpFile.close();
 }
 
-Stack& Stack::operator=(const Stack &obj2)
+template <class T>
+Stack<T>& Stack<T>::operator=(const Stack<T> &obj2)
 {
   //  swap(m_size, obj2.m_size);
   //  swap(m_capacity, obj2.capacity);
@@ -235,7 +250,7 @@ Stack& Stack::operator=(const Stack &obj2)
         m_capacity = obj2.m_capacity;
         if (m_data) 
             delete[] m_data; 
-        m_data = new value_type [m_capacity];
+        m_data = new T [m_capacity];
         for (Stack::size_type i = 0; i < m_size; i++) 
             m_data[i] = obj2.m_data[i];
     }
