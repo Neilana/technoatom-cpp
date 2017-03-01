@@ -4,6 +4,8 @@
 using MyNamespace::Stack;
 using namespace std;
 
+// FIXME: Обычно пишут тесты ко всем методам. Иначе от них мало толку. Так что допиши.
+
 TEST(StackTest, CheckEmpty)
 {
     Stack <int> stack1;

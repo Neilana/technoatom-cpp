@@ -11,6 +11,8 @@
 #include <new>  
 #include <algorithm>        // swap
 
+// FYI: Что касается POISON values, я бы их оставил только в режиме DEBUG.
+
 /* STACK: CLASS INTERFACE */
 
 /**
@@ -26,6 +28,9 @@ namespace MyNamespace
     {
     public:
         // types definition
+        // FYI: Мне кажется, это уже излишне:
+        //    1) объем памяти, занимаемой стеком >> sizeof(size_t)
+        //    2) размер стека (capacity) не может быть больше, чем size_t, если мы конечно не биты в нем храним.
         typedef size_t size_type;   ///< type of indexes used inside the array 
         
         // constructors and destructor
@@ -42,7 +47,8 @@ namespace MyNamespace
         // operators overload
         Stack<T>& operator=(const Stack<T> &obj2);    ///< assignment operator overload
 
-        // getters  
+        // getters
+        // FYI: Здесь можно оставить просто size_type
         Stack<T>::size_type capacity() const { return m_capacity; };
         Stack<T>::size_type size() const { return m_id; } ; ///< returns current number of elemetns in the stack
         Stack<T>::size_type id() const{ return m_id; };     ///< returns id of the stack
@@ -54,6 +60,8 @@ namespace MyNamespace
         static const size_type INCREMENT_CAPACITY = 6;  ///< add this number to the current capacity when stack is full
         static const T POISON_VALUE;                ///< instead of deleted elements
         static const std::string DUMP_FILE_NAME;    ///< name of the file where debug information is stored
+        // FYI: В чем смысл этой переменной?! Если посмотреть, сколько стеков создается разными неявными вызовами конструкторов,
+        // то логично в деструкторе уменьшать это число и убедится, что все сходится к 0.
         static int stacksCount;                     ///< total amount of created stacks 
 
         // information about the stack
@@ -90,7 +98,7 @@ template <class T>
 const string Stack<T>::DUMP_FILE_NAME = "dumpFile.txt";
 
 template <class T>
-const T Stack<T>::POISON_VALUE = 666;
+const T Stack<T>::POISON_VALUE = 666; // FIXME: Плохое число. Оно вполне может встретиться в стеке и в нормальной ситуации.
 
 template <class T>
 int Stack<T>::stacksCount = 0;
@@ -106,11 +114,21 @@ template <class T>
 Stack<T>::Stack(Stack::size_type capacity) : m_size(0), m_capacity(capacity),
                  m_id(stacksCount), m_data(NULL)
 {
+    // FIXME: Почему не DUMP_FILE_NAME?
+    // FIXME: Мне кажется не логичным фиксировать имя файла с дампом. А если несколько программ
+    // параллельно захочется запустить?! Обычно в таких случаях генерят имя файла, содержащее
+    // текущие дату/время и какую-нибудь случайную последовательность. + ко всему, дампить всегда -
+    // плохое решение. Это отнимает время. Дампить надо только в дебаг режиме. Поэтому dump лучше делать
+    // макросом, печатающим только тогда, когда мы явно задали константу DEBUG при компиляции программы.
+    // Впоследствии это все хорошо бы заменить логгером с несколькими приоритетами сообщений.
     if (stacksCount == 0)
         remove("dumpFile.txt");
     string message = "Creating stack...";   
     try 
     {
+        // FIXME: Раз уж у тебя есть POISON VALUE - я бы посоветовал заполнить им весь буффер изначально.
+        // Иначе непонятно, нужен ли такой POISON_VALUE, который обозначает выделенную память, не содержащую
+        // разумных значений, но не всегда.
         m_data = new T[DEFAULT_CAPACITY];
         stacksCount++;
 
@@ -132,6 +150,9 @@ template <class T>
 Stack<T>::Stack(const Stack &obj)
 {
     stacksCount++;
+    // FYI: Есть такое хорошее predefined значение __FUNCTION__. Тогда можно подставлять прототип функции,
+    // в которой ты находишься. Еще есть __LINE__. Из них хорошо бы генерировать сообщение об ошибке в
+    // макросе dump.
     string message = "Creating stack from copy constructor (copy stack #" + 
                      to_string( obj.id() ) + ")... ";
 
@@ -142,12 +163,14 @@ Stack<T>::Stack(const Stack &obj)
     {
         m_data = new T [m_size];
 
+        // FYI: Есть такая клевая функция, memcpy - лучше использовать ее.
         for (size_type i = 0; i < m_size; i++)
             m_data[i] = obj.m_data[i];
 
         message += "Success!\n";
     } catch (exception &e)
     {
+        // FIXME: Такого рода исключения лучше кидать наружу. А то ты фактически замалчиваешь проблему.
         string error = e.what();
         message = "We've got some problems! Exception caught: " + error + ".\n";
     }
@@ -251,6 +274,7 @@ bool Stack<T>::empty() const
 template <class T>
 bool Stack<T>::ok() const
 {
+    // FIXME: А как насчет проверить, что m_data не NULL?! 
     return (m_size <= m_capacity);
 }
 
@@ -263,6 +287,8 @@ bool Stack<T>::ok() const
 template <class T>
 void Stack<T>::dump(const string &message) const
 {
+    // FYI: Лучше держать файл с логами всегда открытым и писать туда когда нужно.
+
     // open dump file and write main info abot the stack
     ofstream dumpFile(DUMP_FILE_NAME, std::ios_base::app);
     dumpFile << "Stack #" << m_id << endl;
@@ -284,6 +310,9 @@ Stack<T>& Stack<T>::operator=(const Stack<T> &obj2)
 {
     // copy-swap
     // Магия! ОНО РЕАЛЬНО РАБОТАЕТ!!!
+    // FIXME: Хм. Я Бы никогда не стал так определять оператор =, потому что он портит объект obj2.
+    // Когда человек пишет оператор =, он не ожидает того, что объект obj2 будет изменен. А ты его портишь.
+    // К тому же, это не скомпилируется, так как obj2 - const Stack&.
     swap(m_size, obj2.m_size);
     swap(m_capacity, obj2.capacity);
     swap(m_data, obj2.m_data);
