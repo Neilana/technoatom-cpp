@@ -69,3 +69,5 @@ CMakeLists.txt.user*
 
 lectures/
 comments.txt
+task1/docs/html/
+task1/docs/latex/
