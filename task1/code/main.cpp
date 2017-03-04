@@ -6,8 +6,6 @@
 *   @date       2017
 */  
 
-// FIXME: А еще не надо класть в репозиторий сгенерированные файлы. Т.е. в папке doc должен лежать только Doxyfile
-
 // headers
 #include <iostream>
 #include "gtest/gtest.h"
@@ -32,9 +30,6 @@
 
 // FIXME: Лучше сразу привыкай не использовать имена типа My***. Это перестает работать как только в проекте появляется больше 1 человека.
 using MyNamespace::Stack;
-// FIXME: Не пиши using namespace std. Бойся конфликтов имен. Импортируй только то, что нужно.
-// типа using std::cout;
-using namespace std;
 
 int main(int argc, char** argv)
 {
