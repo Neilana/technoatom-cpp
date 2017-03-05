@@ -4,7 +4,7 @@ CONFIG -= app_bundle
 CONFIG -= qt
 
 SOURCES += main.cpp \
-    Array.cpp \
+    #Array.cpp \
     Array.t.cpp
 
 # Google Test
