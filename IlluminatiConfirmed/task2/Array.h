@@ -199,6 +199,7 @@ Array<Tp>::~Array()
 template <class Tp>
 void Array<Tp>::push_back(const Tp& value)
 {
+
     DUMP("in");
     Array <Tp> bufArr(*this);
     if (m_data != NULL)
@@ -224,6 +225,7 @@ const Tp& Array<Tp>::operator[](size_t index) const
     ASSERT_OK((index < m_capacity));
     if (index < m_capacity)
     {
+
         return m_data[index];
     }
     else

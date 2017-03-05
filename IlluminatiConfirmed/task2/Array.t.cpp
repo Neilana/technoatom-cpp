@@ -3,17 +3,17 @@
 
 using IlluminatiConfirmed::Array;
 
-TEST(ArrayTest, CheckConstructors)
+TEST(ArrayTest, CheckDefaultConstructorReturnsCorrectCapacity)
 {
-    /* FEATURE #1: CHECK CONSTRUCTOR WITHOUT ARGUMENTS (ZERO SIZED ARRAY). */
-    // GIVEN an empty just constructed array with default constructor
-    Array <int> a1;
+    // GIVEN
+    Array <int> anArray;
+    size_t expectedCapacity = 0;
 
-    // WHEN we check for its capacity
+    // WHEN
     size_t capacity = a1.capacity();
 
-    // THEN it tells us it's empty
-    ASSERT_EQ(capacity, 0);
+    // THEN
+    ASSERT_EQ(capacity, expectedCapacity);
 
 
     /* FEATURE #2. CHECK CONSTRUCTOR WITH 1 ARGUMENT (ZERO SIZED ARRAY). */
@@ -140,6 +140,11 @@ TEST(ArrayTest, CheckAccess_Brackets)
     // WHEN trying to get value of non-existing 2nd element
     // THEN we have an exception
     ASSERT_ANY_THROW(a2[2]);
+
+    /* FEATURE #5. CHECK OPERATOR [] WITH EMPTY ARRAY (WITHOUT push_back(). */
+    Array <int> a3(5);
+    a3[0] = 100;
+    ASSERT_EQ(a3[0], 100);
 }
 
 TEST(ArrayTest, CheckAccess_At)
