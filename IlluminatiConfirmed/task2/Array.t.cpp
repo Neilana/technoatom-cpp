@@ -181,6 +181,67 @@ TEST(ArrayTest, CheckAccess_At)
     ASSERT_ANY_THROW(a2.at(2));
 }
 
+TEST(ArrayTest, CheckSize)
+{
+    Array <int> a1;
+
+    a1.push_back(1);
+    ASSERT_EQ(a1.capacity(), size_t(1));
+}
+
+TEST(ArrayTest, CheckOperatorAssignment)
+{
+    Array<double> a1(10);
+    for (size_t i = 0; i<10; i++)
+    {
+
+        a1[i] = i*10;
+    }
+    Array<double> a2(10);
+    for (size_t i = 0; i<10; i++)
+    {
+
+        a2[i] = i*1000;
+    }
+
+    a2 = a1;
+
+    for (size_t i = 0; i<10; i++)
+    {
+        ASSERT_EQ(a1.at(i), i*10);
+        ASSERT_EQ(a2.at(i), i*10);
+    }
+}
+
+TEST(ArrayTest, CheckConstructorDefaultValue)
+{
+    Array<double> a1(10,10.1);
+    for (size_t i = 0; i<10; i++)
+    {
+        ASSERT_EQ(a1.at(i) , 10.1);
+    }
+}
+
+TEST(ArrayTest, CheckAccessAssignmentOpConst)
+{
+    const Array<double> a1(10);
+    //a1[1] = 0; //It does not compile if all is ok
+}
+
+TEST(ArrayTest, CheckEqualOperator)
+{
+    const Array<double> a1(10, 10.2);
+    const Array<double> a2(10, 10.2);
+
+    ASSERT_TRUE(a1 == a2);
+
+    Array<double> a3(10, 10.2);
+
+    a3[9] = 0;
+
+    ASSERT_FALSE(a3 == a1);
+}
+
 //DISABLED_TEST(ArrayTest, CheckAccess_FrontBack)
 //{
 //    Array <float> a1;
