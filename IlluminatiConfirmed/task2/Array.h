@@ -144,13 +144,18 @@ namespace IlluminatiConfirmed
          */
         void reserve(size_t capacity);
 
+        // modifiers
+        void push_back(const Tp& value);
+        void pop_back();
+        void clear();
+
+        // other functions
         /*!
          * \brief dump Debug information about the array's container
          * \param func Name of the function from which dump is called
          * \author penguinlav
          */
         void dump(std::string str) const;
-        void push_back(const Tp& value);
 
         void push_front(const Tp& value);
 
@@ -378,8 +383,9 @@ void Array<Tp>::dump(string str) const
         file << std::asctime(std::localtime(&result)) << std::endl;
 
         file << "Array::" << str << std::endl << "{" << std::endl;
-        file << space(1) << NAME_VAR(m_capacity) << " = " << m_capacity<<std::endl;
-        file << space(1) << NAME_VAR(m_data) << " " << m_capacity<<std::endl;
+        file << space(1) << NAME_VAR(m_capacity) << " = " << m_capacity << std::endl;
+        file << space(1) << NAME_VAR(m_size) << " " << m_size << std::endl;
+        file << space(1) << NAME_VAR(m_data) << " " << m_capacity << std::endl;
         file << space(2) << "{" << std::endl;
 
         if (m_data != nullptr)
@@ -415,4 +421,27 @@ void Array<Tp>::reserve(size_t capacity)
 
         DUMP("out");
     }
+}
+
+template<class Tp>
+void Array<Tp>::assign (size_t capacity, const Tp& value)
+{
+    reserve(capacity);
+
+    m_size = capacity;
+    for (size_t i = 0; i < capacity; i++)
+        m_data[i] = value;
+}
+
+template<class Tp>
+void Array<Tp>::pop_back()
+{
+   if (m_size > 0)
+       m_size--;
+}
+
+template<class Tp>
+void Array<Tp>::clear()
+{
+   m_size = 0;
 }
