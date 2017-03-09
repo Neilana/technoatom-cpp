@@ -1,29 +1,41 @@
+/// \file Array.h
+
+// include guard
 #pragma once
 
+// macroses
 #define NAME_VAR(VAR) #VAR
 #define DEBUG_ON
 #if defined(DEBUG_ON)
-    #define DUMP(ch) do {dump(string(__PRETTY_FUNCTION__)+string(ch));} while(0); //FIXME add line
+    #define DUMP(ch) do {dump(string(__PRETTY_FUNCTION__)+string("\n")+string(ch));} while(0); //FIXME add line. Neilana: now fixed?
     #define ASSERT_OK(cond) do { if (!cond)  {dump(string(__PRETTY_FUNCTION__) + string(" ")+ string(#cond));}} while(0);
     #define ASSERT_STR(str) do { dump(string(__PRETTY_FUNCTION__) + string(" ")+ str);} while(0);
 #else
     #define ASSERT_OK(cond) do { if (!cond)  { assert(cond);}} while(0);
-    #define ASSERT_STR(str) do { assert(!str);} while(0); //Ops
+    #define ASSERT_STR(str) do { assert(!str);} while(0); //Ops Neilana: не разбиралась что здесь
 #define DUMP(ch)
 #endif
 
+// usefull headers
 #include <iostream>
 #include <cassert>
+#include <string>
+#include <exception>
+#include <new>
+#include <fstream>
 
 using std::size_t;
 using std::string;
+using std::exception;
 
+// Illuminati Confirmed namespace and Array class declaration
 namespace IlluminatiConfirmed
 {
-    template <class Tp> //FIXME Why class? How should dump works?
+    template <class Tp>
     class Array
     {
     public:
+        // constructors, destructors and assignment
         /*!
          * \brief Array Constructs an empty array
          */
@@ -53,13 +65,16 @@ namespace IlluminatiConfirmed
          * \brief operator = Assigns rhs to this vector
          * \param rhs The right array
          * \return Returns a reference to this vector
+         * \author penguinlav
          */
         Array<Tp> & operator=(const Array<Tp> &rhs);
 
+        // element access
         /*!
          * \brief operator [] Returns the item at index position i as a modifiable reference.
          * \param i Must be a valid index position in the array.
          * \return Value
+         * \author Neilana
          */
         const Tp & operator[](size_t index) const;
 
@@ -67,38 +82,52 @@ namespace IlluminatiConfirmed
          * \brief operator [] Overload, denide access to a const value
          * \param index
          * \return
+         * \author penguinlav
          */
         Tp & operator[](size_t index) { DUMP("in/out"); return const_cast<Tp &>(static_cast<const Array &>(*this)[index]);}
 
         /*!
-         * \brief operator == Two vectors are considered equal if they contain the same values in the same order.
-         *                    This function requires the value type to have an implementation of operator==().
-         * \param rhs Right operand
-         * \return Returns true if other is equal to this vector; otherwise returns false.
+         * \brief Returns a reference to the element at specified location pos, with bounds checking.
+         * \param index position of element to return
+         * \return reference to the requested element
+         * \author Neilana
          */
-        bool operator==(const Array<Tp> &rhs) const;
+        Tp& at(size_t index) const;
 
+        // capacity
         /*!
          * \brief max_size Returns the maximum number of items that can be stored in the vector without forcing a reallocation.
          * \return Value
+         * \author penguinlav
          */
         inline size_t max_size() const { DUMP("in/out"); return m_capacity;}
 
         /*!
          * \brief empty Returns true if the array has size 0; otherwise returns false.
          * \return True or false
+         * \author penguinlav
          */
         inline bool empty() const { DUMP("in/out"); return m_capacity == 0;}
 
         /*!
          * \brief dump Debug information about the array's container
          * \param func Name of the function from which dump is called
+         * \author penguinlav
          */
         void dump(std::string str) const;
         size_t size() const { DUMP("in/out"); return m_size; } //FIXME Mb it's number of uninitialized elements.. Just count for push, [] and other
         size_t capacity() const { DUMP("in/out"); return m_capacity; }
         void push_back(const Tp& value);
-        Tp& at(size_t index) const;
+
+        // operators overload
+        /*!
+         * \brief operator == Two vectors are considered equal if they contain the same values in the same order.
+         *                    This function requires the value type to have an implementation of operator==().
+         * \param rhs Right operand
+         * \return Returns true if other is equal to this vector; otherwise returns false.
+         * \author penguinlav
+         */
+        bool operator==(const Array<Tp> &rhs) const;
 
     private:
         Tp *m_data;
@@ -108,12 +137,7 @@ namespace IlluminatiConfirmed
     };
 }
 
-#include <string>
-#include <exception>
-#include <new>
-#include <fstream>
-
-using std::exception;
+// Array class implementation
 using IlluminatiConfirmed::Array;
 
 template <class Tp>
@@ -132,7 +156,7 @@ Array<Tp>::Array(size_t capacity) : m_data(NULL), m_size(0), m_capacity(0)
         m_capacity = capacity;
     } catch (exception& e)
     {
-        ASSERT_STR(string(e.what()));
+        ASSERT_STR( string(e.what()) );
     }
     DUMP("out");
 }
@@ -144,13 +168,13 @@ Array<Tp>::Array(size_t capacity, const Tp &def) : m_data(NULL), m_size(0), m_ca
     try
     {
         m_data = new Tp[m_capacity];
-        for (size_t i = 0; i<m_capacity; i++)
+        for (size_t i = 0; i < m_capacity; i++)
         {
             m_data[i] = def;
         }
     } catch (exception& e)
     {
-        ASSERT_STR(string(e.what()));
+        ASSERT_STR( string(e.what()) );
     }
     DUMP("out");
 }
@@ -168,13 +192,13 @@ Array<Tp>::Array(const Array<Tp> &other) :
         memcpy(m_data, other.m_data, sizeof(Tp) * m_capacity);
     } catch (exception &e)
     {
-        ASSERT_STR(string(e.what()));
+        ASSERT_STR( string(e.what()) );
     }
     DUMP("out");
 }
 
 template<class Tp>
-Array<Tp> &Array<Tp>::operator=(const Array<Tp> &rhs)
+Array<Tp>& Array<Tp>::operator=(const Array<Tp> &rhs)
 {
     DUMP("in");
     if (this != &rhs)
@@ -190,7 +214,7 @@ Array<Tp> &Array<Tp>::operator=(const Array<Tp> &rhs)
             m_size = rhs.m_size;
         } catch (exception &e)
         {
-            ASSERT_STR(string(e.what()));
+            ASSERT_STR( string(e.what()) );
         }
     }
     DUMP("out");
@@ -209,13 +233,13 @@ Array<Tp>::~Array()
 template <class Tp>
 void Array<Tp>::push_back(const Tp& value)
 {
-
     DUMP("in");
     Array <Tp> bufArr(*this);
     if (m_data != NULL)
         delete [] m_data;
 
     m_capacity++;// = INCREMENT_CAPACITY; //push_back should add a new element at the end.
+    /* !!! */
     try
     {
         m_data = new Tp [m_capacity];
@@ -235,7 +259,6 @@ const Tp& Array<Tp>::operator[](size_t index) const
     ASSERT_OK((index < m_capacity));
     if (index < m_capacity)
     {
-
         return m_data[index];
     }
     else
@@ -290,24 +313,28 @@ void IlluminatiConfirmed::Array<Tp>::dump(string str) const
     file.open("dump_Array.txt",std::ofstream::out | std::ofstream::app);
     if(file.is_open())
     {
-        auto space = [](unsigned int i) ->string {
-            string sp = "";
-            while (i-->0) sp += "    ";
-            return sp;};
-        std::time_t result = std::time(nullptr);
-        file<<std::asctime(std::localtime(&result))<<std::endl;
-        file<<"Array::"<<str<<std::endl<<"{"<<std::endl;
-        file<<space(1)<<NAME_VAR(m_capacity)<<" = "<<m_capacity<<std::endl;
-        file<<space(1)<<NAME_VAR(m_data)<<" "<<m_capacity<<std::endl;
-        file<<space(2)<<"{"<<std::endl;
-        if(!(m_data == NULL))
-        {for (size_t j = 0; j < m_capacity;j++)
+        // Neilana: зачёёёётная лямбда \m/
+        auto space = [](unsigned int i) -> string
         {
-            file<<space(2)<<"["<<j<<"]"<<" = "<<m_data[j]<<std::endl;
+            string sp = "";
+            while (i-- > 0) sp += "    ";
+            return sp;
+        };
+        std::time_t result = std::time(nullptr);
+        file << std::asctime(std::localtime(&result)) << std::endl;
+
+        file << "Array::" << str << std::endl << "{" << std::endl;
+        file << space(1) << NAME_VAR(m_capacity) << " = " << m_capacity<<std::endl;
+        file << space(1) << NAME_VAR(m_data) << " " << m_capacity<<std::endl;
+        file << space(2) << "{" << std::endl;
+
+        if (m_data)
+        {
+            for (size_t j = 0; j < m_capacity;j++)
+                file << space(2) << "[" << j << "]" << " = " << m_data[j] << std::endl;
         }
-        }
-        file<<space(2)<<"}"<<std::endl;
-        file<<space(1)<<"}"<<std::endl;
+        file << space(2) << "}" << std::endl;
+        file << space(1) << "}" << std::endl;
     }
     file.close();
 }
