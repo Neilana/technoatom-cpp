@@ -7,7 +7,7 @@
 #define NAME_VAR(VAR) #VAR
 #define DEBUG_ON
 #if defined(DEBUG_ON)
-    #define DUMP(ch) do {dump(string(__PRETTY_FUNCTION__)+string("\n")+string(ch));} while(0); //FIXME add line. Neilana: now fixed?
+    #define DUMP(ch) do {dump(string(__PRETTY_FUNCTION__)+string(" ")+string(ch));} while(0);
     #define ASSERT_OK(cond) do { if (!cond)  {dump(string(__PRETTY_FUNCTION__) + string(" ")+ string(#cond));}} while(0);
     #define ASSERT_STR(str) do { dump(string(__PRETTY_FUNCTION__) + string(" ")+ str);} while(0);
 #else
@@ -96,7 +96,7 @@ namespace IlluminatiConfirmed
          * \return reference to the first element
          * \author Neilana
          */
-        Tp& front(){ if (m_data) return m_data[0]; };
+        Tp& front() { if (m_data) return m_data[0]; }
 
         const Tp& front() const
         {
@@ -109,7 +109,7 @@ namespace IlluminatiConfirmed
          * \return reference to the last element
          * \author Neilana
          */
-        Tp& back(){ if (m_data[m_size]) return m_data[m_size]; };
+        Tp& back() { DUMP("in/out"); if (m_data[m_size]) return m_data[m_size]; }
 
         const Tp& back() const
         {
@@ -124,7 +124,7 @@ namespace IlluminatiConfirmed
          * \author Neilana
          */
         //inline size_t max_size() const { DUMP("in/out"); return m_capacity;}
-        inline size_t max_size() const { DUMP("in/out"); return size_t(-1)/sizeof(Tp);};
+        inline size_t max_size() const { DUMP("in/out"); return size_t(-1)/sizeof(Tp); }
 
         /*!
          * \brief empty Returns true if the array has size 0; otherwise returns false.
@@ -152,6 +152,8 @@ namespace IlluminatiConfirmed
         void dump(std::string str) const;
         void push_back(const Tp& value);
 
+        void push_front(const Tp& value);
+
         // operators overload
         /*!
          * \brief operator == Two vectors are considered equal if they contain the same values in the same order.
@@ -174,13 +176,13 @@ namespace IlluminatiConfirmed
 using IlluminatiConfirmed::Array;
 
 template <class Tp>
-Array<Tp>::Array() : m_data(NULL), m_size(0), m_capacity(0)
+Array<Tp>::Array() : m_data(nullptr), m_size(0), m_capacity(0)
 {
     DUMP("in/out");
 }
 
 template<class Tp>
-Array<Tp>::Array(size_t capacity, const Tp& def) : m_data(NULL), m_size(0), m_capacity(0)
+Array<Tp>::Array(size_t capacity, const Tp& def) : m_data(nullptr), m_size(0), m_capacity(0)
 {
     DUMP("in");
     try
@@ -200,7 +202,7 @@ Array<Tp>::Array(size_t capacity, const Tp& def) : m_data(NULL), m_size(0), m_ca
 
 template<class Tp>
 Array<Tp>::Array(const Array<Tp> &other) :
-    m_data(NULL),
+    m_data(nullptr),
     m_size(other.m_size),
     m_capacity(other.m_capacity)
 {
@@ -244,17 +246,20 @@ template <class Tp>
 Array<Tp>::~Array()
 {
     DUMP("in");
-    if (m_data != NULL)
+    if (m_data != nullptr)
         delete [] m_data;
+    m_data = nullptr;
     DUMP("out");
 }
 
 template <class Tp>
 void Array<Tp>::push_back(const Tp& value)
 {
+    DUMP("in");
     if (m_size == m_capacity)
         reserve(m_capacity + INCREMENT_CAPACITY);
     m_data[m_size++] = value;
+    DUMP("out");
     /*
     DUMP("in");
 
@@ -275,6 +280,28 @@ void Array<Tp>::push_back(const Tp& value)
         ASSERT_STR(string(e.what()));
     }
     DUMP("out");*/
+}
+
+template <class Tp>
+void Array<Tp>::push_front(const Tp& value)
+{
+    DUMP("in");
+    Array <Tp> bufArr(*this);
+    if (m_data != nullptr)
+        delete [] m_data;
+
+    m_capacity++;// = INCREMENT_CAPACITY; //push_back should add a new element at the end.
+    try
+    {
+        m_data = new Tp [m_capacity];
+        std::copy(&bufArr.m_data[0], &bufArr.m_data[m_capacity], &m_data[1]);
+        //memcpy(&bufArr.m_data[1], bufArr.m_data[m_capacity], m_data);
+        m_data[0] = value;
+    } catch (exception &e)
+    {
+        ASSERT_STR(string(e.what()));
+    }
+    DUMP("out");
 }
 
 template <class Tp>
@@ -355,7 +382,7 @@ void Array<Tp>::dump(string str) const
         file << space(1) << NAME_VAR(m_data) << " " << m_capacity<<std::endl;
         file << space(2) << "{" << std::endl;
 
-        if (m_data)
+        if (m_data != nullptr)
         {
             for (size_t j = 0; j < m_capacity;j++)
                 file << space(2) << "[" << j << "]" << " = " << m_data[j] << std::endl;
@@ -373,7 +400,7 @@ void Array<Tp>::reserve(size_t capacity)
     {
         DUMP("in");
         Array bufArr(*this);
-        if (m_data != NULL)
+        if (m_data != nullptr)
             delete [] m_data;
 
         m_capacity = capacity;
