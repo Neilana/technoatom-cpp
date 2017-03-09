@@ -42,17 +42,11 @@ namespace IlluminatiConfirmed
         Array();
 
         /*!
-         * \brief Array Constructs a array with a size
-         * \param size The size of the new array
-         */
-        Array(size_t capacity);
-
-        /*!
          * \brief Array Overload
          * \param capacity
          * \param def Initialization with the default value
          */
-        Array(size_t capacity, const Tp & def);
+        Array(size_t capacity, const Tp & def = Tp());
 
         /*!
          * \brief Array Copy constractor
@@ -68,6 +62,8 @@ namespace IlluminatiConfirmed
          * \author penguinlav
          */
         Array<Tp> & operator=(const Array<Tp> &rhs);
+
+        void assign (size_t capacity, const Tp& value);
 
         // element access
         /*!
@@ -121,7 +117,6 @@ namespace IlluminatiConfirmed
             return const_cast<Tp &>(static_cast<const Array &>(*this)->back());
         }
 
-
         // capacity
         /*!
          * \brief returns the maximum number of elements the container is able to hold due to system or library implementation limitations.
@@ -138,14 +133,23 @@ namespace IlluminatiConfirmed
          */
         inline bool empty() const { DUMP("in/out"); return m_capacity == 0;}
 
+        size_t size() const { DUMP("in/out"); return m_size; } //FIXME Mb it's number of uninitialized elements.. Just count for push, [] and other
+
+        size_t capacity() const { DUMP("in/out"); return m_capacity; }
+
+        /*!
+         * \brief increase the capacity to a value that's greater or equal to new capacity
+         * \param capacity new capacity
+         * \author Neilana
+         */
+        void reserve(size_t capacity);
+
         /*!
          * \brief dump Debug information about the array's container
          * \param func Name of the function from which dump is called
          * \author penguinlav
          */
         void dump(std::string str) const;
-        size_t size() const { DUMP("in/out"); return m_size; } //FIXME Mb it's number of uninitialized elements.. Just count for push, [] and other
-        size_t capacity() const { DUMP("in/out"); return m_capacity; }
         void push_back(const Tp& value);
 
         // operators overload
@@ -175,32 +179,18 @@ Array<Tp>::Array() : m_data(NULL), m_size(0), m_capacity(0)
     DUMP("in/out");
 }
 
-template <class Tp>
-Array<Tp>::Array(size_t capacity) : m_data(NULL), m_size(0), m_capacity(0)
+template<class Tp>
+Array<Tp>::Array(size_t capacity, const Tp& def) : m_data(NULL), m_size(0), m_capacity(0)
 {
     DUMP("in");
     try
     {
         m_data = new Tp[capacity];
         m_capacity = capacity;
-    } catch (exception& e)
-    {
-        ASSERT_STR( string(e.what()) );
-    }
-    DUMP("out");
-}
+        m_size = capacity;
 
-template<class Tp>
-Array<Tp>::Array(size_t capacity, const Tp &def) : m_data(NULL), m_size(0), m_capacity(capacity)
-{
-    DUMP("in");
-    try
-    {
-        m_data = new Tp[m_capacity];
         for (size_t i = 0; i < m_capacity; i++)
-        {
             m_data[i] = def;
-        }
     } catch (exception& e)
     {
         ASSERT_STR( string(e.what()) );
@@ -262,23 +252,29 @@ Array<Tp>::~Array()
 template <class Tp>
 void Array<Tp>::push_back(const Tp& value)
 {
+    if (m_size == m_capacity)
+        reserve(m_capacity + INCREMENT_CAPACITY);
+    m_data[m_size++] = value;
+    /*
     DUMP("in");
+
     Array <Tp> bufArr(*this);
     if (m_data != NULL)
         delete [] m_data;
 
     m_capacity++;// = INCREMENT_CAPACITY; //push_back should add a new element at the end.
-    /* !!! */
+    // !!!
     try
     {
         m_data = new Tp [m_capacity];
         memcpy(m_data, bufArr.m_data, sizeof(Tp) * m_capacity-1);
         m_data[m_capacity-1] = value;
+        m_size++;
     } catch (exception &e)
     {
         ASSERT_STR(string(e.what()));
     }
-    DUMP("out");
+    DUMP("out");*/
 }
 
 template <class Tp>
@@ -311,7 +307,7 @@ bool Array<Tp>::operator==(const Array<Tp> &rhs) const
         for (size_t i = 0; i < m_capacity; i++)
         {
             if (m_data[i] != rhs.m_data[i])
-                return false;
+            return false;
         }
     } catch (exception &e)
     {
@@ -327,7 +323,9 @@ Tp& Array<Tp>::at(size_t index) const
     DUMP("in mb out");
     ASSERT_OK((index < m_capacity));
     if (index < m_capacity)
+    {
         return m_data[index];
+    }
     else
     {
         ASSERT_OK(!"Out of range");
@@ -336,7 +334,7 @@ Tp& Array<Tp>::at(size_t index) const
 }
 
 template<class Tp>
-void IlluminatiConfirmed::Array<Tp>::dump(string str) const
+void Array<Tp>::dump(string str) const
 {
     std::ofstream file;
     file.open("dump_Array.txt",std::ofstream::out | std::ofstream::app);
@@ -366,4 +364,28 @@ void IlluminatiConfirmed::Array<Tp>::dump(string str) const
         file << space(1) << "}" << std::endl;
     }
     file.close();
+}
+
+template<class Tp>
+void Array<Tp>::reserve(size_t capacity)
+{
+    if (capacity > m_capacity)
+    {
+        DUMP("in");
+        Array bufArr(*this);
+        if (m_data != NULL)
+            delete [] m_data;
+
+        m_capacity = capacity;
+        try
+        {
+            m_data = new Tp [m_capacity];
+            memcpy(m_data, bufArr.m_data, sizeof(Tp) * m_capacity-1);
+        } catch (exception &e)
+        {
+            ASSERT_STR( string(e.what()) );
+        }
+
+        DUMP("out");
+    }
 }

@@ -206,7 +206,7 @@ TEST(ArrayTest, CheckSize)
     Array <int> a1;
 
     a1.push_back(1);
-    ASSERT_EQ(a1.capacity(), size_t(1));
+    ASSERT_EQ(a1.size(), 1);
 }
 
 TEST(ArrayTest, CheckMaxSize)
@@ -257,9 +257,21 @@ TEST(ArrayTest, CheckOperatorAssignment)
 TEST(ArrayTest, CheckConstructorDefaultValue)
 {
     Array<double> a1(10,10.1);
-    for (size_t i = 0; i<10; i++)
+    for (size_t i = 0; i < 10; i++)
     {
-        ASSERT_EQ(a1.at(i) , 10.1);
+        ASSERT_EQ(a1.at(i), 10.1);
+    }
+
+    Array <int> a2(10);
+    for (size_t i = 0; i < 10; i++)
+    {
+        ASSERT_EQ(a2.at(i), 0);
+    }
+
+    Array <std::string> a3(10);
+    for (size_t i = 0; i < 10; i++)
+    {
+        ASSERT_EQ(a3.at(i), "");
     }
 }
 
@@ -283,7 +295,20 @@ TEST(ArrayTest, CheckEqualOperator)
     ASSERT_FALSE(a3 == a1);
 }
 
-//DISABLED_TEST(ArrayTest, CheckAccess_FrontBack)
+TEST(ArrayTest, CheckReserve)
+{
+    Array<double> a1(2);
+    size_t expectedCapacity = 2;
+    size_t actualCapacity = a1.capacity();
+    ASSERT_EQ(actualCapacity, expectedCapacity);
+
+    a1.reserve(5);
+    expectedCapacity = 5;
+    actualCapacity = a1.capacity();
+    ASSERT_EQ(actualCapacity, expectedCapacity);
+}
+
+//TEST(ArrayTest, CheckAccess_FrontBack)
 //{
 //    Array <float> a1;
 //    a1.push_back(1.21);
