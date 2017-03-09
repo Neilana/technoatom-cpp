@@ -1,7 +1,9 @@
 #include <iostream>
 #include "gtest/gtest.h"
+#include "Array.h"
 
 using IlluminatiConfirmed::Array;
+
 int main(int argc, char *argv[])
 {
     ::testing::InitGoogleTest(&argc, argv);

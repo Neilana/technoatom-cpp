@@ -14,6 +14,7 @@
 
 #include <iostream>
 #include <cassert>
+
 using std::size_t;
 using std::string;
 
@@ -27,41 +28,48 @@ namespace IlluminatiConfirmed
          * \brief Array Constructs an empty array
          */
         Array();
+
         /*!
          * \brief Array Constructs a array with a size
          * \param size The size of the new array
          */
         Array(size_t capacity);
+
         /*!
          * \brief Array Overload
          * \param capacity
          * \param def Initialization with the default value
          */
         Array(size_t capacity, const Tp & def);
+
         /*!
          * \brief Array Copy constractor
          * \param other What is copied
          */
         Array(const Array<Tp> &other);
         ~Array();
+
         /*!
          * \brief operator = Assigns rhs to this vector
          * \param rhs The right array
          * \return Returns a reference to this vector
          */
         Array<Tp> & operator=(const Array<Tp> &rhs);
+
         /*!
          * \brief operator [] Returns the item at index position i as a modifiable reference.
          * \param i Must be a valid index position in the array.
          * \return Value
          */
         const Tp & operator[](size_t index) const;
+
         /*!
          * \brief operator [] Overload, denide access to a const value
          * \param index
          * \return
          */
         Tp & operator[](size_t index) { DUMP("in/out"); return const_cast<Tp &>(static_cast<const Array &>(*this)[index]);}
+
         /*!
          * \brief operator == Two vectors are considered equal if they contain the same values in the same order.
          *                    This function requires the value type to have an implementation of operator==().
@@ -69,16 +77,19 @@ namespace IlluminatiConfirmed
          * \return Returns true if other is equal to this vector; otherwise returns false.
          */
         bool operator==(const Array<Tp> &rhs) const;
+
         /*!
          * \brief max_size Returns the maximum number of items that can be stored in the vector without forcing a reallocation.
          * \return Value
          */
         inline size_t max_size() const { DUMP("in/out"); return m_capacity;}
+
         /*!
          * \brief empty Returns true if the array has size 0; otherwise returns false.
          * \return True or false
          */
         inline bool empty() const { DUMP("in/out"); return m_capacity == 0;}
+
         /*!
          * \brief dump Debug information about the array's container
          * \param func Name of the function from which dump is called
@@ -101,6 +112,7 @@ namespace IlluminatiConfirmed
 #include <exception>
 #include <new>
 #include <fstream>
+
 using std::exception;
 using IlluminatiConfirmed::Array;
 
@@ -185,7 +197,6 @@ Array<Tp> &Array<Tp>::operator=(const Array<Tp> &rhs)
     return *this;
 }
 
-
 template <class Tp>
 Array<Tp>::~Array()
 {
@@ -194,7 +205,6 @@ Array<Tp>::~Array()
         delete [] m_data;
     DUMP("out");
 }
-
 
 template <class Tp>
 void Array<Tp>::push_back(const Tp& value)

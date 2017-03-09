@@ -6,75 +6,80 @@ using IlluminatiConfirmed::Array;
 TEST(ArrayTest, CheckDefaultConstructorReturnsCorrectCapacity)
 {
     // GIVEN
-    Array <int> anArray;
+    Array <int> array1;
     size_t expectedCapacity = 0;
 
     // WHEN
-    size_t capacity = a1.capacity();
+    size_t capacity = array1.capacity();
 
     // THEN
     ASSERT_EQ(capacity, expectedCapacity);
 
 
     /* FEATURE #2. CHECK CONSTRUCTOR WITH 1 ARGUMENT (ZERO SIZED ARRAY). */
-    // GIVEN an empty just constructed arrray with arguments
-    Array <int> a2(0);
+    // GIVEN
+    Array <int> array2(0);
+    expectedCapacity = 0;
 
-    // WHEN we check for its capacity
-    capacity = a2.capacity();
+    // WHEN
+    capacity = array2.capacity();
 
-    // THEN it tells us it's empty
-    ASSERT_EQ(capacity, 0);
+    // THEN
+    ASSERT_EQ(capacity, expectedCapacity);
 
 
     /* FEATURE #3. CHECK CONSTRUCTOR WITH 1 ARGUMENT (NORMAL SIZED ARRAY). */
-    // GIVEN an empty array with 10 elements
-    Array <int> a3(10);
+    // GIVEN
+    Array <int> array3(10);
+    expectedCapacity = 10;
 
-    // WHEN we check for its capacity
-    capacity = a3.capacity();
+    // WHEN
+    capacity = array3.capacity();
 
-    // THEN it tells us it's in fact 10 elements
-    ASSERT_EQ(capacity, 10);
+    // THEN
+    ASSERT_EQ(capacity, expectedCapacity);
 
 
     /* FEATURE #4. CHECK CONSTRUCTOR WITH 1 ARGUMENT (NEGATIVE AMOUNT OF ELEMENTS). */
-    // GIVEN an attempt to create an array with -10 elements (just for fun)
-    Array <int> a4(-10);
+    // GIVEN
+    Array <int> array4(-10);
+    expectedCapacity = 0;
 
-    // WHEN we're trying to do sth with this array (to get its capacity)
-    capacity = a4.capacity();
+    // WHEN
+    capacity = array4.capacity();
 
-    // THEN it tells us it's ok but has zero capacity
-    ASSERT_EQ(capacity, 0);
+    // THEN
+    ASSERT_EQ(capacity, expectedCapacity);
 
 
     /* FEATURE #5. CHECK CONSTRUCTOR WITH 1 ARGUMENT (TOO BIG NUMBER OF ELEMENTS). */
-    // GIVEN an attempt to create an array with toooooooo maaaaaaaanyyyyyyyyyyyyy elements
-    Array <int> a5(1000000000000000);
+    // GIVEN
+    Array <int> array5(1000000000000000);
+    expectedCapacity = 0;
 
-    // WHEN we're trying to do sth with this array (to get its capacity)
-    capacity = a5.capacity();
+    // WHEN
+    capacity = array5.capacity();
 
-    // THEN it tells us it's ok but has zero capacity
-    ASSERT_EQ(capacity, 0);
+    // THEN
+    ASSERT_EQ(capacity, expectedCapacity);
 
 
     /* FEATURE #6. CHECK CONSTRUCTOR WITH 1 ARGUMENT (WRONG ARGUMENT TYPE). */
-    // GIVEN an attempt to create an array with wrong argument type
-    Array <int> a6(5.5);
+    // GIVEN
+    Array <int> array6(5.5);
+    expectedCapacity = 5;
 
-    // WHEN we're trying to do sth with this array (to get its capacity)
-    capacity = a6.capacity();
+    // WHEN
+    capacity = array6.capacity();
 
-    // THEN it tells us it's ok but has zero capacity
-    ASSERT_EQ(capacity, 5);
+    // THEN
+    ASSERT_EQ(capacity, expectedCapacity);
 }
 
-TEST(ArrayTest, CheckAccess_Brackets)
+TEST(ArrayTest, CheckAccessWithBrackets)
 {
     /* FEATURE #1. CHECK OPERATOR [] WITH NOT EMPTY ARRAY (LOW BOUNDARY). */
-    // GIVEN not empty array with 5 eleemnts
+    // GIVEN
     Array <int> a1;
     a1.push_back(1);
     a1.push_back(2);
@@ -82,30 +87,46 @@ TEST(ArrayTest, CheckAccess_Brackets)
     a1.push_back(4);
     a1.push_back(5);
 
-    // WHEN trying to accesS 0th element (check low boundary)
-    // THEN it equals the first value we put into the array (1)
-    ASSERT_EQ(a1[0], 1);
+    int expectedValue = 1;
 
-    // GIVEN the same array
-    // WHEN trying to change value of the 0th element to be equal 10
+    // WHEN
+    int actualValue = a1[0];
+
+    // THEN
+    ASSERT_EQ(actualValue, expectedValue);
+
+
+    // GIVEN
+    expectedValue = 10;
+
+    // WHEN
     a1[0] = 10;
+    actualValue = a1[0];
 
-    // THEN it really changes to 10
-    ASSERT_EQ(a1[0], 10);
+    // THEN
+    ASSERT_EQ(actualValue, expectedValue);
 
 
     /* FEATURE #2. CHECK OPERATOR [] WITH NOT EMPTY ARRAY (HIGH BOUNDARY). */
-    // GIVEN the same full array
-    // WHEN trying to get value of the last (4th) element
-    // THEN it equals the last value we put into the array (5)
-    ASSERT_EQ(a1[4], 5);
+    // GIVEN
+    expectedValue = 5;
 
-    // GIVEN the same array
-    // WHEN trying to change value of the last element to 50
+    // WHEN
+    actualValue = a1[4];
+
+    // THEN
+    ASSERT_EQ(actualValue, expectedValue);
+
+
+    // GIVEN
+    expectedValue = 50;
+
+    // WHEN
     a1[4] = 50;
+    actualValue = a1[4];
 
-    // THEN it equals 50
-    ASSERT_EQ(a1[4], 50);
+    // THEN
+    ASSERT_EQ(actualValue, expectedValue);
 
 
     /* FEATURE #3. CHECK OPERATOR [] WITH NOT EMPTY ARRAY (INDEX OUT OF RANGE). */
@@ -113,8 +134,6 @@ TEST(ArrayTest, CheckAccess_Brackets)
     // WHEN trying to get value of non-existing 10th element
     // THEN we have an exception
     ASSERT_ANY_THROW(a1[10]);
-    //try { ASSERT_ANY_THROW(a1[10]);} catch (exception &e) { std::cout << e.what();};
-  //  try { a1[10];} catch (exception &e) { std::cout << e.what();};
 
     // GIVEN the same full array
     // WHEN trying to get value of -10 element (just for fun)
@@ -125,12 +144,6 @@ TEST(ArrayTest, CheckAccess_Brackets)
     // WHEN trying to get value of non-existing element with TOOOOOO BIIIIIIIG INDEX
     // THEN we have an exception
     ASSERT_ANY_THROW(a1[10000000000000]);
-
-    // wrong range type
-    // GIVEN the same full array
-    // WHEN typing some wrong index
-    // THEN we have an exception
-//    ASSERT_ANY_THROW(a1[3.4]);
 
 
     /* FEATURE #4. CHECK OPERATOR [] WITH EMPTY ARRAY. */
