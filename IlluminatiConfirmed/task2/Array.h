@@ -78,6 +78,7 @@ namespace IlluminatiConfirmed
          */
         const Tp & operator[](size_t index) const;
 
+        // Neilana: крутой способ! \m/
         /*!
          * \brief operator [] Overload, denide access to a const value
          * \param index
@@ -94,13 +95,41 @@ namespace IlluminatiConfirmed
          */
         Tp& at(size_t index) const;
 
+        /*!
+         * \brief returns a reference to the first element
+         * \return reference to the first element
+         * \author Neilana
+         */
+        Tp& front(){ if (m_data) return m_data[0]; };
+
+        const Tp& front() const
+        {
+            DUMP("in/out");
+            return const_cast<Tp &>(static_cast<const Array &>(*this)->front());
+        }
+
+        /*!
+         * \brief returns reference to the last element
+         * \return reference to the last element
+         * \author Neilana
+         */
+        Tp& back(){ if (m_data[m_size]) return m_data[m_size]; };
+
+        const Tp& back() const
+        {
+            DUMP("in/out");
+            return const_cast<Tp &>(static_cast<const Array &>(*this)->back());
+        }
+
+
         // capacity
         /*!
-         * \brief max_size Returns the maximum number of items that can be stored in the vector without forcing a reallocation.
-         * \return Value
-         * \author penguinlav
+         * \brief returns the maximum number of elements the container is able to hold due to system or library implementation limitations.
+         * \return maximum number of elements.
+         * \author Neilana
          */
-        inline size_t max_size() const { DUMP("in/out"); return m_capacity;}
+        //inline size_t max_size() const { DUMP("in/out"); return m_capacity;}
+        inline size_t max_size() const { DUMP("in/out"); return size_t(-1)/sizeof(Tp);};
 
         /*!
          * \brief empty Returns true if the array has size 0; otherwise returns false.

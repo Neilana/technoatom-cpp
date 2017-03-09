@@ -1,4 +1,6 @@
 #include "gtest/gtest.h"
+#include <string>
+#include <vector>
 #include "Array.h"
 
 using IlluminatiConfirmed::Array;
@@ -205,6 +207,27 @@ TEST(ArrayTest, CheckSize)
 
     a1.push_back(1);
     ASSERT_EQ(a1.capacity(), size_t(1));
+}
+
+TEST(ArrayTest, CheckMaxSize)
+{
+    // test 1
+    std::vector <std::string> v1(5);
+    size_t expectedSize = v1.max_size();
+
+    Array <std::string> a1(5);
+    size_t actualSize =  a1.max_size();
+
+    ASSERT_EQ(expectedSize, actualSize);
+
+    // test 2
+    std::vector <std::string> v2(10);
+    expectedSize = v2.max_size();
+
+    Array <std::string> a2(10);
+    actualSize =  a2.max_size();
+
+    ASSERT_EQ(expectedSize, actualSize);
 }
 
 TEST(ArrayTest, CheckOperatorAssignment)
