@@ -148,6 +148,8 @@ namespace IlluminatiConfirmed
         void push_back(const Tp& value);
         void pop_back();
         void clear();
+        void swap (Array <Tp> & other);
+        void resize( size_t capacity, Tp value = Tp() );
 
         // other functions
         /*!
@@ -381,7 +383,7 @@ void Array<Tp>::reserve(size_t capacity)
 }
 
 template<class Tp>
-void Array<Tp>::assign (size_t capacity, const Tp& value)
+void Array<Tp>::assign(size_t capacity, const Tp& value)
 {
     reserve(capacity);
 
@@ -401,4 +403,31 @@ template<class Tp>
 void Array<Tp>::clear()
 {
    m_size = 0;
+}
+
+template<class Tp>
+void Array<Tp>::swap(Array <Tp> & other)
+{
+    DUMP("in");
+    std::swap(m_capacity, other.m_capacity);
+    std::swap(m_size, other.m_size);
+    std::swap(m_data, other.m_data);
+    DUMP("out");
+}
+
+template<class Tp>
+void Array<Tp>::resize(size_t capacity, Tp value)
+{
+    DUMP("in");
+    if (m_size > capacity)
+        m_size = capacity;
+    else
+    {
+        reserve(capacity);
+
+        for (size_t i = m_size; i < capacity; i++)
+            m_data[i] = value;
+        m_size = capacity;
+    }
+    DUMP("out");
 }

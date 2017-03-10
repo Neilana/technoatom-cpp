@@ -308,23 +308,32 @@ TEST(ArrayTest, CheckReserve)
     ASSERT_EQ(actualCapacity, expectedCapacity);
 }
 
+TEST (ArrayTest, CheckSwap)
+{
+    Array <double> a1(10);
+    for (size_t i = 0; i<10; i++)
+        a1[i] = i*10;
 
-//TEST(ArrayTest, CheckAccess_FrontBack)
-//{
-//    Array <float> a1;
-//    a1.push_back(1.21);
-//    a1.push_back(2.34);
-//    a1.push_back(3.56);
-//    a1.push_back(4.78);
-//    a1.push_back(5.91);
-//    ASSERT_EQ(a1.front(), 1.21);
-//    ASSERT_EQ(a1.back(), 5.91);
+    Array <double> a2(5);
+    for (size_t i = 0; i<5; i++)
+        a2[i] = i*1000;
 
-//    Array <float> a2;
-//    ASSERT_ANY_THROW(a2.front());
-//    ASSERT_ANY_THROW(a2.back());
+    a1.swap(a2);
+    // ыыыы, смотрим дампы, там всё океюшки. но надо будет переделать по-православному
+}
 
-//    Array <float> a3(5);
-//    ASSERT_ANY_THROW(a3.front());
-//    ASSERT_ANY_THROW(a3.back());
-//}
+TEST (ArrayTest2, CheckResize)
+{
+    Array <double> a1(10);
+    for (size_t i = 0; i<10; i++)
+        a1[i] = i*10;
+    a1.resize(5);
+    // ыыы, снова смотрим дампы :D
+
+    Array <double> a2(5);
+    for (size_t i = 0; i<5; i++)
+        a2[i] = i*1000;
+
+    a2.resize(10);
+    // ...и снова!
+}
