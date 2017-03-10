@@ -308,24 +308,6 @@ TEST(ArrayTest, CheckReserve)
     ASSERT_EQ(actualCapacity, expectedCapacity);
 }
 
-TEST(ArrayTest, CheckPushFront)
-{
-    Array<double> a1(10, 10.3);
-
-    a1.push_front(10000);
-
-    ASSERT_EQ(a1.capacity(), 11);
-    ASSERT_EQ(a1.at(0), 10000);
-
-    a1.push_front(20000);
-
-    ASSERT_EQ(a1.capacity(), 12);
-    ASSERT_EQ(a1.at(0), 20000);
-    ASSERT_EQ(a1.at(1), 10000);
-
-    for (size_t i = 2; i < a1.capacity(); i++)
-        ASSERT_EQ(a1.at(i), 10.3);
-}
 
 //TEST(ArrayTest, CheckAccess_FrontBack)
 //{

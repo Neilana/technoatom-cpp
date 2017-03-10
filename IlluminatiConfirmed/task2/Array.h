@@ -157,8 +157,6 @@ namespace IlluminatiConfirmed
          */
         void dump(std::string str) const;
 
-        void push_front(const Tp& value);
-
         // operators overload
         /*!
          * \brief operator == Two vectors are considered equal if they contain the same values in the same order.
@@ -265,48 +263,7 @@ void Array<Tp>::push_back(const Tp& value)
         reserve(m_capacity + INCREMENT_CAPACITY);
     m_data[m_size++] = value;
     DUMP("out");
-    /*
-    DUMP("in");
 
-    Array <Tp> bufArr(*this);
-    if (m_data != NULL)
-        delete [] m_data;
-
-    m_capacity++;// = INCREMENT_CAPACITY; //push_back should add a new element at the end.
-    // !!!
-    try
-    {
-        m_data = new Tp [m_capacity];
-        memcpy(m_data, bufArr.m_data, sizeof(Tp) * m_capacity-1);
-        m_data[m_capacity-1] = value;
-        m_size++;
-    } catch (exception &e)
-    {
-        ASSERT_STR(string(e.what()));
-    }
-    DUMP("out");*/
-}
-
-template <class Tp>
-void Array<Tp>::push_front(const Tp& value)
-{
-    DUMP("in");
-    Array <Tp> bufArr(*this);
-    if (m_data != nullptr)
-        delete [] m_data;
-
-    m_capacity++;// = INCREMENT_CAPACITY; //push_back should add a new element at the end.
-    try
-    {
-        m_data = new Tp [m_capacity];
-        std::copy(&bufArr.m_data[0], &bufArr.m_data[m_capacity], &m_data[1]);
-        //memcpy(&bufArr.m_data[1], bufArr.m_data[m_capacity], m_data);
-        m_data[0] = value;
-    } catch (exception &e)
-    {
-        ASSERT_STR(string(e.what()));
-    }
-    DUMP("out");
 }
 
 template <class Tp>
