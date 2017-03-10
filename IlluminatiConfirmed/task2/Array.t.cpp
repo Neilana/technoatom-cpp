@@ -337,3 +337,27 @@ TEST (ArrayTest2, CheckResize)
     a2.resize(10);
     // ...и снова!
 }
+
+TEST (ArrayTest2, CheckAggregateInitialization)
+{
+    Array<double> s1 = {10,20,30,40,50,60};
+
+    for (size_t i = 0; i < s1.capacity(); i++)
+    {
+        ASSERT_EQ(s1.at(i), (i+1)*10);
+    }
+
+    Array<double> s2 {10,20,30,40,50,60};
+
+    for (size_t i = 0; i < s2.capacity(); i++)
+    {
+        ASSERT_EQ(s2.at(i), (i+1)*10);
+    }
+
+    Array<double> s3 ({10,20,30,40,50,60});
+
+    for (size_t i = 0; i < s3.capacity(); i++)
+    {
+        ASSERT_EQ(s3.at(i), (i+1)*10);
+    }
+}

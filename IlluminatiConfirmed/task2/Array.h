@@ -53,6 +53,8 @@ namespace IlluminatiConfirmed
          * \param other What is copied
          */
         Array(const Array<Tp> &other);
+
+        Array(std::initializer_list<Tp> l);
         ~Array();
 
         /*!
@@ -220,6 +222,19 @@ Array<Tp>::Array(const Array<Tp> &other) :
     {
         ASSERT_STR( string(e.what()) );
     }
+    DUMP("out");
+}
+
+template<class Tp>
+Array<Tp>::Array(std::initializer_list<Tp> l) :
+    Array(l.size())
+{
+    DUMP("in");
+        size_t i = 0;
+        for (auto it = l.begin(); it!=l.end(); it++)
+        {
+            this->m_data[i++] = *it;
+        }
     DUMP("out");
 }
 
