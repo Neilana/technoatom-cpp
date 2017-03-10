@@ -5,11 +5,17 @@ CONFIG -= qt
 
 SOURCES += main.cpp \
     #Array.cpp \
-    Array.t.cpp
+    Array.t.cpp \
+    bugnumbers.cpp
 
 # Google Test
-INCLUDEPATH += /usr/include/gtest
-LIBS += -lgtest -L /usr/include/gtest
+
 
 HEADERS += \
-    Array.h
+    Array.h \
+    bugnumbers.h
+
+unix|win32: LIBS += -L$$PWD/../../../googletest-master/googletest/lib/ -lgtest
+
+INCLUDEPATH += $$PWD/../../../googletest-master/googletest/include
+DEPENDPATH += $$PWD/../../../googletest-master/googletest/include
