@@ -1,13 +1,13 @@
 #include <iostream>
 #include "gtest/gtest.h"
-#include "Array.h"
+#include "Vector.h"
 
-using IlluminatiConfirmed::Array;
+using IlluminatiConfirmed::Vector;
 
 int main(int argc, char *argv[])
 {
     ::testing::InitGoogleTest(&argc, argv);
     // запускаем только определённый тест (чтобы проще смотреть дампы)
-    //::testing::GTEST_FLAG(filter) = "ArrayTest2*";
+    //::testing::GTEST_FLAG(filter) = "VectorTest2*";
     return RUN_ALL_TESTS();
 }
