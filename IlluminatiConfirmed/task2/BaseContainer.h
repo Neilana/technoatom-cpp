@@ -2,7 +2,7 @@
 
 // include guard
 #pragma once
-
+#define UNUSED(var) (void)var;
 // macroses
 #define NAME_VAR(VAR) #VAR
 #define DEBUG_ON
@@ -35,11 +35,11 @@ namespace IlluminatiConfirmed
     {
     public:
         //  BaseContainer(){};
-        BaseContainer(const Tp & def = Tp()) : m_size (0) {};
-        BaseContainer(const BaseContainer<Tp> &other) : m_size(other.m_size) {};
+        BaseContainer(const Tp & def = Tp()) : m_dataPtr(nullptr), m_size (0){ UNUSED(def); DUMP("in/out");}
+        BaseContainer(const BaseContainer<Tp> &other) : m_dataPtr(nullptr), m_size(other.m_size) { DUMP("in/out");}
 
-        BaseContainer(std::initializer_list<Tp> l) : m_size (l.size()) {};
-        virtual  ~BaseContainer() {};
+        BaseContainer(std::initializer_list<Tp> l) :m_dataPtr(nullptr),  m_size (l.size()) { DUMP("in/out");}
+        virtual  ~BaseContainer() {}
 
         // element access
         /*!
@@ -56,7 +56,7 @@ namespace IlluminatiConfirmed
          * \return
          * \author penguinlav
          */
-         Tp & operator[](size_t index) {/* DUMP("in/out");*/ return const_cast<Tp &>(static_cast<const BaseContainer &>(*this)[index]);};
+         Tp & operator[](size_t index) { DUMP("in/out"); return const_cast<Tp &>(static_cast<const BaseContainer &>(*this)[index]);}
 
          /*!
           * \brief Returns a reference to the element at specified location pos, with bounds checking.
@@ -72,16 +72,16 @@ namespace IlluminatiConfirmed
           * \return True or false
           * \author penguinlav
           */
-         inline bool empty() const {/* DUMP("in/out");*/ return this->m_size == 0;}
+         inline bool empty() const { DUMP("in/out"); return this->m_size == 0;}
 
-         size_t size() const {/* DUMP("in/out"); */return this->m_size; }
+         size_t size() const { DUMP("in/out"); return this->m_size; }
 
          /*!
           * \brief returns the maximum number of elements the container is able to hold due to system or library implementation limitations.
           * \return maximum number of elements.
           * \author Neilana
           */
-         inline size_t max_size() const { /*DUMP("in/out"); */return size_t(-1)/sizeof(Tp); }
+         inline size_t max_size() const { DUMP("in/out"); return size_t(-1)/sizeof(Tp); }
 
          // other functions
          /*!
@@ -145,7 +145,7 @@ template<class Tp>
 void BaseContainer<Tp>::dump(string str) const
 {
     std::ofstream file;
-    file.open("dump_Array.txt",std::ofstream::out | std::ofstream::app);
+    file.open("dump.txt",std::ofstream::out | std::ofstream::app);
     if(file.is_open())
     {
         auto space = [](unsigned int i) -> string

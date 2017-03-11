@@ -216,7 +216,7 @@ TEST(VectorTest, CheckMaxSize)
     std::vector <std::string> v1(5);
     size_t expectedSize = v1.max_size();
 
-    Vector <std::string> vStd1(5);
+    Vector <std::string> vStd1(5); //FIXME: wtf??
     size_t actualSize =  v1.max_size();
 
     ASSERT_EQ(expectedSize, actualSize);

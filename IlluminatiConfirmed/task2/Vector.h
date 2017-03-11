@@ -134,14 +134,14 @@ namespace IlluminatiConfirmed
 using IlluminatiConfirmed::Vector;
 
 template <class Tp>
-Vector<Tp>::Vector() : m_data(nullptr), m_capacity(0),  BaseContainer<Tp>()
+Vector<Tp>::Vector() :  BaseContainer<Tp>(), m_data(nullptr), m_capacity(0)
 {
     DUMP("in/out");
 }
 
 template<class Tp>
-Vector<Tp>::Vector(size_t capacity, const Tp& def) : m_data(nullptr), m_capacity(0),
-BaseContainer<Tp>(def)
+Vector<Tp>::Vector(size_t capacity, const Tp& def) : BaseContainer<Tp>(def), m_data(nullptr), m_capacity(0)
+
 {
     DUMP("in");
     try
@@ -163,10 +163,11 @@ BaseContainer<Tp>(def)
 
 template<class Tp>
 Vector<Tp>::Vector(const Vector<Tp> &other) :
+    BaseContainer<Tp>(other),
     m_data(nullptr),
     //this->m_size(other.this->m_size),
-    m_capacity(other.m_capacity),
-    BaseContainer<Tp>(other)
+    m_capacity(other.m_capacity)
+
 {
     DUMP("in");
     try
@@ -183,8 +184,8 @@ Vector<Tp>::Vector(const Vector<Tp> &other) :
 }
 
 template<class Tp>
-Vector<Tp>::Vector(std::initializer_list<Tp> initList) : m_capacity(0),
-    /*Vector(initList.size()),  */BaseContainer<Tp>(initList)
+Vector<Tp>::Vector(std::initializer_list<Tp> initList) : BaseContainer<Tp>(initList), m_data(nullptr), m_capacity(0)
+    /*Vector(initList.size()),  */
 {
     DUMP("in");
     try
@@ -239,6 +240,7 @@ Vector<Tp>::~Vector()
     if (m_data != nullptr)
         delete [] m_data;
     m_data = nullptr;
+    this->m_dataPtr = nullptr;
     DUMP("out");
 }
 
