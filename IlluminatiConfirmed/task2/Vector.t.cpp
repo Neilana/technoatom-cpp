@@ -208,6 +208,23 @@ TEST(VectorTest, CheckSize)
 
     v1.push_back(1);
     ASSERT_EQ(v1.size(), 1);
+
+    v1.push_back(10);
+    ASSERT_EQ(v1.size(), 2);
+    ASSERT_EQ(v1.capacity(), 5);
+    v1.push_back(10);
+    v1.push_back(10);
+    v1.push_back(10);
+    ASSERT_EQ(v1.capacity(), 5);
+    v1.push_back(10);
+    ASSERT_EQ(v1.capacity(), 10);
+    ASSERT_EQ(v1.size(), 6);
+    v1.reserve(20);
+    ASSERT_EQ(v1.size(), 6);
+    ASSERT_EQ(v1.capacity(), 20);
+    v1.clear();
+    ASSERT_EQ(v1.capacity(), 20);
+    ASSERT_EQ(v1.size(), 0);
 }
 
 TEST(VectorTest, CheckMaxSize)
@@ -362,3 +379,20 @@ TEST (VectorTest, CheckAggregateInitialization)
         ASSERT_EQ(v3.at(i), (i+1)*10);
     }
 }
+
+TEST (VectorTest, CheckIterators) //эммм..))
+{
+    Vector<double> v1 = {10,20,30,40,50,60};
+    size_t i = 0;
+    ASSERT_EQ(6,v1.size());
+    for (IlluminatiConfirmed::Vector<double>::iterator it = v1.begin(); it != v1.end(); it++)
+    {
+        ASSERT_EQ((*it), ((i++)+1)*10);
+    }
+    i = 6;
+    for (IlluminatiConfirmed::Vector<double>::iterator it = v1.end(); it != v1.begin(); --it)
+    {
+        ASSERT_EQ((*it), ((i--))*10);
+    }
+}
+

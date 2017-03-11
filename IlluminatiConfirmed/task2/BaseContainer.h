@@ -28,13 +28,19 @@ using std::size_t;
 using std::string;
 using std::exception;
 
+template <class Tp>
+class iterator;
+template <class Tp>
+class const_iterator;
+
 namespace IlluminatiConfirmed
 {
     template <class Tp>
     class BaseContainer
     {
     public:
-        //  BaseContainer(){};
+        typedef iterator <Tp> iterator;
+        typedef const_iterator <Tp> const_iterator;
         BaseContainer(const Tp & def = Tp()) : m_dataPtr(nullptr), m_size (0){ UNUSED(def); DUMP("in/out");}
         BaseContainer(const BaseContainer<Tp> &other) : m_dataPtr(nullptr), m_size(other.m_size) { DUMP("in/out");}
 
@@ -101,10 +107,74 @@ namespace IlluminatiConfirmed
           */
          bool operator==(const BaseContainer<Tp> &rhs) const;
 
+         iterator begin() { return iterator(m_dataPtr); }
+         iterator end() { return iterator(m_dataPtr + m_size); }
+         const_iterator begin() const { return const_iterator(m_dataPtr); }
+         const_iterator end() const { return const_iterator(m_dataPtr + m_size); }
+
+
     protected:
         Tp *m_dataPtr;
         size_t m_size;
     };
+}
+
+template <class Tp>
+class iterator
+ {
+public:
+    typedef iterator self_type;
+    typedef Tp value_type;
+    typedef Tp & reference;
+    typedef Tp * pointer;
+    typedef std::forward_iterator_tag iterator_category;
+    typedef int difference_type;
+    iterator() : m_ptr(nullptr) { }
+    iterator(pointer ptr) : m_ptr(ptr) { }
+    ~iterator() = default;
+    inline self_type operator++() { m_ptr++; return *this; }
+    inline self_type operator++(int) { self_type i = *this; m_ptr++; return i; }
+    inline self_type &operator--() { m_ptr--; return *this; }
+    inline self_type operator--(int) { pointer n = m_ptr; m_ptr--; return n; }
+    inline reference operator*() const { return *m_ptr; }
+    inline pointer operator->() const { return m_ptr; }
+    inline bool operator==(const self_type& rhs) const { return m_ptr == rhs.m_ptr; }
+    inline bool operator!=(const self_type& rhs) const { return m_ptr != rhs.m_ptr; }
+    inline bool operator<(const self_type& other) const { return m_ptr < other.m_ptr; }
+    inline bool operator<=(const self_type& other) const { return m_ptr <= other.m_ptr; }
+    inline bool operator>(const self_type& other) const { return m_ptr > other.m_ptr; }
+    inline bool operator>=(const self_type& other) const { return m_ptr >= other.m_ptr; }
+private:
+    pointer m_ptr;
+ };
+
+template <class Tp>
+class const_iterator
+{
+public:
+    typedef const_iterator self_type;
+    typedef Tp value_type;
+    typedef Tp & reference;
+    typedef Tp * pointer;
+    typedef int difference_type;
+    typedef std::forward_iterator_tag iterator_category;
+    const_iterator() : m_ptr(nullptr) { }
+    const_iterator(pointer ptr) : m_ptr(ptr) { }
+    ~const_iterator() = default;
+    inline self_type operator++() { m_ptr++; return *this; }
+    inline self_type operator++(int) { self_type i = *this; m_ptr++; return i; }
+    inline self_type &operator--() { m_ptr--; return *this; }
+    inline self_type operator--(int) { pointer n = m_ptr; m_ptr--; return n; }
+    inline const reference operator*() const { return *m_ptr; }
+    inline const pointer operator->() const { return m_ptr; }
+    inline bool operator==(const self_type& rhs) const { return m_ptr == rhs.m_ptr; }
+    inline bool operator!=(const self_type& rhs) const { return m_ptr != rhs.m_ptr; }
+    inline bool operator<(const self_type& other) const { return m_ptr < other.m_ptr; }
+    inline bool operator<=(const self_type& other) const { return m_ptr <= other.m_ptr; }
+    inline bool operator>(const self_type& other) const { return m_ptr > other.m_ptr; }
+    inline bool operator>=(const self_type& other) const { return m_ptr >= other.m_ptr; }
+private:
+    pointer m_ptr;
 };
 
 using IlluminatiConfirmed::BaseContainer;
