@@ -323,7 +323,7 @@ TEST (VectorTest, CheckSwap)
     // ыыыы, смотрим дампы, там всё океюшки. но надо будет переделать по-православному
 }
 
-TEST (VectorTest2, CheckResize)
+TEST (VectorTest, CheckResize)
 {
     Vector <double> v1(10);
     for (size_t i = 0; i<10; i++)
@@ -339,7 +339,7 @@ TEST (VectorTest2, CheckResize)
     // ...и снова!
 }
 
-TEST (VectorTest2, CheckAggregateInitialization)
+TEST (VectorTest, CheckAggregateInitialization)
 {
     Vector<double> v1 = {10,20,30,40,50,60};
 

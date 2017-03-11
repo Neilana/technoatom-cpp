@@ -14,4 +14,5 @@ LIBS += -lgtest -L /usr/include/gtest
 
 HEADERS += \
     Array.h \
-    Vector.h
+    Vector.h \
+    BaseContainer.h

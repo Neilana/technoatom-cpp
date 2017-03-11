@@ -7,9 +7,9 @@
 #define NAME_VAR(VAR) #VAR
 #define DEBUG_ON
 #if defined(DEBUG_ON)
-    #define DUMP(ch) do {dump(string(__PRETTY_FUNCTION__)+string(" ")+string(ch));} while(0);
-    #define ASSERT_OK(cond) do { if (!cond)  {dump(string(__PRETTY_FUNCTION__) + string(" ")+ string(#cond));}} while(0);
-    #define ASSERT_STR(str) do { dump(string(__PRETTY_FUNCTION__) + string(" ")+ str);} while(0);
+    #define DUMP(ch) do {this->dump(string(__PRETTY_FUNCTION__)+string(" ")+string(ch));} while(0);
+    #define ASSERT_OK(cond) do { if (!cond)  {this->dump(string(__PRETTY_FUNCTION__) + string(" ")+ string(#cond));}} while(0);
+    #define ASSERT_STR(str) do { this->dump(string(__PRETTY_FUNCTION__) + string(" ")+ str);} while(0);
 #else
     #define ASSERT_OK(cond) do { if (!cond)  { assert(cond);}} while(0);
     #define ASSERT_STR(str) do { assert(!str);} while(0); //Ops Neilana: не разбиралась что здесь
@@ -28,11 +28,14 @@ using std::size_t;
 using std::string;
 using std::exception;
 
+#include "BaseContainer.h"
+using IlluminatiConfirmed::BaseContainer;
+
 // Illuminati Confirmed namespace and Array class declaration
 namespace IlluminatiConfirmed
 {
-    template <class Tp, size_t m_size>
-    class Array
+    template <class Tp, size_t TpSize>
+    class Array : public BaseContainer<Tp>
     {
     public:
         // constructors, destructors and assignment
@@ -52,7 +55,7 @@ namespace IlluminatiConfirmed
          * \brief Array Copy constractor
          * \param other What is copied
          */
-        Array(const Array<Tp, m_size> &other);
+        Array(const Array<Tp, TpSize> &other);
 
         Array(std::initializer_list<Tp> l);
         ~Array();
@@ -63,76 +66,14 @@ namespace IlluminatiConfirmed
          * \return Returns a reference to this vector
          * \author penguinlav
          */
-        Array<Tp, m_size> & operator=(const Array<Tp, m_size> &rhs);
-
-
-        // element access
-        /*!
-         * \brief operator [] Returns the item at index position i as a modifiable reference.
-         * \param i Must be a valid index position in the array.
-         * \return Value
-         * \author Neilana
-         */
-        const Tp & operator[](size_t index) const;
-
-        // Neilana: крутой способ! \m/
-        /*!
-         * \brief operator [] Overload, denide access to a const value
-         * \param index
-         * \return
-         * \author penguinlav
-         */
-        Tp & operator[](size_t index) { DUMP("in/out"); return const_cast<Tp &>(static_cast<const Array &>(*this)[index]);}
-
-        /*!
-         * \brief Returns a reference to the element at specified location pos, with bounds checking.
-         * \param index position of element to return
-         * \return reference to the requested element
-         * \author Neilana
-         */
-        Tp& at(size_t index);
-
-        // capacity
-        /*!
-         * \brief returns the maximum number of elements the container is able to hold due to system or library implementation limitations.
-         * \return maximum number of elements.
-         * \author Neilana
-         */
-        inline size_t max_size() const { DUMP("in/out"); return size_t(-1)/sizeof(Tp); }
-
-        /*!
-         * \brief empty Returns true if the array has size 0; otherwise returns false.
-         * \return True or false
-         * \author penguinlav
-         */
-        inline bool empty() const { DUMP("in/out"); return m_size == 0;}
-
-        size_t size() const { DUMP("in/out"); return m_size; } //FIXME Mb it's number of uninitialized elements.. Just count for push, [] and other
+        Array<Tp, TpSize> & operator=(const Array<Tp, TpSize> &rhs);
 
         // modifiers
-        void swap (Array <Tp, m_size> & other);
-
-        // other functions
-        /*!
-         * \brief dump Debug information about the array's container
-         * \param func Name of the function from which dump is called
-         * \author penguinlav
-         */
-        void dump(std::string str) const;
-
-        // operators overload
-        /*!
-         * \brief operator == Two vectors are considered equal if they contain the same values in the same order.
-         *                    This function requires the value type to have an implementation of operator==().
-         * \param rhs Right operand
-         * \return Returns true if other is equal to this vector; otherwise returns false.
-         * \author penguinlav
-         */
-        bool operator==(const Array<Tp, m_size> &rhs) const;
+        void swap (Array <Tp, TpSize> & other);
 
     private:
         //Tp *m_data;
-        Tp m_data[m_size];
+        Tp m_data[TpSize];
         //size_t m_size;
     };
 }
@@ -141,16 +82,17 @@ namespace IlluminatiConfirmed
 using IlluminatiConfirmed::Array;
 
 
-template<class Tp, size_t m_size>
-Array<Tp, m_size>::Array(const Tp& def)
+template<class Tp, size_t TpSize>
+Array<Tp, TpSize>::Array(const Tp& def) : BaseContainer<Tp>(def)
 {    DUMP("in");
     try
     {
         //m_data = new Tp[size];
-      //  m_size = size;
+      //  TpSize = size;
 
-        for (size_t i = 0; i < m_size; i++)
+        for (size_t i = 0; i < TpSize; i++)
             m_data[i] = def;
+        this->m_dataPtr = m_data; this->m_size = TpSize;
     } catch (exception& e)
     {
         ASSERT_STR( string(e.what()) );
@@ -158,15 +100,16 @@ Array<Tp, m_size>::Array(const Tp& def)
     DUMP("out");
 }
 
-template<class Tp, size_t m_size>
-Array<Tp, m_size>::Array(const Array<Tp, m_size> &other) :
+template<class Tp, size_t TpSize>
+Array<Tp, TpSize>::Array(const Array<Tp, TpSize> &other) : BaseContainer<Tp>(other),
     m_data(nullptr)
 {
     DUMP("in");
     try
     {
-        m_data = new Tp[m_size];
-        memcpy(m_data, other.m_data, sizeof(Tp) * m_size);
+        //m_data = new Tp[TpSize];
+        memcpy(m_data, other.m_data, sizeof(Tp) * TpSize);
+        this->m_dataPtr = m_data;this->m_size = TpSize;
     } catch (exception &e)
     {
         ASSERT_STR( string(e.what()) );
@@ -174,8 +117,8 @@ Array<Tp, m_size>::Array(const Array<Tp, m_size> &other) :
     DUMP("out");
 }
 
-template<class Tp, size_t m_size>
-Array<Tp, m_size>::Array(std::initializer_list<Tp> initList)
+template<class Tp, size_t TpSize>
+Array<Tp, TpSize>::Array(std::initializer_list<Tp> initList) : BaseContainer<Tp>(initList)
 {
     DUMP("in");
     size_t i = 0;
@@ -183,24 +126,28 @@ Array<Tp, m_size>::Array(std::initializer_list<Tp> initList)
     {
         m_data[i++] = *it;
     }
+
+    this->m_dataPtr = m_data;
+    this->m_size = TpSize;
+
     DUMP("out");
 }
 
-template<class Tp, size_t m_size>
-Array<Tp, m_size>& Array<Tp, m_size>::operator=(const Array<Tp, m_size> &rhs)
+template<class Tp, size_t TpSize>
+Array<Tp, TpSize>& Array<Tp, TpSize>::operator=(const Array<Tp, TpSize> &rhs)
 {
     DUMP("in");
     if (this != &rhs)
     {
         try
         {
-            //Tp *temp_data = new Tp [rhs.m_size];
-            //memcpy(temp_data, rhs.m_data, sizeof(Tp) * rhs.m_size);
+            //Tp *temp_data = new Tp [rhs.TpSize];
+            //memcpy(temp_data, rhs.m_data, sizeof(Tp) * rhs.TpSize);
             //delete [] m_data;
 
            // m_data = temp_data;
-           // m_size = rhs.m_size;
-            for (size_t i = 0; i < m_size; i++)
+           // TpSize = rhs.TpSize;
+            for (size_t i = 0; i < TpSize; i++)
                 m_data[i] = rhs.m_data[i];
 
         } catch (exception &e)
@@ -212,8 +159,8 @@ Array<Tp, m_size>& Array<Tp, m_size>::operator=(const Array<Tp, m_size> &rhs)
     return *this;
 }
 
-template <class Tp, size_t m_size>
-Array<Tp, m_size>::~Array()
+template <class Tp, size_t TpSize>
+Array<Tp, TpSize>::~Array()
 {
     // само удаляется, если оставить - будет ошибка сегментации
 
@@ -224,97 +171,9 @@ Array<Tp, m_size>::~Array()
     //DUMP("out");
 }
 
-template <class Tp, size_t m_size>
-const Tp& Array<Tp, m_size>::operator[](size_t index) const
-{
-    DUMP("in mb out");
-    ASSERT_OK((index < m_size));
-    if (index < m_size)
-    {
-        return m_data[index];
-    }
-    else
-    {
-        ASSERT_OK(!"Out of range");
-        throw std::out_of_range("ERRROOOORRRRR");
-    }
-}
 
-template<class Tp, size_t m_size>
-bool Array<Tp, m_size>::operator==(const Array<Tp, m_size> &rhs) const
-{
-    DUMP("in");
-    //ASSERT_OK(rhs!= NULL&&rhs!=nullptr); //FIXME Maybe it's too much
-    try
-    {
-//        if (m_data == rhs.m_data)
- //           return true;
-      //  if (m_size != rhs.m_size)
-         //   return false;
-        for (size_t i = 0; i < m_size; i++)
-        {
-            if (m_data[i] != rhs.m_data[i])
-            return false;
-        }
-    } catch (exception &e)
-    {
-        ASSERT_STR(string(e.what()));
-    }
-    DUMP("out");
-    return true;
-}
-
-template <class Tp, size_t m_size>
-Tp& Array<Tp, m_size>::at(size_t index)
-{
-    DUMP("in mb out");
-    ASSERT_OK((index < m_size));
-    if (index < m_size)
-    {
-        return m_data[index];
-    }
-    else
-    {
-        ASSERT_OK(!"Out of range");
-        throw std::out_of_range("ERRROOOORRRRR");
-    }
-}
-
-template<class Tp, size_t m_size>
-void Array<Tp, m_size>::dump(string str) const
-{
-    std::ofstream file;
-    file.open("dump_Array.txt",std::ofstream::out | std::ofstream::app);
-    if(file.is_open())
-    {
-        // Neilana: зачёёёётная лямбда \m/
-        auto space = [](unsigned int i) -> string
-        {
-            string sp = "";
-            while (i-- > 0) sp += "    ";
-            return sp;
-        };
-        std::time_t result = std::time(nullptr);
-        file << std::asctime(std::localtime(&result)) << std::endl;
-
-        file << "Array::" << str << std::endl << "{" << std::endl;
-        file << space(1) << NAME_VAR(m_size) << " " << m_size << std::endl;
-        file << space(1) << NAME_VAR(m_data) << " " << m_size << std::endl;
-        file << space(2) << "{" << std::endl;
-
-        if (m_data != nullptr)
-        {
-            for (size_t j = 0; j < m_size;j++)
-                file << space(2) << "[" << j << "]" << " = " << m_data[j] << std::endl;
-        }
-        file << space(2) << "}" << std::endl;
-        file << space(1) << "}" << std::endl;
-    }
-    file.close();
-}
-
-template<class Tp, size_t m_size>
-void Array<Tp, m_size>::swap(Array <Tp, m_size> & other)
+template<class Tp, size_t TpSize>
+void Array<Tp, TpSize>::swap(Array <Tp, TpSize> & other)
 {
     DUMP("in");
     std::swap(m_data, other.m_data);
