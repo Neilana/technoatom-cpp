@@ -134,13 +134,13 @@ namespace IlluminatiConfirmed
 using IlluminatiConfirmed::Vector;
 
 template <class Tp>
-Vector<Tp>::Vector() :  BaseContainer<Tp>(), m_data(nullptr), m_capacity(0)
+Vector<Tp>::Vector() : BaseContainer<Tp>(nullptr, 0), m_data(nullptr), m_capacity(0)
 {
     DUMP("in/out");
 }
 
 template<class Tp>
-Vector<Tp>::Vector(size_t capacity, const Tp& def) : BaseContainer<Tp>(def), m_data(nullptr), m_capacity(0)
+Vector<Tp>::Vector(size_t capacity, const Tp& def) : BaseContainer<Tp>(nullptr, 0), m_data(nullptr), m_capacity(0)
 
 {
     DUMP("in");
@@ -152,8 +152,8 @@ Vector<Tp>::Vector(size_t capacity, const Tp& def) : BaseContainer<Tp>(def), m_d
         this->m_size = capacity;
         this->m_dataPtr = m_data;
 
-        for (size_t i = 0; i < m_capacity; i++)
-            m_data[i] = def;
+        for (auto it = this->begin(); it != this->end(); it++)
+            *it = def;
     } catch (exception& e)
     {
         ASSERT_STR( string(e.what()) );
@@ -163,7 +163,7 @@ Vector<Tp>::Vector(size_t capacity, const Tp& def) : BaseContainer<Tp>(def), m_d
 
 template<class Tp>
 Vector<Tp>::Vector(const Vector<Tp> &other) :
-    BaseContainer<Tp>(other),
+    BaseContainer<Tp>(nullptr, other.m_capacity),
     m_data(nullptr),
     //this->m_size(other.this->m_size),
     m_capacity(other.m_capacity)
@@ -174,8 +174,8 @@ Vector<Tp>::Vector(const Vector<Tp> &other) :
     {
         m_data = new Tp[this->m_size];
         this->m_dataPtr = m_data;
-
-        memcpy(m_data, other.m_data, sizeof(Tp) * this->m_size);
+        std::copy(other.begin(),other.end(),this->begin());
+        //memcpy(m_data, other.m_data, sizeof(Tp) * this->m_size);
     } catch (exception &e)
     {
         ASSERT_STR( string(e.what()) );
@@ -184,15 +184,12 @@ Vector<Tp>::Vector(const Vector<Tp> &other) :
 }
 
 template<class Tp>
-Vector<Tp>::Vector(std::initializer_list<Tp> initList) : BaseContainer<Tp>(initList), m_data(nullptr), m_capacity(0)
+Vector<Tp>::Vector(std::initializer_list<Tp> initList) : BaseContainer<Tp>(nullptr, initList.size()), m_data(nullptr), m_capacity(initList.size())
     /*Vector(initList.size()),  */
 {
     DUMP("in");
     try
     {
-        m_capacity = initList.size();
-        this->m_size = initList.size();
-
         m_data = new Tp[this->m_size];
         this->m_dataPtr = m_data;
 
@@ -214,21 +211,10 @@ Vector<Tp>& Vector<Tp>::operator=(const Vector<Tp> &rhs)
     DUMP("in");
     if (this != &rhs)
     {
-        try
-        {
-            Tp *temp_data = new Tp [rhs.m_capacity];
-            memcpy(temp_data, rhs.m_data, sizeof(Tp) * rhs.m_capacity);
-            delete [] m_data;
-
-            m_data = temp_data;
-            this->m_dataPtr = m_data;
-            m_capacity = rhs.m_capacity;
-            this->m_size = rhs.m_size;
-        } catch (exception &e)
-        {
-            ASSERT_STR( string(e.what()) );
-        }
+        Vector temp(rhs);
+        swap(temp);
     }
+
     DUMP("out");
     return *this;
 }
@@ -271,7 +257,6 @@ void Vector<Tp>::reserve(size_t capacity)
             m_data = new Tp [m_capacity];
             this->m_dataPtr = m_data;
             std::copy(bufArr.begin(),bufArr.end(),this->begin());
-
             //memcpy(m_data, bufArr.m_data, sizeof(Tp) * m_capacity-1);
         } catch (exception &e)
         {
@@ -288,15 +273,15 @@ void Vector<Tp>::assign(size_t capacity, const Tp& value)
     reserve(capacity);
 
     this->m_size = capacity;
-    for (size_t i = 0; i < capacity; i++)
-        m_data[i] = value;
+    for (auto it = this->begin(); it != this->end(); it++)
+        *it = value;
 }
 
 template<class Tp>
 void Vector<Tp>::pop_back()
 {
    if (this->m_size > 0)
-       this->m_size--;
+       --(this->m_size);
 }
 
 template<class Tp>
@@ -311,7 +296,9 @@ void Vector<Tp>::swap(Vector <Tp> & other)
     DUMP("in");
     std::swap(m_capacity, other.m_capacity);
     std::swap(this->m_size, other.m_size);
+    std::iter_swap(this->begin(),other.begin());
     std::swap(m_data, other.m_data);
+    std::swap(this->m_dataPtr, other.m_dataPtr);
     DUMP("out");
 }
 

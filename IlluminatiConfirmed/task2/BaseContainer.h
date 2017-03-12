@@ -44,11 +44,8 @@ namespace IlluminatiConfirmed
     public:
         typedef class iterator <Tp const> const_iterator;
         typedef class iterator <Tp> iterator;
-        BaseContainer(const Tp & def = Tp()) : m_dataPtr(nullptr), m_size (0){ UNUSED(def); DUMP("in/out");}
-        BaseContainer(const BaseContainer<Tp> &other) : m_dataPtr(nullptr), m_size(other.m_size) { DUMP("in/out");}
-
-        BaseContainer(std::initializer_list<Tp> l) :m_dataPtr(nullptr),  m_size (l.size()) { DUMP("in/out");}
-        virtual  ~BaseContainer() {}
+        BaseContainer(Tp * data_Ptr, size_t size) : m_dataPtr(data_Ptr), m_size (size){ DUMP("in/out");}
+        virtual  ~BaseContainer() = 0;
 
         // element access
         /*!
@@ -216,11 +213,16 @@ void BaseContainer<Tp>::dump(string str) const
         file << space(1) << NAME_VAR(m_size) << " " << m_size << std::endl;
         file << space(1) << NAME_VAR(m_dataPtr) << " " << m_size << std::endl;
         file << space(2) << "{" << std::endl;
+        std::string type(typeid(Tp).name());
 
         if (m_dataPtr != nullptr)
         {
-            for (size_t j = 0; j < m_size;j++)
-                file << space(2) << "[" << j << "]" << " = " << m_dataPtr[j] << std::endl;
+            if(type.size() < 4)         //I'm tired of catching bugs from the dump
+            {
+                for (size_t j = 0; j < m_size;j++)
+                    file << space(2) << "[" << j << "]" << " = " << m_dataPtr[j] << std::endl;
+            }
+            else { file<< space(3)<<"I cannot show array. It isn't a primitive data type."<<std::endl;}
         }
         file << space(2) << "}" << std::endl;
         file << space(1) << "}" << std::endl;
@@ -246,4 +248,10 @@ bool BaseContainer<Tp>::operator==(const BaseContainer<Tp> &rhs) const
     }
     DUMP("out");
     return true;
+}
+
+template<class Tp>
+BaseContainer<Tp>::~BaseContainer()
+{
+
 }

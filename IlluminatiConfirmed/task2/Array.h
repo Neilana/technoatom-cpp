@@ -83,7 +83,7 @@ using IlluminatiConfirmed::Array;
 
 
 template<class Tp, size_t TpSize>
-Array<Tp, TpSize>::Array(const Tp& def) : BaseContainer<Tp>(def)
+Array<Tp, TpSize>::Array(const Tp& def) : BaseContainer<Tp>(m_data, TpSize)
 {    DUMP("in");
     try
     {
@@ -101,7 +101,7 @@ Array<Tp, TpSize>::Array(const Tp& def) : BaseContainer<Tp>(def)
 }
 
 template<class Tp, size_t TpSize>
-Array<Tp, TpSize>::Array(const Array<Tp, TpSize> &other) : BaseContainer<Tp>(other),
+Array<Tp, TpSize>::Array(const Array<Tp, TpSize> &other) : BaseContainer<Tp>(nullptr, TpSize),
     m_data(nullptr)
 {
     DUMP("in");
@@ -118,7 +118,7 @@ Array<Tp, TpSize>::Array(const Array<Tp, TpSize> &other) : BaseContainer<Tp>(oth
 }
 
 template<class Tp, size_t TpSize>
-Array<Tp, TpSize>::Array(std::initializer_list<Tp> initList) : BaseContainer<Tp>(initList)
+Array<Tp, TpSize>::Array(std::initializer_list<Tp> initList) : BaseContainer<Tp>(m_data, initList.size())
 {
     DUMP("in");
 
@@ -131,8 +131,6 @@ Array<Tp, TpSize>::Array(std::initializer_list<Tp> initList) : BaseContainer<Tp>
             m_data[i++] = *it;
             if (i > TpSize) break; //FIXME
         }
-        this->m_dataPtr = m_data;
-        this->m_size = TpSize;
     } else
     {
         size_t i = 0;

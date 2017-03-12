@@ -448,3 +448,7 @@ TEST (VectorIteratorsTest, CheckIterators) //эммм..))
 
 }
 
+TEST (BaseContainerTest, CheckAbstract) //эммм..))
+{
+    //IlluminatiConfirmed::BaseContainer<double> s; //It does not compile if all is ok
+}
