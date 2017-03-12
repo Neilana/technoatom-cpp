@@ -6,16 +6,17 @@ CONFIG -= qt
 SOURCES += main.cpp \
     #Array.cpp \
     Array.t.cpp \
+    Vector.t.cpp \
     bugnumbers.cpp
-
+    
 # Google Test
-
-
-HEADERS += \
-    Array.h \
-    bugnumbers.h
-
 unix|win32: LIBS += -L$$PWD/../../../googletest-master/googletest/lib/ -lgtest
 
 INCLUDEPATH += $$PWD/../../../googletest-master/googletest/include
 DEPENDPATH += $$PWD/../../../googletest-master/googletest/include
+
+HEADERS += \
+    Array.h \
+    Vector.h \
+    BaseContainer.h\
+
