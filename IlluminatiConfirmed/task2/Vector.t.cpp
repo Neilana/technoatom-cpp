@@ -380,19 +380,66 @@ TEST (VectorTest, CheckAggregateInitialization)
     }
 }
 
-TEST (VectorTest, CheckIterators) //эммм..))
+TEST (VectorIteratorsTest, CheckIterators) //эммм..))
 {
+    //--, ++, +, -
+    const Vector<double> v0 = {10,20,30,40,50,60};
+
+    IlluminatiConfirmed::Vector<double>::const_iterator it0 = v0.begin();
+
+    ASSERT_EQ(v0.at(3) , (*(it0+3)));
+    ASSERT_EQ(v0.at(0),(*(it0++)));
+    ASSERT_EQ(v0.at(1), (*(it0++)));
+    ASSERT_EQ(v0.at(1), (*(it0-1)));
+    ASSERT_EQ(v0.at(1), (*(--it0)));
+    ASSERT_EQ(v0.at(1), (*(it0--)));
+
+    //begin, end
     Vector<double> v1 = {10,20,30,40,50,60};
     size_t i = 0;
     ASSERT_EQ(6,v1.size());
     for (IlluminatiConfirmed::Vector<double>::iterator it = v1.begin(); it != v1.end(); it++)
     {
+
         ASSERT_EQ((*it), ((i++)+1)*10);
     }
-    i = 6;
-    for (IlluminatiConfirmed::Vector<double>::iterator it = v1.end(); it != v1.begin(); --it)
+
+    const Vector<double> v2 = {10,20,30,40,50,60};
+
+    ASSERT_EQ(6,v2.size());
+
+    //begin, end, ++: check const
+    i = 0;
+    for (IlluminatiConfirmed::Vector<double>::const_iterator it = v2.begin(); it != v2.end(); it++)
     {
-        ASSERT_EQ((*it), ((i--))*10);
+        //*it = 10; //It does not compile if all is ok
+        ASSERT_EQ((*it), ((i++)+1)*10);
     }
+
+    //[]
+    const Vector<double> v3 = {10,20,30,40,50,60};
+
+    IlluminatiConfirmed::Vector<double>::const_iterator it3 = v3.begin();
+
+    ASSERT_EQ(it3[5], 60);
+
+    //==, !=
+    Vector<double> v4 = {10,20,30,40,50,60};
+    Vector<double> v5 = {10,20,30,40,50,60};
+    IlluminatiConfirmed::Vector<double>::iterator it4 = v4.begin();
+    IlluminatiConfirmed::Vector<double>::iterator it5 = v5.begin();
+    ASSERT_TRUE(it4 != it5);
+
+    ASSERT_FALSE(it4 == it5);
+
+    //>
+    Vector<double> v6 = {10,20,30,40,50,60};
+    IlluminatiConfirmed::Vector<double>::iterator it6 = v6.begin();
+    IlluminatiConfirmed::Vector<double>::iterator it7 = v6.begin();
+    it7++;
+    ASSERT_TRUE(it6 < it7);
+
+    ASSERT_TRUE(it7 > it6); // And so on .. this is utopia
+
 }
 

@@ -270,8 +270,8 @@ void Vector<Tp>::reserve(size_t capacity)
         {
             m_data = new Tp [m_capacity];
             this->m_dataPtr = m_data;
-
-            memcpy(m_data, bufArr.m_data, sizeof(Tp) * m_capacity-1);
+            std::copy(bufArr.begin(),bufArr.end(),this->begin());
+            //memcpy(m_data, bufArr.m_data, sizeof(Tp) * m_capacity-1);
         } catch (exception &e)
         {
             ASSERT_STR( string(e.what()) );

@@ -121,14 +121,29 @@ template<class Tp, size_t TpSize>
 Array<Tp, TpSize>::Array(std::initializer_list<Tp> initList) : BaseContainer<Tp>(initList)
 {
     DUMP("in");
-    size_t i = 0;
-    for (auto it = initList.begin(); it != initList.end(); it++)
-    {
-        m_data[i++] = *it;
-    }
 
-    this->m_dataPtr = m_data;
-    this->m_size = TpSize;
+    if (initList.size() > TpSize)
+    {
+        throw std::printf("Too large list size.");
+        size_t i = 0;
+        for (auto it = initList.begin(); it != initList.end(); it++)
+        {
+            m_data[i++] = *it;
+            if (i > TpSize) break; //FIXME
+        }
+        this->m_dataPtr = m_data;
+        this->m_size = TpSize;
+    } else
+    {
+        size_t i = 0;
+        for (auto it = initList.begin(); it != initList.end(); it++)
+        {
+            m_data[i++] = *it;
+        }
+
+        this->m_dataPtr = m_data;
+        this->m_size = TpSize;
+    }
 
     DUMP("out");
 }
