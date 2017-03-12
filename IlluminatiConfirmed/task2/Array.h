@@ -10,6 +10,7 @@
 #include <exception>
 #include <new>
 #include <fstream>
+#include <ctime>
 
 using std::size_t;
 using std::string;
