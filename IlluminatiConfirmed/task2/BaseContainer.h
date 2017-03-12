@@ -12,7 +12,7 @@
     #define ASSERT_STR(str) do { this->dump(string(__PRETTY_FUNCTION__) + string(" ")+ str);} while(0);
 #else
     #define ASSERT_OK(cond) do { if (!cond)  { assert(cond);}} while(0);
-    #define ASSERT_STR(str) do { assert(!str);} while(0); //Ops Neilana: не разбиралась что здесь
+    #define ASSERT_STR(str) do { printf(str.c_str()); assert(!" trouble");} while(0); //Ops Neilana: не разбиралась что здесь
 #define DUMP(ch)
 #endif
 
@@ -56,13 +56,13 @@ namespace IlluminatiConfirmed
          */
         const Tp & operator[](size_t index) const;
 
-        /*!
-         * \brief operator [] Overload, denide access to a const value
-         * \param index
-         * \return
-         * \author penguinlav
-         */
-         Tp & operator[](size_t index) { DUMP("in/out"); return const_cast<Tp &>(static_cast<const BaseContainer &>(*this)[index]);}
+         /*!
+          * \brief operator [] Overload, denide access to a const value
+          * \param index
+          * \return
+          * \author penguinlav
+                  */
+        Tp & operator[](size_t index) { DUMP("in/out"); return const_cast<Tp &>(static_cast<const BaseContainer &>(*this)[index]);}
 
          /*!
           * \brief Returns a reference to the element at specified location pos, with bounds checking.
@@ -70,7 +70,7 @@ namespace IlluminatiConfirmed
           * \return reference to the requested element
           * \author Neilana
           */
-         Tp& at(size_t index);
+        Tp& at(size_t index);
 
          /*!
           * \brief Returns Overloaded
@@ -78,7 +78,7 @@ namespace IlluminatiConfirmed
           * \return const reference to the requested element
           * \author penguinlav
           */
-         const Tp& at(size_t index) const { DUMP("in/out"); return this->begin()[index]; }
+        const Tp& at(size_t index) const { DUMP("in/out"); return this->begin()[index]; }
 
          // capacity
          /*!
@@ -86,16 +86,16 @@ namespace IlluminatiConfirmed
           * \return True or false
           * \author penguinlav
           */
-         inline bool empty() const { DUMP("in/out"); return this->m_size == 0;}
+        inline bool empty() const { DUMP("in/out"); return this->m_size == 0;}
 
-         size_t size() const { DUMP("in/out"); return this->m_size; }
+        size_t size() const { DUMP("in/out"); return this->m_size; }
 
          /*!
           * \brief returns the maximum number of elements the container is able to hold due to system or library implementation limitations.
           * \return maximum number of elements.
           * \author Neilana
-          */
-         inline size_t max_size() const { DUMP("in/out"); return size_t(-1)/sizeof(Tp); }
+         */
+        inline size_t max_size() const { DUMP("in/out"); return size_t(-1)/sizeof(Tp); }
 
          // other functions
          /*!
@@ -103,9 +103,8 @@ namespace IlluminatiConfirmed
           * \param func Name of the function from which dump is called
           * \author penguinlav
           */
-         void dump(std::string str) const;
+        void dump(std::string str) const;
 
-         // operators overload
          /*!
           * \brief operator == Two vectors are considered equal if they contain the same values in the same order.
           *                    This function requires the value type to have an implementation of operator==().
@@ -113,12 +112,33 @@ namespace IlluminatiConfirmed
           * \return Returns true if other is equal to this vector; otherwise returns false.
           * \author penguinlav
           */
-         bool operator==(const BaseContainer<Tp> &rhs) const;
+        bool operator==(const BaseContainer<Tp> &rhs) const;
 
-         iterator begin() { return iterator(m_dataPtr); }
-         iterator end() { return iterator(m_dataPtr + m_size); }
-         const_iterator begin() const { return const_iterator(m_dataPtr); }
-         const_iterator end() const { return const_iterator(m_dataPtr + m_size); }
+         //virtual void swap( /*I don't know what the signature should be here*/) = 0;
+
+        /*!
+         * \brief begin Returns an STL-style iterator pointing to the first item in the vector.
+         * \return Iterator to begin
+         */
+        iterator begin() { return iterator(m_dataPtr); }
+
+        /*!
+         * \brief end Returns an STL-style iterator pointing to the imaginary item after the last item in the vector.
+         * \return Iterator to end
+         */
+        iterator end() { return iterator(m_dataPtr + m_size); }
+
+        /*!
+         * \brief begin Overload
+         * \return
+         */
+        const_iterator begin() const { return const_iterator(m_dataPtr); }
+
+        /*!
+         * \brief end
+         * \return
+         */
+        const_iterator end() const { return const_iterator(m_dataPtr + m_size); }
 
     protected:
         Tp *m_dataPtr;
@@ -127,6 +147,11 @@ namespace IlluminatiConfirmed
 }
 
 template <class Tp>
+/*!
+ * \brief The iterator class An iterator is any object that, pointing to some element in
+ *              a range of elements (such as an array or a container), has the ability to iterate
+ *              through the elements of that range using a set of operators.
+ */
 class iterator
 {
 public:
@@ -235,23 +260,24 @@ bool BaseContainer<Tp>::operator==(const BaseContainer<Tp> &rhs) const
 {
     DUMP("in");
     if (m_size != rhs.m_size) return false;
-    try
+    for (size_t i = 0; i < m_size; i++)
     {
-        for (size_t i = 0; i < m_size; i++)
-        {
-            if (m_dataPtr[i] != rhs.m_dataPtr[i])
-            return false;
-        }
-    } catch (exception &e)
-    {
-        ASSERT_STR(string(e.what()));
+        if (m_dataPtr[i] != rhs.m_dataPtr[i])
+        return false;
     }
     DUMP("out");
     return true;
 }
+/*
+template<class Tp>
+void BaseContainer<Tp>::swap()
+{
 
+    DUMP("in/out");
+}
+*/
 template<class Tp>
 BaseContainer<Tp>::~BaseContainer()
 {
-
+    DUMP("in/out");
 }

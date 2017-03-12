@@ -3,19 +3,6 @@
 // include guard
 #pragma once
 
-// macroses
-#define NAME_VAR(VAR) #VAR
-#define DEBUG_ON
-#if defined(DEBUG_ON)
-    #define DUMP(ch) do {this->dump(string(__PRETTY_FUNCTION__)+string(" ")+string(ch));} while(0);
-    #define ASSERT_OK(cond) do { if (!cond)  {this->dump(string(__PRETTY_FUNCTION__) + string(" ")+ string(#cond));}} while(0);
-    #define ASSERT_STR(str) do { this->dump(string(__PRETTY_FUNCTION__) + string(" ")+ str);} while(0);
-#else
-    #define ASSERT_OK(cond) do { if (!cond)  { assert(cond);}} while(0);
-    #define ASSERT_STR(str) do { assert(!str);} while(0); //Ops Neilana: не разбиралась что здесь
-#define DUMP(ch)
-#endif
-
 // usefull headers
 #include <iostream>
 #include <cassert>
@@ -38,14 +25,8 @@ namespace IlluminatiConfirmed
     class Array : public BaseContainer<Tp>
     {
     public:
-        // constructors, destructors and assignment
         /*!
-         * \brief Array Constructs an empty array
-         */
-    //    Array();
-
-        /*!
-         * \brief Array Overload
+         * \brief Array Constract array with def value
          * \param capacity
          * \param def Initialization with the default value
          */
@@ -57,6 +38,10 @@ namespace IlluminatiConfirmed
          */
         Array(const Array<Tp, TpSize> &other);
 
+        /*!
+         * \brief Array Constructs with aggregate list. If the compiler supports C++11 initializer lists.
+         * \param l List
+         */
         Array(std::initializer_list<Tp> l);
         ~Array();
 
@@ -68,13 +53,14 @@ namespace IlluminatiConfirmed
          */
         Array<Tp, TpSize> & operator=(const Array<Tp, TpSize> &rhs);
 
-        // modifiers
+        /*!
+         * \brief swap Swaps vector other with this vector. This operation is very fast and never fails.
+         * \param other
+         */
         void swap (Array <Tp, TpSize> & other);
 
     private:
-        //Tp *m_data;
         Tp m_data[TpSize];
-        //size_t m_size;
     };
 }
 
@@ -175,6 +161,7 @@ Array<Tp, TpSize>& Array<Tp, TpSize>::operator=(const Array<Tp, TpSize> &rhs)
 template <class Tp, size_t TpSize>
 Array<Tp, TpSize>::~Array()
 {
+    DUMP("in/out");
     // само удаляется, если оставить - будет ошибка сегментации
 
     //DUMP("in");
@@ -189,6 +176,6 @@ template<class Tp, size_t TpSize>
 void Array<Tp, TpSize>::swap(Array <Tp, TpSize> & other)
 {
     DUMP("in");
-    std::swap(m_data, other.m_data);
+    std::iter_swap(this->begin(), other.begin());
     DUMP("out");
 }

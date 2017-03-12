@@ -3,19 +3,6 @@
 // include guard
 #pragma once
 
-// macroses
-#define NAME_VAR(VAR) #VAR
-#define DEBUG_ON
-#if defined(DEBUG_ON)
-    #define DUMP(ch) do {this->dump(string(__PRETTY_FUNCTION__)+string(" ")+string(ch));} while(0);
-    #define ASSERT_OK(cond) do { if (!cond)  {this->dump(string(__PRETTY_FUNCTION__) + string(" ")+ string(#cond));}} while(0);
-    #define ASSERT_STR(str) do { this->dump(string(__PRETTY_FUNCTION__) + string(" ")+ str);} while(0);
-#else
-    #define ASSERT_OK(cond) do { if (!cond)  { assert(cond);}} while(0);
-    #define ASSERT_STR(str) do { assert(!str);} while(0); //Ops Neilana: не разбиралась что здесь
-#define DUMP(ch)
-#endif
-
 // usefull headers
 #include <iostream>
 #include <cassert>
@@ -57,6 +44,10 @@ namespace IlluminatiConfirmed
          */
         Vector(const Vector<Tp> &other);
 
+        /*!
+         * \brief Vector Constructs with aggregate list. If the compiler supports C++11 initializer lists.
+         * \param l List
+         */
         Vector(std::initializer_list<Tp> l);
         ~Vector();
 
@@ -68,6 +59,12 @@ namespace IlluminatiConfirmed
          */
         Vector<Tp> & operator=(const Vector<Tp> &rhs);
 
+        /*!
+         * \brief assign FIXME: Чо то делает
+         * \param capacity
+         * \param value
+         * \author Neilana
+         */
         void assign (size_t capacity, const Tp& value);
 
         // element access
@@ -78,11 +75,12 @@ namespace IlluminatiConfirmed
          */
         Tp& front() { if (m_data) return m_data[0]; }
 
-        const Tp& front() const
-        {
-            DUMP("in/out");
-            return const_cast<Tp &>(static_cast<const Vector &>(*this)->front());
-        }
+        /*!
+         * \brief returns Overload
+         * \return reference
+         * \author Neilana
+         */
+        const Tp& front() const { DUMP("in/out"); return const_cast<Tp &>(static_cast<const Vector &>(*this)->front()); }
 
         /*!
          * \brief returns reference to the last element
@@ -91,12 +89,17 @@ namespace IlluminatiConfirmed
          */
         Tp& back() { DUMP("in/out"); if (m_data[this->m_size]) return m_data[this->m_size]; }
 
-        const Tp& back() const
-        {
-            DUMP("in/out");
-            return const_cast<Tp &>(static_cast<const Vector &>(*this)->back());
-        }
+        /*!
+         * \brief back Overload
+         * \return
+         * \author Neilana
+         */
+        const Tp& back() const { DUMP("in/out"); return const_cast<Tp &>(static_cast<const Vector &>(*this)->back()); }
 
+        /*!
+         * \brief capacity Returns the maximum number of characters that can be stored in the string without forcing a reallocation.
+         * \return Capacity
+         */
         size_t capacity() const { DUMP("in/out"); return m_capacity; }
 
         /*!
@@ -106,23 +109,47 @@ namespace IlluminatiConfirmed
          */
         void reserve(size_t capacity);
 
-        // modifiers
-        void push_back(const Tp& value);
-        void pop_back();
-        void clear();
-        void swap (Vector <Tp> & other);
-        void resize( size_t capacity, Tp value = Tp() );
-
-        // operators overload
         /*!
-         * \brief operator == Two vectors are considered equal if they contain the same values in the same order.
-         *                    This function requires the value type to have an implementation of operator==().
-         * \param rhs Right operand
-         * \return Returns true if other is equal to this vector; otherwise returns false.
-         * \author penguinlav
+         * \brief push_back Inserts value at the end of the vector.
+         * \param value
          */
-       // bool operator==(const Vector<Tp> &rhs) const;
+        void push_back(const Tp& value);
 
+        /*!
+         * \brief pop_back Removes the last item in the vector. Calling this function is
+         *      equivalent to calling remove(size() - 1). The vector must not be empty.
+         *      If the vector can be empty, call isEmpty() before calling this function.
+         */
+        void pop_back();
+
+        /*!
+         * \brief clear Removes all the elements from the vector and doesn't release
+         *      the memory used by the vector. For releasing use for example "vector<T>().swap(x);"
+         */
+        void clear();
+
+        /*!
+         * \brief swap Swaps vector other with this vector. This operation is very fast and never fails.
+         * \param other
+         */
+        void swap (Vector <Tp> & other);
+
+        /*! //FIXME: aaaazazzazzzzzaazaz
+         * \brief resize Resizes the container so that it contains n elements.
+                  If n is smaller than the current container size, the content
+                  is reduced to its first n elements, removing those beyond (and destroying them).
+                  If n is greater than the current container size, the content
+                  is expanded by inserting at the end as many elements as needed
+                  to reach a size of n. If val is specified, the new elements are
+                  initialized as copies of val, otherwise, they are value-initialized.
+                  If n is also greater than the current container capacity, an automatic
+                  reallocation of the allocated storage space takes place.
+                  Notice that this function changes the actual content of the container
+                  by inserting or erasing elements from it.
+         * \param capacity
+         * \param value
+         */
+        void resize( size_t capacity, Tp value = Tp() );
     private:
         Tp *m_data;
         size_t m_capacity;
