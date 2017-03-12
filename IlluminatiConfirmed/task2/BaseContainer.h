@@ -28,8 +28,13 @@ using std::size_t;
 using std::string;
 using std::exception;
 
-template <class Tp>
-class iterator;
+namespace IlluminatiConfirmed
+{
+    template <class Tp>
+    class iterator;
+}
+
+using IlluminatiConfirmed::iterator;
 
 namespace IlluminatiConfirmed
 {
@@ -118,7 +123,6 @@ namespace IlluminatiConfirmed
          const_iterator begin() const { return const_iterator(m_dataPtr); }
          const_iterator end() const { return const_iterator(m_dataPtr + m_size); }
 
-
     protected:
         Tp *m_dataPtr;
         size_t m_size;
@@ -127,7 +131,7 @@ namespace IlluminatiConfirmed
 
 template <class Tp>
 class iterator
- {
+{
 public:
     typedef iterator self_type;
     typedef Tp value_type;
@@ -155,7 +159,7 @@ public:
     inline bool operator>=(const self_type& other) const { return m_ptr >= other.m_ptr; }
 private:
     pointer m_ptr;
- };
+};
 
 using IlluminatiConfirmed::BaseContainer;
 
@@ -228,14 +232,9 @@ template<class Tp>
 bool BaseContainer<Tp>::operator==(const BaseContainer<Tp> &rhs) const
 {
     DUMP("in");
-    //ASSERT_OK(rhs!= NULL&&rhs!=nullptr); //FIXME Maybe it's too much
     if (m_size != rhs.m_size) return false;
     try
     {
-//        if (m_data == rhs.m_data)
- //           return true;
-      //  if (TpSize != rhs.TpSize)
-         //   return false;
         for (size_t i = 0; i < m_size; i++)
         {
             if (m_dataPtr[i] != rhs.m_dataPtr[i])

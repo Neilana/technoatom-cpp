@@ -5,6 +5,7 @@
 #include "Vector.h"
 
 using IlluminatiConfirmed::Vector;
+using IlluminatiConfirmed::iterator;
 
 TEST(VectorTest, CheckDefaultConstructorReturnsCorrectCapacity)
 {
@@ -212,16 +213,20 @@ TEST(VectorTest, CheckSize)
     v1.push_back(10);
     ASSERT_EQ(v1.size(), 2);
     ASSERT_EQ(v1.capacity(), 5);
+
     v1.push_back(10);
     v1.push_back(10);
     v1.push_back(10);
     ASSERT_EQ(v1.capacity(), 5);
+
     v1.push_back(10);
     ASSERT_EQ(v1.capacity(), 10);
     ASSERT_EQ(v1.size(), 6);
+
     v1.reserve(20);
     ASSERT_EQ(v1.size(), 6);
     ASSERT_EQ(v1.capacity(), 20);
+
     v1.clear();
     ASSERT_EQ(v1.capacity(), 20);
     ASSERT_EQ(v1.size(), 0);

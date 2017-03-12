@@ -8,6 +8,7 @@
 #include "Array.h"
 
 using IlluminatiConfirmed::Array;
+using IlluminatiConfirmed::iterator;
 
 TEST(ArrayTest, CheckDefaultConstructorReturnsCorrectSize)
 {
@@ -20,7 +21,6 @@ TEST(ArrayTest, CheckDefaultConstructorReturnsCorrectSize)
 
     // THEN
     ASSERT_EQ(actualSize, expectedSize);
-
 }
 
 TEST(ArrayTest, CheckAccessWithBrackets)
