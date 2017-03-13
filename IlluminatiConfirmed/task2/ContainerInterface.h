@@ -40,7 +40,6 @@ namespace IlluminatiConfirmed
     public:
         typedef class IlluminatiConfirmed::Iterator <Tp const> const_iterator;
         typedef class IlluminatiConfirmed::Iterator <Tp> iterator;
-
         ContainerInterface(Tp * data_Ptr, size_t size) : m_dataPtr(data_Ptr), m_size (size){ DUMP("in/out");}
         virtual  ~ContainerInterface() = 0;
 
@@ -225,11 +224,10 @@ bool ContainerInterface<Tp>::operator==(const ContainerInterface<Tp> &rhs) const
 {
     DUMP("in");
     if (m_size != rhs.m_size) return false;
-    for (size_t i = 0; i < m_size; i++)
-    {
-        if (m_dataPtr[i] != rhs.m_dataPtr[i])
-        return false;
-    }
+
+    ContainerInterface<Tp>::const_iterator itRhs = rhs.begin(); //wtf why const auto it = rhs.begin(); doesnt compile
+    for(auto const &itThis : *this)
+        if (*(itRhs++) != itThis) return false;
     DUMP("out");
     return true;
 }

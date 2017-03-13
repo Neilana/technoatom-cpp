@@ -31,5 +31,12 @@ int main(int argc, char *argv[])
     ::testing::InitGoogleTest(&argc, argv);
     // запускаем только определённый тест (чтобы проще смотреть дампы)
     //::testing::GTEST_FLAG(filter) = "VectorTest3*";
+
+
+//    Vector<double> v1 = {1,2,3,4,5};
+//    Vector<double>::iterator it = (v1.begin() + 0);
+//    Vector<double>::iterator it2 = (v1.begin() + 3);
+//    std::cout<<*it<<" "<<*it2<<std::endl;
+
     return RUN_ALL_TESTS();
 }

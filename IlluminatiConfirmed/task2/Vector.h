@@ -141,6 +141,7 @@ namespace IlluminatiConfirmed
          * \brief resize resizes the container to contain count elements.
          * \param capacity new size of the container
          * \param value the value to initialize the new elements with
+         * \author Neilana
          */
         void resize( size_t capacity, Tp value = Tp() );
 
@@ -182,8 +183,8 @@ Vector<Tp>::Vector(size_t capacity, const Tp& def) :
         this->m_size = capacity;
         this->m_dataPtr = m_data;
 
-        for (auto it = this->begin(); it != this->end(); it++)
-            *it = def;
+        for (auto &it : *this)
+            it = def;
 
     } catch (exception& e)
     {
@@ -223,11 +224,9 @@ Vector<Tp>::Vector(std::initializer_list<Tp> initList) :
         m_data = new Tp[this->m_size];
         this->m_dataPtr = m_data;
 
-        size_t i = 0;
-        for (auto it = initList.begin(); it != initList.end(); it++)
-        {
-            m_data[i++] = *it;
-        }
+        auto itThis = this->begin();
+        for (auto &it : initList)
+            *(itThis++) = it;
     } catch (exception &e)
     {
         ASSERT_STR( string(e.what()) );
@@ -299,8 +298,8 @@ void Vector<Tp>::assign(size_t capacity, const Tp& value)
     reserve(capacity);
 
     this->m_size = capacity;
-    for (auto it = this->begin(); it != this->end(); it++)
-        *it = value;
+    for(auto &it : *this)
+        it = value;
 }
 
 template<class Tp>
@@ -322,8 +321,7 @@ void Vector<Tp>::swap(Vector <Tp> & other)
     DUMP("in");
     std::swap(m_capacity, other.m_capacity);
     std::swap(this->m_size, other.m_size);
-    std::swap(m_data, other.m_data);
-    std::swap(this->m_dataPtr, other.m_dataPtr);
+    std::swap_ranges(this->begin(),this->end(),other.begin());
     DUMP("out");
 }
 
@@ -331,14 +329,20 @@ template<class Tp>
 void Vector<Tp>::resize(size_t capacity, Tp value)
 {
     DUMP("in");
-    if (this->m_size > capacity)
+    if (this->m_size >= capacity)
         this->m_size = capacity;
     else
     {
         reserve(capacity);
-        for (size_t i = this->m_size; i < capacity; i++)
-            m_data[i] = value;
+
+        //auto it2 = (this->begin() + 0);
+
+        for (auto it = this->begin()+this->m_size; it != this->end()+capacity-this->m_size; it++)
+            *it = value; //на сотой итерации изменения кода прошел тест. Я у мамы упорный
         this->m_size = capacity;
+        //for (size_t i = this->m_size; i < capacity; i++)
+        //    m_data[i] = value;
+
     }
     DUMP("out");
 }

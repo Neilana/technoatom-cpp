@@ -15,6 +15,18 @@ TEST(ArrayTest, CheckDefaultConstructor)
 
     Array <int, 0> a2;                  // number of elements = 0. Because...why not?
     ASSERT_EQ(a2.size(), 0);
+
+
+}
+
+TEST(ArrayTest, CheckCopyConstruct)
+{
+    Array <int,6> a1 = {10,20,30,40,50,60};
+    Array <int,6> a2(a1);
+    ASSERT_EQ(a2.size(), 6);
+    int j = 1;
+    for (auto &it : a2)
+        ASSERT_EQ(it, j++*10);
 }
 
 TEST(ArrayTest, CheckAccessWithBrackets)
@@ -160,6 +172,23 @@ TEST (ArrayTest, CheckAggregateInitialization)
     ASSERT_EQ(a4.at(1), 20);
     for (size_t i = 2; i < a3.size(); i++)
         ASSERT_EQ(a4.at(i), 0);
+
+    Array<double,4> a5 = {10,10.1,10.2,10.3};
+
+    ASSERT_EQ(a5.size(), 4);
+    double i = 0;
+    for(auto &it : a5)
+        ASSERT_EQ(it, 10.0 + i++*0.1);
+
+    Array<double> a6 = {999};
+
+    ASSERT_EQ(a6.size(), 1);
+    ASSERT_EQ(a6.at(0), 999);
+
+    Array<int> a7 = 999;
+
+    ASSERT_EQ(a7.size(), 1);
+    ASSERT_EQ(a7.at(0), 999);
 }
 
 TEST (ArrayIteratorsTest, CheckIterators) //эммм..))

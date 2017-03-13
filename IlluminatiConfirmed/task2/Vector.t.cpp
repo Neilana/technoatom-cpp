@@ -372,6 +372,12 @@ TEST (VectorIteratorsTest, CheckIterators) //эммм..))
     ASSERT_TRUE(it6 < it7);
 
     ASSERT_TRUE(it7 > it6); // And so on .. this is utopia
+
+    Vector<double> v7 = {10,20,30,40,50,60};
+
+    i = 0;
+    for(auto &it : v7)
+        ASSERT_EQ((it), ((i++)+1)*10);
 }
 
 TEST (BaseContainerTest, CheckAbstract) //эммм..))
