@@ -5,15 +5,15 @@
 #define UNUSED(var) (void)var;
 // macroses
 #define NAME_VAR(VAR) #VAR
-#define DEBUG_ON
+//#define DEBUG_ON
 #if defined(DEBUG_ON)
     #define DUMP(ch) do {this->dump(string(__PRETTY_FUNCTION__)+string(" ")+string(ch));} while(0);
     #define ASSERT_OK(cond) do { if (!cond)  {this->dump(string(__PRETTY_FUNCTION__) + string(" ")+ string(#cond));}} while(0);
     #define ASSERT_STR(str) do { this->dump(string(__PRETTY_FUNCTION__) + string(" ")+ str);} while(0);
 #else
-    #define ASSERT_OK(cond) do { if (!cond)  { assert(cond);}} while(0);
-    #define ASSERT_STR(str) do { printf(str.c_str()); assert(!" trouble");} while(0); //Ops Neilana: не разбиралась что здесь
-#define DUMP(ch)
+    #define ASSERT_OK(cond) do { if (!cond)  { /*assert(cond);*/}} while(0);
+    #define ASSERT_STR(str) do { printf(str.c_str()); /*assert(!" trouble");*/} while(0); //Ops Neilana: не разбиралась что здесь
+    #define DUMP(ch)
 #endif
 
 // usefull headers
