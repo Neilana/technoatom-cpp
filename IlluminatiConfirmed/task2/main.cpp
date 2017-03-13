@@ -1,6 +1,8 @@
+// usefull headers and usings
 #include <iostream>
 #include "gtest/gtest.h"
 
+// custom headers and usings
 #include "Vector.h"
 #include "Array.h"
 //#include "BugNumbers.h"
@@ -8,7 +10,6 @@
 using IlluminatiConfirmed::Array;
 //using IlluminatiConfirmed::BugNumbers;
 using IlluminatiConfirmed::Vector;
-
 
 int main(int argc, char *argv[])
 {

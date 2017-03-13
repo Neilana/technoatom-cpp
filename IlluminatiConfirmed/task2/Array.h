@@ -3,7 +3,7 @@
 // include guard
 #pragma once
 
-// usefull headers
+// usefull headers and usings
 #include <iostream>
 #include <cassert>
 #include <string>
@@ -16,19 +16,25 @@ using std::size_t;
 using std::string;
 using std::exception;
 
-#include "BaseContainer.h"
-using IlluminatiConfirmed::BaseContainer;
+// custom headers and usings
+#include "ContainerInterface.h"
+#include "Iterator.h"
+
+using IlluminatiConfirmed::ContainerInterface;
+using IlluminatiConfirmed::Iterator;
 
 // Illuminati Confirmed namespace and Array class declaration
 namespace IlluminatiConfirmed
 {
     template <class Tp, size_t TpSize>
-    class Array : public BaseContainer<Tp>
+    class Array : public ContainerInterface<Tp>
     {
     public:
+        typedef class IlluminatiConfirmed::Iterator <Tp const> const_iterator;
+        typedef class IlluminatiConfirmed::Iterator <Tp> iterator;
+
         /*!
          * \brief Array Constract array with def value
-         * \param capacity
          * \param def Initialization with the default value
          */
         Array(const Tp & def = Tp());
@@ -55,28 +61,24 @@ namespace IlluminatiConfirmed
         Array<Tp, TpSize> & operator=(const Array<Tp, TpSize> &rhs);
 
         /*!
-         * \brief swap Swaps vector other with this vector. This operation is very fast and never fails.
+         * \brief swap Swaps other array with this array. This operation is very fast and never fails.
          * \param other
          */
         void swap (Array <Tp, TpSize> & other);
 
     private:
-        Tp m_data[TpSize];
+        Tp m_data[TpSize];          /// array of elements
     };
 }
 
 // Array class implementation
 using IlluminatiConfirmed::Array;
 
-
 template<class Tp, size_t TpSize>
-Array<Tp, TpSize>::Array(const Tp& def) : BaseContainer<Tp>(m_data, TpSize)
+Array<Tp, TpSize>::Array(const Tp& def) : ContainerInterface<Tp>(m_data, TpSize)
 {    DUMP("in");
     try
     {
-        //m_data = new Tp[size];
-      //  TpSize = size;
-
         for (size_t i = 0; i < TpSize; i++)
             m_data[i] = def;
         this->m_dataPtr = m_data; this->m_size = TpSize;
@@ -88,7 +90,7 @@ Array<Tp, TpSize>::Array(const Tp& def) : BaseContainer<Tp>(m_data, TpSize)
 }
 
 template<class Tp, size_t TpSize>
-Array<Tp, TpSize>::Array(const Array<Tp, TpSize> &other) : BaseContainer<Tp>(nullptr, TpSize),
+Array<Tp, TpSize>::Array(const Array<Tp, TpSize> &other) : ContainerInterface<Tp>(nullptr, TpSize),
     m_data(nullptr)
 {
     DUMP("in");
@@ -105,30 +107,23 @@ Array<Tp, TpSize>::Array(const Array<Tp, TpSize> &other) : BaseContainer<Tp>(nul
 }
 
 template<class Tp, size_t TpSize>
-Array<Tp, TpSize>::Array(std::initializer_list<Tp> initList) : BaseContainer<Tp>(m_data, initList.size())
+Array<Tp, TpSize>::Array(std::initializer_list<Tp> initList) : ContainerInterface<Tp>(m_data, initList.size())
 {
     DUMP("in");
 
     if (initList.size() > TpSize)
-    {
         throw std::printf("Too large list size.");
-        size_t i = 0;
-        for (auto it = initList.begin(); it != initList.end(); it++)
-        {
-            m_data[i++] = *it;
-            if (i > TpSize) break; //FIXME
-        }
-    } else
-    {
-        size_t i = 0;
-        for (auto it = initList.begin(); it != initList.end(); it++)
-        {
-            m_data[i++] = *it;
-        }
 
-        this->m_dataPtr = m_data;
-        this->m_size = TpSize;
-    }
+    size_t i = 0;
+    for (auto it = initList.begin(); it != initList.end(); it++)
+        m_data[i++] = *it;
+
+    if (initList.size() < TpSize)
+        while (i < TpSize)
+            m_data[i++] = Tp();
+
+    this->m_dataPtr = m_data;
+    this->m_size = TpSize;
 
     DUMP("out");
 }
@@ -141,15 +136,8 @@ Array<Tp, TpSize>& Array<Tp, TpSize>::operator=(const Array<Tp, TpSize> &rhs)
     {
         try
         {
-            //Tp *temp_data = new Tp [rhs.TpSize];
-            //memcpy(temp_data, rhs.m_data, sizeof(Tp) * rhs.TpSize);
-            //delete [] m_data;
-
-           // m_data = temp_data;
-           // TpSize = rhs.TpSize;
             for (size_t i = 0; i < TpSize; i++)
                 m_data[i] = rhs.m_data[i];
-
         } catch (exception &e)
         {
             ASSERT_STR( string(e.what()) );
@@ -164,19 +152,19 @@ Array<Tp, TpSize>::~Array()
 {
     DUMP("in/out");
     // само удаляется, если оставить - будет ошибка сегментации
-
-    //DUMP("in");
-    //if (m_data != nullptr)
-     //delete m_data;
-    //m_data = nullptr;
-    //DUMP("out");
 }
-
 
 template<class Tp, size_t TpSize>
 void Array<Tp, TpSize>::swap(Array <Tp, TpSize> & other)
 {
     DUMP("in");
-    std::iter_swap(this->begin(), other.begin());
+    iterator it1 = this->begin();
+    iterator it2 = other.begin();
+    while (it1 != this->end())
+    {
+        it1++;
+        it2++;
+        std::iter_swap(it1, it2);
+    }
     DUMP("out");
 }

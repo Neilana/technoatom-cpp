@@ -5,85 +5,33 @@
 #include "Vector.h"
 
 using IlluminatiConfirmed::Vector;
-using IlluminatiConfirmed::iterator;
 
-TEST(VectorTest, CheckDefaultConstructorReturnsCorrectCapacity)
+TEST(VectorTest, CheckDefaultConstructor)
 {
-    // GIVEN
-    Vector <int> vector1;
-    size_t expectedCapacity = 0;
+    // test 1
+    Vector <int> v1;
+    ASSERT_EQ(v1.capacity(), 0);
 
-    // WHEN
-    size_t capacity = vector1.capacity();
+    // test 2
+    Vector <int> v2(0);
+    ASSERT_EQ(v2.capacity(), 0);
 
-    // THEN
-    ASSERT_EQ(capacity, expectedCapacity);
+    // test 3
+    Vector <int> v3(10);
+    ASSERT_EQ(v3.capacity(), 10);
 
+    // test 4
+    Vector <int> v4(-10);
+    ASSERT_EQ(v4.capacity(), 0);
 
-    /* FEATURE #2. CHECK CONSTRUCTOR WITH 1 ARGUMENT (ZERO SIZED ARRAY). */
-    // GIVEN
-    Vector <int> vector2(0);
-    expectedCapacity = 0;
-
-    // WHEN
-    capacity = vector2.capacity();
-
-    // THEN
-    ASSERT_EQ(capacity, expectedCapacity);
-
-
-    /* FEATURE #3. CHECK CONSTRUCTOR WITH 1 ARGUMENT (NORMAL SIZED ARRAY). */
-    // GIVEN
-    Vector <int> vector3(10);
-    expectedCapacity = 10;
-
-    // WHEN
-    capacity = vector3.capacity();
-
-    // THEN
-    ASSERT_EQ(capacity, expectedCapacity);
-
-
-    /* FEATURE #4. CHECK CONSTRUCTOR WITH 1 ARGUMENT (NEGATIVE AMOUNT OF ELEMENTS). */
-    // GIVEN
-    Vector <int> vector4(-10);
-    expectedCapacity = 0;
-
-    // WHEN
-    capacity = vector4.capacity();
-
-    // THEN
-    ASSERT_EQ(capacity, expectedCapacity);
-
-
-    /* FEATURE #5. CHECK CONSTRUCTOR WITH 1 ARGUMENT (TOO BIG NUMBER OF ELEMENTS). */
-    // GIVEN
-    Vector <int> vector5(1000000000000000);
-    expectedCapacity = 0;
-
-    // WHEN
-    capacity = vector5.capacity();
-
-    // THEN
-    ASSERT_EQ(capacity, expectedCapacity);
-
-
-    /* FEATURE #6. CHECK CONSTRUCTOR WITH 1 ARGUMENT (WRONG ARGUMENT TYPE). */
-    // GIVEN
-    Vector <int> vector6(5.5);
-    expectedCapacity = 5;
-
-    // WHEN
-    capacity = vector6.capacity();
-
-    // THEN
-    ASSERT_EQ(capacity, expectedCapacity);
+    // test 5
+    Vector <int> v5(1000000000000000);
+    ASSERT_EQ(v5.capacity(), 0);
 }
 
 TEST(VectorTest, CheckAccessWithBrackets)
 {
-    /* FEATURE #1. CHECK OPERATOR [] WITH NOT EMPTY ARRAY (LOW BOUNDARY). */
-    // GIVEN
+    // test 1
     Vector <int> v1;
     v1.push_back(1);
     v1.push_back(2);
@@ -91,82 +39,30 @@ TEST(VectorTest, CheckAccessWithBrackets)
     v1.push_back(4);
     v1.push_back(5);
 
-    int expectedValue = 1;
+    ASSERT_EQ(v1[0], 1);
 
-    // WHEN
-    int actualValue = v1[0];
-
-    // THEN
-    ASSERT_EQ(actualValue, expectedValue);
-
-
-    // GIVEN
-    expectedValue = 10;
-
-    // WHEN
+    // check write
     v1[0] = 10;
-    actualValue = v1[0];
+    ASSERT_EQ(v1[0], 10);
 
-    // THEN
-    ASSERT_EQ(actualValue, expectedValue);
+    ASSERT_EQ(v1[4], 5);
 
-
-    /* FEATURE #2. CHECK OPERATOR [] WITH NOT EMPTY ARRAY (HIGH BOUNDARY). */
-    // GIVEN
-    expectedValue = 5;
-
-    // WHEN
-    actualValue = v1[4];
-
-    // THEN
-    ASSERT_EQ(actualValue, expectedValue);
-
-
-    // GIVEN
-    expectedValue = 50;
-
-    // WHEN
-    v1[4] = 50;
-    actualValue = v1[4];
-
-    // THEN
-    ASSERT_EQ(actualValue, expectedValue);
-
-
-    /* FEATURE #3. CHECK OPERATOR [] WITH NOT EMPTY ARRAY (INDEX OUT OF RANGE). */
-    // GIVEN the same full vector
-    // WHEN trying to get value of non-existing 10th element
-    // THEN we have an exception
     ASSERT_ANY_THROW(v1[10]);
 
-    // GIVEN the same full vector
-    // WHEN trying to get value of -10 element (just for fun)
-    // THEN we have an exception
     ASSERT_ANY_THROW(v1[-10]);
 
-    // GIVEN the same full vector
-    // WHEN trying to get value of non-existing element with TOOOOOO BIIIIIIIG INDEX
-    // THEN we have an exception
     ASSERT_ANY_THROW(v1[10000000000000]);
 
-
-    /* FEATURE #4. CHECK OPERATOR [] WITH EMPTY ARRAY. */
-    // GIVEN an empty vector with no elements
     Vector <int> v2;
+    ASSERT_ANY_THROW(v2[2]);    // empty
 
-    // WHEN trying to get value of non-existing 2nd element
-    // THEN we have an exception
-    ASSERT_ANY_THROW(v2[2]);
-
-    /* FEATURE #5. CHECK OPERATOR [] WITH EMPTY ARRAY (WITHOUT push_back(). */
     Vector <int> v3(5);
     v3[0] = 100;
     ASSERT_EQ(v3[0], 100);
 }
 
-TEST(VectorTest, CheckAccess_At)
+TEST(VectorTest, CheckAccessWithAt)
 {
-    /* 1. Check not empty vector. */
     Vector <int> v1;
     v1.push_back(1);
     v1.push_back(2);
@@ -195,10 +91,6 @@ TEST(VectorTest, CheckAccess_At)
     // out of range: wrong high number
     ASSERT_ANY_THROW(v1.at(100000000000000));
 
-    // wrong range type
-//    ASSERT_ANY_THROW(v1.at(3.4));
-
-    /* 2. Check empty vector. */
     Vector <int> v2;
     ASSERT_ANY_THROW(v2.at(2));
 }
@@ -238,7 +130,7 @@ TEST(VectorTest, CheckMaxSize)
     std::vector <std::string> v1(5);
     size_t expectedSize = v1.max_size();
 
-    Vector <std::string> vStd1(5); //FIXME: wtf??
+    Vector <std::string> vStd1(5); //FIXME: wtf??  Neilana: ну надоже max_size как-то проверить...
     size_t actualSize =  v1.max_size();
 
     ASSERT_EQ(expectedSize, actualSize);
@@ -264,7 +156,6 @@ TEST(VectorTest, CheckOperatorAssignment)
     Vector<double> v2(10);
     for (size_t i = 0; i<10; i++)
     {
-
         v2[i] = i*1000;
     }
 
@@ -342,47 +233,57 @@ TEST (VectorTest, CheckSwap)
         v2[i] = i*1000;
 
     v1.swap(v2);
-    // ыыыы, смотрим дампы, там всё океюшки. но надо будет переделать по-православному
+
+    for (size_t i = 0; i < 5; i++)
+    {
+        ASSERT_EQ(v1[i], i*1000);
+        ASSERT_EQ(v2[i], i*10);
+    }
 }
 
 TEST (VectorTest, CheckResize)
 {
+    // test 1
     Vector <double> v1(10);
     for (size_t i = 0; i<10; i++)
         v1[i] = i*10;
-    v1.resize(5);
-    // ыыы, снова смотрим дампы :D
 
+    v1.resize(5);
+    for (size_t i = 0; i < 5; i++)
+        ASSERT_EQ(v1[i], i*10);
+
+    // test 2
     Vector <double> v2(5);
     for (size_t i = 0; i<5; i++)
         v2[i] = i*1000;
 
     v2.resize(10);
-    // ...и снова!
+    for (size_t i = 0; i < 5; i++)
+        ASSERT_EQ(v2[i], i*1000);
+
+    for (size_t i = 5; i < 10; i++)
+        ASSERT_EQ(v2[i], 0);
 }
 
 TEST (VectorTest, CheckAggregateInitialization)
 {
+    // test 1
     Vector<double> v1 = {10,20,30,40,50,60};
 
     for (size_t i = 0; i < v1.capacity(); i++)
-    {
         ASSERT_EQ(v1.at(i), (i+1)*10);
-    }
 
+    // test 2
     Vector<double> v2 {10,20,30,40,50,60};
 
     for (size_t i = 0; i < v2.capacity(); i++)
-    {
         ASSERT_EQ(v2.at(i), (i+1)*10);
-    }
 
+    // test 3
     Vector<double> v3 ({10,20,30,40,50,60});
 
     for (size_t i = 0; i < v3.capacity(); i++)
-    {
         ASSERT_EQ(v3.at(i), (i+1)*10);
-    }
 }
 
 TEST (VectorIteratorsTest, CheckIterators) //эммм..))
@@ -405,7 +306,6 @@ TEST (VectorIteratorsTest, CheckIterators) //эммм..))
     ASSERT_EQ(6,v1.size());
     for (IlluminatiConfirmed::Vector<double>::iterator it = v1.begin(); it != v1.end(); it++)
     {
-
         ASSERT_EQ((*it), ((i++)+1)*10);
     }
 
@@ -445,10 +345,9 @@ TEST (VectorIteratorsTest, CheckIterators) //эммм..))
     ASSERT_TRUE(it6 < it7);
 
     ASSERT_TRUE(it7 > it6); // And so on .. this is utopia
-
 }
 
 TEST (BaseContainerTest, CheckAbstract) //эммм..))
 {
-    //IlluminatiConfirmed::BaseContainer<double> s; //It does not compile if all is ok
+    //IlluminatiConfirmed::ContainerInterface<double> s; //It does not compile if all is ok
 }

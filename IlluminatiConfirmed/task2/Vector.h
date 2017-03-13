@@ -3,7 +3,7 @@
 // include guard
 #pragma once
 
-// usefull headers
+// usefull headers and usings
 #include <iostream>
 #include <cassert>
 #include <string>
@@ -15,14 +15,16 @@ using std::size_t;
 using std::string;
 using std::exception;
 
-#include "BaseContainer.h"
-using IlluminatiConfirmed::BaseContainer;
+// custom headers and usings
+#include "ContainerInterface.h"
+
+using IlluminatiConfirmed::ContainerInterface;
 
 // Illuminati Confirmed namespace and Vector class declaration
 namespace IlluminatiConfirmed
 {
     template <class Tp>
-    class Vector : public BaseContainer<Tp>
+    class Vector : public ContainerInterface<Tp>
     {
     public:
         // constructors, destructors and assignment
@@ -60,9 +62,9 @@ namespace IlluminatiConfirmed
         Vector<Tp> & operator=(const Vector<Tp> &rhs);
 
         /*!
-         * \brief assign FIXME: Чо то делает
-         * \param capacity
-         * \param value
+         * \brief assign replaces the contents of the container.
+         * \param capacity the new size of the container
+         * \param value the value to initialize elements of the container with
          * \author Neilana
          */
         void assign (size_t capacity, const Tp& value);
@@ -134,26 +136,16 @@ namespace IlluminatiConfirmed
          */
         void swap (Vector <Tp> & other);
 
-        /*! //FIXME: aaaazazzazzzzzaazaz
-         * \brief resize Resizes the container so that it contains n elements.
-                  If n is smaller than the current container size, the content
-                  is reduced to its first n elements, removing those beyond (and destroying them).
-                  If n is greater than the current container size, the content
-                  is expanded by inserting at the end as many elements as needed
-                  to reach a size of n. If val is specified, the new elements are
-                  initialized as copies of val, otherwise, they are value-initialized.
-                  If n is also greater than the current container capacity, an automatic
-                  reallocation of the allocated storage space takes place.
-                  Notice that this function changes the actual content of the container
-                  by inserting or erasing elements from it.
-         * \param capacity
-         * \param value
+        /*!
+         * \brief resize resizes the container to contain count elements.
+         * \param capacity new size of the container
+         * \param value the value to initialize the new elements with
          */
         void resize( size_t capacity, Tp value = Tp() );
     private:
-        Tp *m_data;
-        size_t m_capacity;
-        const size_t INCREMENT_CAPACITY = 5;
+        Tp *m_data;                 /// pointer to the first element
+        size_t m_capacity;          /// current maximum capacity of the vector
+        const size_t INCREMENT_CAPACITY = 5; /// used when new memory allocated
     };
 }
 
@@ -161,14 +153,16 @@ namespace IlluminatiConfirmed
 using IlluminatiConfirmed::Vector;
 
 template <class Tp>
-Vector<Tp>::Vector() : BaseContainer<Tp>(nullptr, 0), m_data(nullptr), m_capacity(0)
+Vector<Tp>::Vector() : ContainerInterface<Tp>(nullptr, 0), m_data(nullptr), m_capacity(0)
 {
     DUMP("in/out");
 }
 
 template<class Tp>
-Vector<Tp>::Vector(size_t capacity, const Tp& def) : BaseContainer<Tp>(nullptr, 0), m_data(nullptr), m_capacity(0)
-
+Vector<Tp>::Vector(size_t capacity, const Tp& def) :
+    ContainerInterface<Tp>(nullptr, 0),
+    m_data(nullptr),
+    m_capacity(0)
 {
     DUMP("in");
     try
@@ -181,6 +175,7 @@ Vector<Tp>::Vector(size_t capacity, const Tp& def) : BaseContainer<Tp>(nullptr, 
 
         for (auto it = this->begin(); it != this->end(); it++)
             *it = def;
+
     } catch (exception& e)
     {
         ASSERT_STR( string(e.what()) );
@@ -190,11 +185,9 @@ Vector<Tp>::Vector(size_t capacity, const Tp& def) : BaseContainer<Tp>(nullptr, 
 
 template<class Tp>
 Vector<Tp>::Vector(const Vector<Tp> &other) :
-    BaseContainer<Tp>(nullptr, other.m_capacity),
+    ContainerInterface<Tp>(nullptr, other.m_capacity),
     m_data(nullptr),
-    //this->m_size(other.this->m_size),
     m_capacity(other.m_capacity)
-
 {
     DUMP("in");
     try
@@ -202,7 +195,6 @@ Vector<Tp>::Vector(const Vector<Tp> &other) :
         m_data = new Tp[this->m_size];
         this->m_dataPtr = m_data;
         std::copy(other.begin(),other.end(),this->begin());
-        //memcpy(m_data, other.m_data, sizeof(Tp) * this->m_size);
     } catch (exception &e)
     {
         ASSERT_STR( string(e.what()) );
@@ -211,8 +203,10 @@ Vector<Tp>::Vector(const Vector<Tp> &other) :
 }
 
 template<class Tp>
-Vector<Tp>::Vector(std::initializer_list<Tp> initList) : BaseContainer<Tp>(nullptr, initList.size()), m_data(nullptr), m_capacity(initList.size())
-    /*Vector(initList.size()),  */
+Vector<Tp>::Vector(std::initializer_list<Tp> initList) :
+    ContainerInterface<Tp>(nullptr, initList.size()),
+    m_data(nullptr),
+    m_capacity(initList.size())
 {
     DUMP("in");
     try
@@ -241,7 +235,6 @@ Vector<Tp>& Vector<Tp>::operator=(const Vector<Tp> &rhs)
         Vector temp(rhs);
         swap(temp);
     }
-
     DUMP("out");
     return *this;
 }
@@ -265,7 +258,6 @@ void Vector<Tp>::push_back(const Tp& value)
         reserve(m_capacity + INCREMENT_CAPACITY);
     m_data[this->m_size++] = value;
     DUMP("out");
-
 }
 
 template<class Tp>
@@ -284,12 +276,10 @@ void Vector<Tp>::reserve(size_t capacity)
             m_data = new Tp [m_capacity];
             this->m_dataPtr = m_data;
             std::copy(bufArr.begin(),bufArr.end(),this->begin());
-            //memcpy(m_data, bufArr.m_data, sizeof(Tp) * m_capacity-1);
         } catch (exception &e)
         {
             ASSERT_STR( string(e.what()) );
         }
-
         DUMP("out");
     }
 }
@@ -338,7 +328,6 @@ void Vector<Tp>::resize(size_t capacity, Tp value)
     else
     {
         reserve(capacity);
-
         for (size_t i = this->m_size; i < capacity; i++)
             m_data[i] = value;
         this->m_size = capacity;

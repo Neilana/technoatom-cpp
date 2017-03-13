@@ -4,81 +4,34 @@
 #include <vector>
 
 // custom headers
-#include "BaseContainer.h"
 #include "Array.h"
 
 using IlluminatiConfirmed::Array;
-using IlluminatiConfirmed::iterator;
 
-TEST(ArrayTest, CheckDefaultConstructorReturnsCorrectSize)
+TEST(ArrayTest, CheckDefaultConstructor)
 {
-    // GIVEN
-    Array <int, 10> array1;
-    size_t expectedSize = 10;
+    Array <int, 10> a1;                 // correct number of elements
+    ASSERT_EQ(a1.size(), 10);
 
-    // WHEN
-    size_t actualSize = array1.size();
-
-    // THEN
-    ASSERT_EQ(actualSize, expectedSize);
+    Array <int, 0> a2;                  // number of elements = 0. Because...why not?
+    ASSERT_EQ(a2.size(), 0);
 }
 
 TEST(ArrayTest, CheckAccessWithBrackets)
 {
-    /* FEATURE #1. CHECK OPERATOR [] WITH NOT EMPTY ARRAY (LOW BOUNDARY). */
-    // GIVEN
     Array <int, 6> a1 = {1,2,3,4,5,6};
-    int expectedValue = 10;
 
-    // WHEN
-    a1[0] = 10;
-    int actualValue = a1[0];
+    ASSERT_EQ(a1[0], 1);                   // correct range
 
-    // THEN
-    ASSERT_EQ(actualValue, expectedValue);
+    ASSERT_ANY_THROW(a1[10]);               // out of range
 
+    ASSERT_ANY_THROW(a1[-10]);              // wrong range type
 
-//    /* FEATURE #2. CHECK OPERATOR [] WITH NOT EMPTY ARRAY (HIGH BOUNDARY). */
-//    // GIVEN
-//    expectedValue = 5;
-
-//    // WHEN
-//    actualValue = a1[4];
-
-//    // THEN
-//    ASSERT_EQ(actualValue, expectedValue);
-
-//    // GIVEN
-//    expectedValue = 50;
-
-//    // WHEN
-//    a1[4] = 50;
-//    actualValue = a1[4];
-
-//    // THEN
-//    ASSERT_EQ(actualValue, expectedValue);
-
-
-//    /* FEATURE #3. CHECK OPERATOR [] WITH NOT EMPTY ARRAY (INDEX OUT OF RANGE). */
-//    // GIVEN the same full array
-//    // WHEN trying to get value of non-existing 10th element
-//    // THEN we have an exception
-//    ASSERT_ANY_THROW(a1[10]);
-
-//    // GIVEN the same full array
-//    // WHEN trying to get value of -10 element (just for fun)
-//    // THEN we have an exception
-//    ASSERT_ANY_THROW(a1[-10]);
-
-//    // GIVEN the same full array
-//    // WHEN trying to get value of non-existing element with TOOOOOO BIIIIIIIG INDEX
-//    // THEN we have an exception
-//    ASSERT_ANY_THROW(a1[10000000000000]);
+    ASSERT_ANY_THROW(a1[10000000000000]);   // really wrong range
 }
 
-TEST(ArrayTest, CheckAccess_At)
+TEST(ArrayTest, CheckAccessAt)
 {
-    /* 1. Check not empty array. */
     Array <int, 6> a1 = {1,2,3,4,5,6};
 
     // low threshold
@@ -87,7 +40,7 @@ TEST(ArrayTest, CheckAccess_At)
     a1[0] = 10;
     ASSERT_EQ(a1.at(0), 10);   // check write
 
-    // high thersshold
+    // high threshold
     ASSERT_EQ(a1.at(4), 5);    // read
 
     a1[4] = 50;
@@ -129,13 +82,12 @@ TEST(ArrayTest, CheckOperatorAssignment)
     Array<double, 10> a1;
     for (size_t i = 0; i<10; i++)
     {
-
         a1[i] = i*10;
     }
+
     Array<double, 10> a2(10);
     for (size_t i = 0; i<10; i++)
     {
-
         a2[i] = i*1000;
     }
 
@@ -165,39 +117,49 @@ TEST(ArrayTest, CheckEqualOperator)
 TEST (ArrayTest, CheckSwap)
 {
     Array <double, 5> a1;
-    for (size_t i = 0; i<5; i++)
+    for (size_t i = 0; i < 5; i++)
         a1[i] = i*10;
 
     Array <double, 5> a2;
-    for (size_t i = 0; i<5; i++)
+    for (size_t i = 0; i < 5; i++)
         a2[i] = i*1000;
 
     a1.swap(a2);
-    // ыыыы, смотрим дампы, там всё океюшки. но надо будет переделать по-православному
+
+    for (size_t i = 0; i < 5; i++)
+    {
+        ASSERT_EQ(a1[i], i*1000);
+        ASSERT_EQ(a2[i], i*10);
+    }
 }
 
 TEST (ArrayTest, CheckAggregateInitialization)
 {
+    // test 1
     Array<double, 6> a1 = {10,20,30,40,50,60};
 
     for (size_t i = 0; i < a1.size(); i++)
-    {
         ASSERT_EQ(a1.at(i), (i+1)*10);
-    }
 
+    // test 2
     Array<double, 6> a2 {10,20,30,40,50,60};
 
     for (size_t i = 0; i < a2.size(); i++)
-    {
         ASSERT_EQ(a2.at(i), (i+1)*10);
-    }
 
+    // test 3
     Array<double, 6> a3 ({10,20,30,40,50,60});
 
     for (size_t i = 0; i < a3.size(); i++)
-    {
         ASSERT_EQ(a3.at(i), (i+1)*10);
-    }
+
+    // test 4
+    Array<double, 6> a4 ({10,20});
+
+    ASSERT_EQ(a4.at(0), 10);
+    ASSERT_EQ(a4.at(1), 20);
+    for (size_t i = 2; i < a3.size(); i++)
+        ASSERT_EQ(a4.at(i), 0);
 }
 
 TEST (ArrayIteratorsTest, CheckIterators) //эммм..))
@@ -219,10 +181,7 @@ TEST (ArrayIteratorsTest, CheckIterators) //эммм..))
     size_t i = 0;
     ASSERT_EQ(6,v1.size());
     for (IlluminatiConfirmed::Array<double, 6>::iterator it = v1.begin(); it != v1.end(); it++)
-    {
-
         ASSERT_EQ((*it), ((i++)+1)*10);
-    }
 
     const Array<double, 6> v2 = {10,20,30,40,50,60};
 

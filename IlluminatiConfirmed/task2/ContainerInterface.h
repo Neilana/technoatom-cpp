@@ -1,9 +1,10 @@
-/// \file BaseContainer.h
+/// \file ContainerInterface.h
 
 // include guard
 #pragma once
-#define UNUSED(var) (void)var;
+
 // macroses
+#define UNUSED(var) (void)var;
 #define NAME_VAR(VAR) #VAR
 //#define DEBUG_ON
 #if defined(DEBUG_ON)
@@ -12,11 +13,11 @@
     #define ASSERT_STR(str) do { this->dump(string(__PRETTY_FUNCTION__) + string(" ")+ str);} while(0);
 #else
     #define ASSERT_OK(cond) do { if (!cond)  { /*assert(cond);*/}} while(0);
-    #define ASSERT_STR(str) do { printf(str.c_str()); /*assert(!" trouble");*/} while(0); //Ops Neilana: не разбиралась что здесь
+    #define ASSERT_STR(str) do { printf(str.c_str()); /*assert(!" trouble");*/} while(0);
     #define DUMP(ch)
 #endif
 
-// usefull headers
+// usefull headers and usings
 #include <iostream>
 #include <cassert>
 #include <string>
@@ -28,24 +29,20 @@ using std::size_t;
 using std::string;
 using std::exception;
 
-namespace IlluminatiConfirmed
-{
-    template <class Tp>
-    class iterator;
-}
-
-using IlluminatiConfirmed::iterator;
+// custom headers
+#include "Iterator.h"
 
 namespace IlluminatiConfirmed
 {
     template <class Tp>
-    class BaseContainer
+    class ContainerInterface
     {
     public:
-        typedef class iterator <Tp const> const_iterator;
-        typedef class iterator <Tp> iterator;
-        BaseContainer(Tp * data_Ptr, size_t size) : m_dataPtr(data_Ptr), m_size (size){ DUMP("in/out");}
-        virtual  ~BaseContainer() = 0;
+        typedef class IlluminatiConfirmed::Iterator <Tp const> const_iterator;
+        typedef class IlluminatiConfirmed::Iterator <Tp> iterator;
+
+        ContainerInterface(Tp * data_Ptr, size_t size) : m_dataPtr(data_Ptr), m_size (size){ DUMP("in/out");}
+        virtual  ~ContainerInterface() = 0;
 
         // element access
         /*!
@@ -61,8 +58,8 @@ namespace IlluminatiConfirmed
           * \param index
           * \return
           * \author penguinlav
-                  */
-        Tp & operator[](size_t index) { DUMP("in/out"); return const_cast<Tp &>(static_cast<const BaseContainer &>(*this)[index]);}
+        */
+        Tp & operator[](size_t index) { DUMP("in/out"); return const_cast<Tp &>(static_cast<const ContainerInterface &>(*this)[index]);}
 
          /*!
           * \brief Returns a reference to the element at specified location pos, with bounds checking.
@@ -87,7 +84,11 @@ namespace IlluminatiConfirmed
           * \author penguinlav
           */
         inline bool empty() const { DUMP("in/out"); return this->m_size == 0;}
-
+        /*!
+         * \brief size Returns the number of elements in the container.
+         * \return The number of elements in the container.
+         * \author penguinlav
+         */
         size_t size() const { DUMP("in/out"); return this->m_size; }
 
          /*!
@@ -112,18 +113,18 @@ namespace IlluminatiConfirmed
           * \return Returns true if other is equal to this vector; otherwise returns false.
           * \author penguinlav
           */
-        bool operator==(const BaseContainer<Tp> &rhs) const;
+        bool operator==(const ContainerInterface<Tp> &rhs) const;
 
          //virtual void swap( /*I don't know what the signature should be here*/) = 0;
 
         /*!
-         * \brief begin Returns an STL-style iterator pointing to the first item in the vector.
+         * \brief begin Returns an STL-style Iterator pointing to the first item in the vector.
          * \return Iterator to begin
          */
         iterator begin() { return iterator(m_dataPtr); }
 
         /*!
-         * \brief end Returns an STL-style iterator pointing to the imaginary item after the last item in the vector.
+         * \brief end Returns an STL-style Iterator pointing to the imaginary item after the last item in the vector.
          * \return Iterator to end
          */
         iterator end() { return iterator(m_dataPtr + m_size); }
@@ -141,52 +142,15 @@ namespace IlluminatiConfirmed
         const_iterator end() const { return const_iterator(m_dataPtr + m_size); }
 
     protected:
-        Tp *m_dataPtr;
-        size_t m_size;
+        Tp *m_dataPtr;          /// pointer at the first element
+        size_t m_size;          /// the number of elements in the container
     };
 }
 
-template <class Tp>
-/*!
- * \brief The iterator class An iterator is any object that, pointing to some element in
- *              a range of elements (such as an array or a container), has the ability to iterate
- *              through the elements of that range using a set of operators.
- */
-class iterator
-{
-public:
-    typedef iterator self_type;
-    typedef Tp value_type;
-    typedef Tp & reference;
-    typedef Tp * pointer;
-    typedef std::forward_iterator_tag iterator_category;
-    typedef int difference_type;
-    iterator() : m_ptr(nullptr) { }
-    iterator(pointer ptr) : m_ptr(ptr) { }
-    ~iterator() = default;
-    inline self_type operator++() { ++m_ptr; return *this; }
-    inline self_type operator++(int) { self_type i = *this; ++m_ptr; return i; }
-    inline self_type &operator--() { --m_ptr; return *this; }
-    inline self_type operator--(int) { pointer n = m_ptr; --m_ptr; return n; }
-    inline self_type operator+(int j) const { return self_type(m_ptr+j); }
-    inline self_type operator-(int j) const { return self_type(m_ptr-j); }
-    inline reference operator*() const { return *m_ptr; }
-    inline pointer operator->() const { return m_ptr; }
-    inline reference operator[](int j) const { return *(m_ptr + j); }
-    inline bool operator==(const self_type& rhs) const { return m_ptr == rhs.m_ptr; }
-    inline bool operator!=(const self_type& rhs) const { return m_ptr != rhs.m_ptr; }
-    inline bool operator<(const self_type& other) const { return m_ptr < other.m_ptr; }
-    inline bool operator<=(const self_type& other) const { return m_ptr <= other.m_ptr; }
-    inline bool operator>(const self_type& other) const { return m_ptr > other.m_ptr; }
-    inline bool operator>=(const self_type& other) const { return m_ptr >= other.m_ptr; }
-private:
-    pointer m_ptr;
-};
-
-using IlluminatiConfirmed::BaseContainer;
+using IlluminatiConfirmed::ContainerInterface;
 
 template <class Tp>
-const Tp& BaseContainer<Tp>::operator[](size_t index) const
+const Tp& ContainerInterface<Tp>::operator[](size_t index) const
 {
     DUMP("in mb out");
     ASSERT_OK((index < m_size));
@@ -202,7 +166,7 @@ const Tp& BaseContainer<Tp>::operator[](size_t index) const
 }
 
 template <class Tp>
-Tp& BaseContainer<Tp>::at(size_t index)
+Tp& ContainerInterface<Tp>::at(size_t index)
 {
     DUMP("in mb out");
     ASSERT_OK((index < m_size));
@@ -218,7 +182,7 @@ Tp& BaseContainer<Tp>::at(size_t index)
 }
 
 template<class Tp>
-void BaseContainer<Tp>::dump(string str) const
+void ContainerInterface<Tp>::dump(string str) const
 {
     std::ofstream file;
     file.open("dump.txt",std::ofstream::out | std::ofstream::app);
@@ -256,7 +220,7 @@ void BaseContainer<Tp>::dump(string str) const
 }
 
 template<class Tp>
-bool BaseContainer<Tp>::operator==(const BaseContainer<Tp> &rhs) const
+bool ContainerInterface<Tp>::operator==(const ContainerInterface<Tp> &rhs) const
 {
     DUMP("in");
     if (m_size != rhs.m_size) return false;
@@ -268,16 +232,9 @@ bool BaseContainer<Tp>::operator==(const BaseContainer<Tp> &rhs) const
     DUMP("out");
     return true;
 }
-/*
-template<class Tp>
-void BaseContainer<Tp>::swap()
-{
 
-    DUMP("in/out");
-}
-*/
 template<class Tp>
-BaseContainer<Tp>::~BaseContainer()
+ContainerInterface<Tp>::~ContainerInterface()
 {
     DUMP("in/out");
 }
