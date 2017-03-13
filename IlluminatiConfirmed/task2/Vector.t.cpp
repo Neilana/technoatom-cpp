@@ -131,7 +131,7 @@ TEST(VectorTest, CheckMaxSize)
     size_t expectedSize = v1.max_size();
 
     Vector <std::string> vStd1(5); //FIXME: wtf??  Neilana: ну надоже max_size как-то проверить...
-    size_t actualSize =  v1.max_size();
+    size_t actualSize =  vStd1.max_size();
 
     ASSERT_EQ(expectedSize, actualSize);
 
