@@ -162,9 +162,9 @@ void Array<Tp, TpSize>::swap(Array <Tp, TpSize> & other)
     iterator it2 = other.begin();
     while (it1 != this->end())
     {
-        it1++;
-        it2++;
         std::iter_swap(it1, it2);
+        ++it1;
+        ++it2;
     }
     DUMP("out");
 }

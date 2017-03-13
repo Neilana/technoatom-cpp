@@ -226,18 +226,18 @@ TEST (VectorTest, CheckSwap)
 {
     Vector <double> v1(10);
     for (size_t i = 0; i<10; i++)
-        v1[i] = i*10;
+        v1[i] = i+10;
 
     Vector <double> v2(5);
     for (size_t i = 0; i<5; i++)
-        v2[i] = i*1000;
+        v2[i] = i+1000;
 
     v1.swap(v2);
 
     for (size_t i = 0; i < 5; i++)
     {
-        ASSERT_EQ(v1[i], i*1000);
-        ASSERT_EQ(v2[i], i*10);
+        ASSERT_EQ(v1[i], i+1000);
+        ASSERT_EQ(v2[i], i+10);
     }
 }
 

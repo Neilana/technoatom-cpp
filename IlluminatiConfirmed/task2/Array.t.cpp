@@ -118,18 +118,18 @@ TEST (ArrayTest, CheckSwap)
 {
     Array <double, 5> a1;
     for (size_t i = 0; i < 5; i++)
-        a1[i] = i*10;
+        a1[i] = i+10;
 
     Array <double, 5> a2;
     for (size_t i = 0; i < 5; i++)
-        a2[i] = i*1000;
+        a2[i] = i+1000;
 
     a1.swap(a2);
 
     for (size_t i = 0; i < 5; i++)
     {
-        ASSERT_EQ(a1[i], i*1000);
-        ASSERT_EQ(a2[i], i*10);
+        ASSERT_EQ(a1[i], i+1000);
+        ASSERT_EQ(a2[i], i+10);
     }
 }
 
