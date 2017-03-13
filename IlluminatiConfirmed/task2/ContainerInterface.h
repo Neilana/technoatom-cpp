@@ -38,8 +38,8 @@ namespace IlluminatiConfirmed
     class ContainerInterface
     {
     public:
-        typedef class IlluminatiConfirmed::Iterator <Tp const> const_iterator;
-        typedef class IlluminatiConfirmed::Iterator <Tp> iterator;
+        typedef IlluminatiConfirmed::Iterator <Tp const> const_iterator;
+        typedef IlluminatiConfirmed::Iterator <Tp> iterator;
         ContainerInterface(Tp * data_Ptr, size_t size) : m_dataPtr(data_Ptr), m_size (size){ DUMP("in/out");}
         virtual  ~ContainerInterface() = 0;
 
@@ -112,7 +112,7 @@ namespace IlluminatiConfirmed
           * \return Returns true if other is equal to this vector; otherwise returns false.
           * \author penguinlav
           */
-        bool operator==(const ContainerInterface<Tp> &rhs) const;
+        virtual bool operator==(const ContainerInterface<Tp> &rhs) const;
 
          //virtual void swap( /*I don't know what the signature should be here*/) = 0;
 

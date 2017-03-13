@@ -18,5 +18,6 @@ HEADERS += \
     Array.h \
     Vector.h \
     ContainerInterface.h \
-    Iterator.h
+    Iterator.h \
+    BugNumbers.h
 

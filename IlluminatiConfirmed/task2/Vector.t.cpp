@@ -301,7 +301,6 @@ TEST (VectorTest, CheckNewArray)
     for (int vectorN = 0; vectorN < 5; vectorN++)
     {    for (int elementN = 0; elementN < 10; elementN++)
             (v3 + vectorN)->push_back(vectorN * elementN);
-        std::cout << v3 << "\n";
     }
 
     for (int vectorN = 0; vectorN < 5; vectorN++)
