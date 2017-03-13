@@ -286,6 +286,33 @@ TEST (VectorTest, CheckAggregateInitialization)
         ASSERT_EQ(v3.at(i), (i+1)*10);
 }
 
+TEST (VectorTest, CheckNewElement)
+{
+    Vector <int> *v1 = new (0) Vector <int>;
+    ASSERT_EQ(v1->size(), 0);
+
+    Vector <int> *v2 = new (0) Vector <int> (3);        // i don't know who might use that form and why... but it works
+    ASSERT_EQ(v2->size(), 3);
+}
+
+TEST (VectorTest, CheckNewArray)
+{
+    Vector <int> *v3 = new Vector <int> [5];        // creates an array of 5 vectors
+    for (int vectorN = 0; vectorN < 5; vectorN++)
+    {    for (int elementN = 0; elementN < 10; elementN++)
+            (v3 + vectorN)->push_back(vectorN * elementN);
+        std::cout << v3 << "\n";
+    }
+
+    for (int vectorN = 0; vectorN < 5; vectorN++)
+        for (int elementN = 0; elementN < 10; elementN++)
+        {
+            int expectedValue = vectorN * elementN;
+            int actualValue = (v3 + vectorN)->at(elementN);
+            ASSERT_EQ(actualValue, expectedValue);
+        }
+}
+
 TEST (VectorIteratorsTest, CheckIterators) //эммм..))
 {
     //--, ++, +, -

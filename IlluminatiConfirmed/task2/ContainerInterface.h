@@ -6,7 +6,7 @@
 // macroses
 #define UNUSED(var) (void)var;
 #define NAME_VAR(VAR) #VAR
-//#define DEBUG_ON
+#define DEBUG_ON
 #if defined(DEBUG_ON)
     #define DUMP(ch) do {this->dump(string(__PRETTY_FUNCTION__)+string(" ")+string(ch));} while(0);
     #define ASSERT_OK(cond) do { if (!cond)  {this->dump(string(__PRETTY_FUNCTION__) + string(" ")+ string(#cond));}} while(0);
@@ -199,6 +199,7 @@ void ContainerInterface<Tp>::dump(string str) const
 
       //  file << "Array::" << str << std::endl << "{" << std::endl;
         file << str << std::endl << "{" << std::endl;
+        file << space(1) << "My address: " << this->m_dataPtr << std::endl;
         file << space(1) << NAME_VAR(m_size) << " " << m_size << std::endl;
         file << space(1) << NAME_VAR(m_dataPtr) << " " << m_size << std::endl;
         file << space(2) << "{" << std::endl;

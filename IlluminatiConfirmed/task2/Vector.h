@@ -10,6 +10,7 @@
 #include <exception>
 #include <new>
 #include <fstream>
+#include <cstring>
 
 using std::size_t;
 using std::string;
@@ -142,6 +143,14 @@ namespace IlluminatiConfirmed
          * \param value the value to initialize the new elements with
          */
         void resize( size_t capacity, Tp value = Tp() );
+
+        /*!
+         * \brief new Allocates requested number of bytes.
+         * \param size number of bytes to allocate
+         * \param init the value to initialize the new elements with
+         */
+        void* operator new(size_t size, int init = 0);
+        void* operator new[](size_t size, int init = 0);
     private:
         Tp *m_data;                 /// pointer to the first element
         size_t m_capacity;          /// current maximum capacity of the vector
@@ -333,4 +342,26 @@ void Vector<Tp>::resize(size_t capacity, Tp value)
         this->m_size = capacity;
     }
     DUMP("out");
+}
+
+template<class Tp>
+void* Vector<Tp>::operator new(size_t size, int init)
+{
+    void *p = malloc(size);
+    if (!p)
+        throw std::bad_alloc();
+    std::memset(p, init, size);
+    //std::cout << "New vector with address: " <<  p << "\n";
+    return p;
+}
+
+template<class Tp>
+void* Vector<Tp>::operator new[](size_t size, int init)
+{
+    void *p = malloc(size);
+    if (!p)
+        throw std::bad_alloc();
+    std::memset(p, init, size);
+   // std::cout << "New array of vector with address: " <<  p << "\n";
+    return p;
 }
