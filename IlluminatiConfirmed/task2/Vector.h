@@ -34,12 +34,14 @@ namespace IlluminatiConfirmed
          */
         Vector();
 
+        Vector(size_t capacity);
+
         /*!
          * \brief Vector Overload
          * \param capacity
          * \param def Initialization with the default value
          */
-        Vector(size_t capacity, const Tp & def = Tp());
+        Vector(size_t capacity, const Tp & def);
 
         /*!
          * \brief Vector Copy constractor
@@ -169,6 +171,27 @@ Vector<Tp>::Vector() : ContainerInterface<Tp>(nullptr, 0), m_data(nullptr), m_ca
 }
 
 template<class Tp>
+Vector<Tp>::Vector(size_t capacity) :
+    ContainerInterface<Tp>(nullptr, 0),
+    m_data(nullptr),
+    m_capacity(0)
+{
+    DUMP("in");
+    try
+    {
+        m_data = new Tp[capacity];
+        m_capacity = capacity;
+        this->m_size = capacity;
+        this->m_dataPtr = m_data;
+
+    } catch (exception& e)
+    {
+        ASSERT_STR( string(e.what()) );
+    }
+    DUMP("out");
+}
+
+template<class Tp>
 Vector<Tp>::Vector(size_t capacity, const Tp& def) :
     ContainerInterface<Tp>(nullptr, 0),
     m_data(nullptr),
@@ -179,13 +202,10 @@ Vector<Tp>::Vector(size_t capacity, const Tp& def) :
     {
         m_data = new Tp[capacity];
         m_capacity = capacity;
-
         this->m_size = capacity;
         this->m_dataPtr = m_data;
-
         for (auto &it : *this)
             it = def;
-
     } catch (exception& e)
     {
         ASSERT_STR( string(e.what()) );
@@ -305,14 +325,14 @@ void Vector<Tp>::assign(size_t capacity, const Tp& value)
 template<class Tp>
 void Vector<Tp>::pop_back()
 {
-   if (this->m_size > 0)
-       --(this->m_size);
+    if (this->m_size > 0)
+        --(this->m_size);
 }
 
 template<class Tp>
 void Vector<Tp>::clear()
 {
-   this->m_size = 0;
+    this->m_size = 0;
 }
 
 template<class Tp>
@@ -365,6 +385,6 @@ void* Vector<Tp>::operator new[](size_t size, int init)
     if (!p)
         throw std::bad_alloc();
     std::memset(p, init, size);
-   // std::cout << "New array of vector with address: " <<  p << "\n";
+    // std::cout << "New array of vector with address: " <<  p << "\n";
     return p;
 }

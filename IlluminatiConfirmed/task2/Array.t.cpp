@@ -165,14 +165,6 @@ TEST (ArrayTest, CheckAggregateInitialization)
     for (size_t i = 0; i < a3.size(); i++)
         ASSERT_EQ(a3.at(i), (i+1)*10);
 
-    // test 4
-    Array<double, 6> a4 ({10,20});
-
-    ASSERT_EQ(a4.at(0), 10);
-    ASSERT_EQ(a4.at(1), 20);
-    for (size_t i = 2; i < a3.size(); i++)
-        ASSERT_EQ(a4.at(i), 0);
-
     Array<double,4> a5 = {10,10.1,10.2,10.3};
 
     ASSERT_EQ(a5.size(), 4);

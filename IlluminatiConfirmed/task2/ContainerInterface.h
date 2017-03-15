@@ -8,13 +8,13 @@
 #define NAME_VAR(VAR) #VAR
 #define DEBUG_ON
 #if defined(DEBUG_ON)
-    #define DUMP(ch) do {this->dump(string(__PRETTY_FUNCTION__)+string(" ")+string(ch));} while(0);
-    #define ASSERT_OK(cond) do { if (!cond)  {this->dump(string(__PRETTY_FUNCTION__) + string(" ")+ string(#cond));}} while(0);
-    #define ASSERT_STR(str) do { this->dump(string(__PRETTY_FUNCTION__) + string(" ")+ str);} while(0);
+#define DUMP(ch) do {this->dump(string(__PRETTY_FUNCTION__)+string(" ")+string(ch));} while(0);
+#define ASSERT_OK(cond) do { if (!cond)  {this->dump(string(__PRETTY_FUNCTION__) + string(" ")+ string(#cond));}} while(0);
+#define ASSERT_STR(str) do { this->dump(string(__PRETTY_FUNCTION__) + string(" ")+ str);} while(0);
 #else
-    #define ASSERT_OK(cond) do { if (!cond)  { /*assert(cond);*/}} while(0);
-    #define ASSERT_STR(str) do { printf(str.c_str()); /*assert(!" trouble");*/} while(0);
-    #define DUMP(ch)
+#define ASSERT_OK(cond) do { if (!cond)  { /*assert(cond);*/}} while(0);
+#define ASSERT_STR(str) do { printf(str.c_str()); /*assert(!" trouble");*/} while(0);
+#define DUMP(ch)
 #endif
 
 // usefull headers and usings
@@ -31,6 +31,7 @@ using std::exception;
 
 // custom headers
 #include "Iterator.h"
+using IlluminatiConfirmed::Iterator;
 
 namespace IlluminatiConfirmed
 {
@@ -38,8 +39,8 @@ namespace IlluminatiConfirmed
     class ContainerInterface
     {
     public:
-        typedef IlluminatiConfirmed::Iterator <Tp const> const_iterator;
-        typedef IlluminatiConfirmed::Iterator <Tp> iterator;
+        typedef Iterator <Tp const> const_iterator;
+        typedef Iterator <Tp> iterator;
         ContainerInterface(Tp * data_Ptr, size_t size) : m_dataPtr(data_Ptr), m_size (size){ DUMP("in/out");}
         virtual  ~ContainerInterface() = 0;
 
@@ -52,7 +53,7 @@ namespace IlluminatiConfirmed
          */
         const Tp & operator[](size_t index) const;
 
-         /*!
+        /*!
           * \brief operator [] Overload, denide access to a const value
           * \param index
           * \return
@@ -60,7 +61,7 @@ namespace IlluminatiConfirmed
         */
         Tp & operator[](size_t index) { DUMP("in/out"); return const_cast<Tp &>(static_cast<const ContainerInterface &>(*this)[index]);}
 
-         /*!
+        /*!
           * \brief Returns a reference to the element at specified location pos, with bounds checking.
           * \param index position of element to return
           * \return reference to the requested element
@@ -68,7 +69,7 @@ namespace IlluminatiConfirmed
           */
         Tp& at(size_t index);
 
-         /*!
+        /*!
           * \brief Returns Overloaded
           * \param index position of element to return
           * \return const reference to the requested element
@@ -76,8 +77,8 @@ namespace IlluminatiConfirmed
           */
         const Tp& at(size_t index) const { DUMP("in/out"); return this->begin()[index]; }
 
-         // capacity
-         /*!
+        // capacity
+        /*!
           * \brief empty Returns true if the vector has size 0; otherwise returns false.
           * \return True or false
           * \author penguinlav
@@ -90,22 +91,22 @@ namespace IlluminatiConfirmed
          */
         size_t size() const { DUMP("in/out"); return this->m_size; }
 
-         /*!
+        /*!
           * \brief returns the maximum number of elements the container is able to hold due to system or library implementation limitations.
           * \return maximum number of elements.
           * \author Neilana
          */
         inline size_t max_size() const { DUMP("in/out"); return size_t(-1)/sizeof(Tp); }
 
-         // other functions
-         /*!
+        // other functions
+        /*!
           * \brief dump Debug information about the array's container
           * \param func Name of the function from which dump is called
           * \author penguinlav
           */
         void dump(std::string str) const;
 
-         /*!
+        /*!
           * \brief operator == Two vectors are considered equal if they contain the same values in the same order.
           *                    This function requires the value type to have an implementation of operator==().
           * \param rhs Right operand
@@ -114,7 +115,7 @@ namespace IlluminatiConfirmed
           */
         virtual bool operator==(const ContainerInterface<Tp> &rhs) const;
 
-         //virtual void swap( /*I don't know what the signature should be here*/) = 0;
+        //virtual void swap( /*I don't know what the signature should be here*/) = 0;
 
         /*!
          * \brief begin Returns an STL-style Iterator pointing to the first item in the vector.
@@ -155,7 +156,7 @@ const Tp& ContainerInterface<Tp>::operator[](size_t index) const
     ASSERT_OK((index < m_size));
     if (index < m_size)
     {
-         return m_dataPtr[index];
+        return m_dataPtr[index];
     }
     else
     {
@@ -196,7 +197,7 @@ void ContainerInterface<Tp>::dump(string str) const
         std::time_t result = std::time(nullptr);
         file << std::asctime(std::localtime(&result)) << std::endl;
 
-      //  file << "Array::" << str << std::endl << "{" << std::endl;
+        //  file << "Array::" << str << std::endl << "{" << std::endl;
         file << str << std::endl << "{" << std::endl;
         file << space(1) << "My address: " << this->m_dataPtr << std::endl;
         file << space(1) << NAME_VAR(m_size) << " " << m_size << std::endl;
@@ -225,7 +226,7 @@ bool ContainerInterface<Tp>::operator==(const ContainerInterface<Tp> &rhs) const
     DUMP("in");
     if (m_size != rhs.m_size) return false;
 
-    ContainerInterface<Tp>::const_iterator itRhs = rhs.begin(); //wtf why const auto it = rhs.begin(); doesnt compile
+    auto itRhs = rhs.begin(); //wtf why const auto it = rhs.begin(); doesnt compile
     for(auto const &itThis : *this)
         if (*(itRhs++) != itThis) return false;
     DUMP("out");

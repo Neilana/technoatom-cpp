@@ -4,29 +4,29 @@
 
 
 namespace IlluminatiConfirmed
-{  
-
-template <class Tp>
-class BugNumbers : public Array<Tp>
 {
-    struct Count
+
+    template <class Tp>
+    class BugNumbers : public Array<Tp>
     {
-        size_t comparison;
-        size_t multiplication;
-        size_t division;
+        struct Count
+        {
+            size_t comparison;
+            size_t multiplication;
+            size_t division;
+        };
+    public:
+        enum payment {comparison, multiplication, division};
+        BugNumbers(const Tp &def);
+        BugNumbers<Tp>& operator*(BugNumbers<Tp> &rhs);
+        BugNumbers<Tp>& operator/(BugNumbers<Tp> &rhs);
+        BugNumbers<Tp> operator==(BugNumbers<Tp> &rhs);
+        void pay(payment p);
+
+
+    private:
+        Count m_count;
     };
-public:
-    enum payment {comparison, multiplication, division};
-    BugNumbers(const Tp &def);
-    BugNumbers<Tp>& operator*(BugNumbers<Tp> &rhs);
-    BugNumbers<Tp>& operator/(BugNumbers<Tp> &rhs);
-    BugNumbers<Tp> operator==(BugNumbers<Tp> &rhs);
-    void pay(payment p);
-
-
-private:
-    Count m_count;
-};
     typedef class BugNumbers<int> Int;
     typedef enum BugNumbers<int>::payment pay;
 }

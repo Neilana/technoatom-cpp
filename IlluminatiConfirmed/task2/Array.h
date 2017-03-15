@@ -30,15 +30,20 @@ namespace IlluminatiConfirmed
     class Array : public ContainerInterface<Tp>
     {
     public:
-        typedef class IlluminatiConfirmed::Iterator <Tp const> const_iterator;
-        typedef class IlluminatiConfirmed::Iterator <Tp> iterator;
+        typedef class Iterator <Tp const> const_iterator;
+        typedef class Iterator <Tp> iterator;
 
         /*!
-         * \brief Array Constract array with def value
+         * \brief Array constractor array with def value
          * \param def Initialization with the default value
          */
-        Array(const Tp & def = Tp());
+        Array();
 
+        /*!
+         * \brief Array Constractor with default value
+         * \param def
+         */
+        Array(const Tp& def);
         /*!
          * \brief Array Copy constractor
          * \param other What is copied
@@ -53,9 +58,9 @@ namespace IlluminatiConfirmed
         ~Array();
 
         /*!
-         * \brief operator = Assigns rhs to this vector
+         * \brief operator = Assigns rhs to this array
          * \param rhs The right array
-         * \return Returns a reference to this vector
+         * \return Returns a reference to this array
          * \author penguinlav
          */
         Array<Tp, TpSize> & operator=(const Array<Tp, TpSize> &rhs);
@@ -73,6 +78,12 @@ namespace IlluminatiConfirmed
 
 // Array class implementation
 using IlluminatiConfirmed::Array;
+
+template<class Tp, size_t TpSize>
+Array<Tp, TpSize>::Array() : ContainerInterface<Tp>(m_data, TpSize)
+{
+    DUMP("in/out");
+}
 
 template<class Tp, size_t TpSize>
 Array<Tp, TpSize>::Array(const Tp& def) : ContainerInterface<Tp>(m_data, TpSize) //FIXME:: а если нет конструктора по умолчанию?
@@ -102,14 +113,7 @@ Array<Tp, TpSize>::Array(std::initializer_list<Tp> initList) : ContainerInterfac
 
     ASSERT_OK(TpSize <= initList.size());
 
-    auto itThis = this->begin();
-    auto itList = initList.begin();
-    while (itList != initList.end())
-            *(itThis++) = *(itList++);
-
-    if (initList.size() < this->m_size)
-        while (itThis != this->end())
-            *(itThis++) = Tp();
+    std::copy(initList.begin(), initList.end(), this->begin());
     DUMP("out");
 }
 
@@ -121,9 +125,7 @@ Array<Tp, TpSize>& Array<Tp, TpSize>::operator=(const Array<Tp, TpSize> &rhs)
     if (this != &rhs)
     {
         ASSERT_OK(rhs.size() <= this->size());
-        auto itRhs = rhs.begin();
-        for (auto &itThis : *this)
-            itThis = *(itRhs++);
+        std::copy(rhs.begin(), rhs.end(), this->begin());
     }
     DUMP("out");
     return *this;
@@ -140,10 +142,8 @@ template<class Tp, size_t TpSize>
 void Array<Tp, TpSize>::swap(Array <Tp, TpSize> & other)
 {
     DUMP("in");
-
     ASSERT_OK(this->size() == other.size());
 
     std::swap_ranges(this->begin(),this->end(),other.begin());
-
     DUMP("out");
 }

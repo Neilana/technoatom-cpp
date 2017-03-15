@@ -176,12 +176,6 @@ TEST(VectorTest, CheckConstructorDefaultValue)
         ASSERT_EQ(v1.at(i), 10.1);
     }
 
-    Vector <int> v2(10);
-    for (size_t i = 0; i < 10; i++)
-    {
-        ASSERT_EQ(v2.at(i), 0);
-    }
-
     Vector <std::string> v3(10);
     for (size_t i = 0; i < 10; i++)
     {
