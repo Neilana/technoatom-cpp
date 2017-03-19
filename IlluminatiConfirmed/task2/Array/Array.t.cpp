@@ -10,36 +10,75 @@ using IlluminatiConfirmed::Array;
 
 TEST(ArrayTest, CheckDefaultConstructor)
 {
+    //test 1
+    // given
     Array <int, 10> a1;                 // correct number of elements
-    ASSERT_EQ(a1.size(), 10);
+    size_t expectedSize = 10;
 
+    //when
+    size_t actualSize = a1.size();
+
+    // then
+    ASSERT_EQ(actualSize, expectedSize);
+
+    // test 2
+    //given
     Array <int, 0> a2;                  // number of elements = 0. Because...why not?
-    ASSERT_EQ(a2.size(), 0);
+    expectedSize = 0;
 
+    //when
+    actualSize = a2.size();
 
+    //then
+    ASSERT_EQ(actualSize, expectedSize);
 }
 
 TEST(ArrayTest, CheckCopyConstruct)
 {
-    Array <int,6> a1 = {10,20,30,40,50,60};
-    Array <int,6> a2(a1);
-    ASSERT_EQ(a2.size(), 6);
+    // given
+    Array <int, 6> a1 = {10, 20, 30, 40, 50, 60};
+    size_t expectedSize = 6;
+
+    // when
+    Array <int, 6> a2(a1);
+    size_t actualSize = a2.size();
+
+    // then
+    ASSERT_EQ(actualSize, expectedSize);
+
+    // and
     int j = 1;
     for (auto &it : a2)
-        ASSERT_EQ(it, j++*10);
+        ASSERT_EQ(it, j++ * 10);
 }
 
 TEST(ArrayTest, CheckAccessWithBrackets)
 {
-    Array <int, 6> a1 = {1,2,3,4,5,6};
+    // given
+    Array <int, 6> a1 = {1, 2, 3, 4, 5, 6};
 
-    ASSERT_EQ(a1[0], 1);                   // correct range
+    // when
+    size_t correctIndex = 0;
+    int expectedValue = 1;
 
-    ASSERT_ANY_THROW(a1[10]);               // out of range
+    // then
+    ASSERT_EQ(a1[correctIndex], expectedValue);
 
-    ASSERT_ANY_THROW(a1[-10]);              // wrong range type
+    // given
+    // a1
 
-    ASSERT_ANY_THROW(a1[10000000000000]);   // really wrong range
+    // when
+    size_t wrongIndexes[3];
+    wrongIndexes[0] = 10;
+    wrongIndexes[1] = -10;
+    wrongIndexes[2] = 10000000000000;
+
+    // then
+    for (size_t i = 0; i < 3; i++)
+    {
+        size_t index = wrongIndexes[i];
+        ASSERT_ANY_THROW(a1[index]);
+    }
 }
 
 TEST(ArrayTest, CheckAccessAt)
@@ -240,5 +279,4 @@ TEST (ArrayIteratorsTest, CheckIterators) //эммм..))
     ASSERT_TRUE(it6 < it7);
 
     ASSERT_TRUE(it7 > it6); // And so on .. this is utopia
-
 }
