@@ -54,7 +54,7 @@ namespace IlluminatiConfirmed
          * \brief Array Constructs with aggregate list. If the compiler supports C++11 initializer lists.
          * \param l List
          */
-        Array(std::initializer_list<Tp> l);
+        Array(const std::initializer_list<Tp> &l);
         ~Array();
 
         /*!

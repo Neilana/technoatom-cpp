@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstddef>
+
 /*!
  * \brief The Iterator class An Iterator is any object that, pointing to some element in
  *              a range of elements (such as an array or a container), has the ability to iterate
@@ -16,7 +18,7 @@ namespace IlluminatiConfirmed
         typedef Tp & reference;
         typedef Tp * pointer;
         typedef std::forward_iterator_tag iterator_category;
-        typedef int difference_type;
+        typedef std::ptrdiff_t difference_type;
 
         Iterator() : m_ptr(nullptr) { }
         Iterator(pointer ptr) : m_ptr(ptr) { }
@@ -36,7 +38,10 @@ namespace IlluminatiConfirmed
         inline bool operator<=(const self_type& other) const { return m_ptr <= other.m_ptr; }
         inline bool operator>(const self_type& other) const { return m_ptr > other.m_ptr; }
         inline bool operator>=(const self_type& other) const { return m_ptr >= other.m_ptr; }
+        inline pointer base() const { return m_ptr;}
     private:
         pointer m_ptr;
     };
+    template <class Tp>
+    inline std::ptrdiff_t operator-(const Iterator<Tp> &lhs, const Iterator<Tp> &rhs) { return (lhs.base() - rhs.base()); }
 }

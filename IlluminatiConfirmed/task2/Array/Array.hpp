@@ -31,7 +31,7 @@ Array<Tp, TpSize>::Array(const Array<Tp, TpSize> &other) : ContainerInterface<Tp
 }
 
 template<class Tp, size_t TpSize>
-Array<Tp, TpSize>::Array(std::initializer_list<Tp> initList) : ContainerInterface<Tp>(m_data, TpSize)
+Array<Tp, TpSize>::Array(const std::initializer_list<Tp> &initList) : ContainerInterface<Tp>(m_data, TpSize)
 {
     DUMP("in");
 

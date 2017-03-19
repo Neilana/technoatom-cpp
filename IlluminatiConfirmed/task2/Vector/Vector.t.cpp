@@ -377,3 +377,13 @@ TEST (BaseContainerTest, CheckAbstract) //эммм..))
 {
     //IlluminatiConfirmed::ContainerInterface<double> s; //It does not compile if all is ok
 }
+
+TEST (VectorTest, CheckInsert)
+{
+    Vector<int> s1 = {10,20,60,70,80,90,100};
+    Vector<int> s2 = {30,40,50};
+    s1.insert(s1.begin()+2, s2.begin(), s2.end()); //FIXME: не знаю зачем я начал делать этот метод,
+    int i = 1;                                     //не знаю почему именно так, но я уже не мог остановиться
+    for (auto it : s1)                             //и возможно надо не до end, которого не существует. Не понял
+        ASSERT_EQ(it, (i++)*10);                   //как реализовано в стл
+}

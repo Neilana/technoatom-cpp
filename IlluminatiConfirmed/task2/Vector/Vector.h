@@ -28,6 +28,8 @@ namespace IlluminatiConfirmed
     class Vector : public ContainerInterface<Tp>
     {
     public:
+        typedef Iterator <Tp const> const_iterator;
+        typedef Iterator <Tp> iterator;
         // constructors, destructors and assignment
         /*!
          * \brief Vector Constructs an empty vector
@@ -53,7 +55,7 @@ namespace IlluminatiConfirmed
          * \brief Vector Constructs with aggregate list. If the compiler supports C++11 initializer lists.
          * \param l List
          */
-        Vector(std::initializer_list<Tp> l);
+        Vector(const std::initializer_list<Tp> &l);
         ~Vector();
 
         /*!
@@ -152,6 +154,31 @@ namespace IlluminatiConfirmed
          * \param size number of bytes to allocate
          * \param init the value to initialize the new elements with
          */
+
+        iterator insert(iterator pos, iterator beg, iterator end)
+        {
+            DUMP("in");
+
+            std::ptrdiff_t offset = pos - this->begin();
+            std::ptrdiff_t diff = end - beg;
+            if (this->m_size + diff > m_capacity)
+            {
+                reserve(m_capacity + ((diff > INCREMENT_CAPACITY) ? diff : INCREMENT_CAPACITY));
+            }
+            this->m_size += diff;
+            for (auto it = this->end() - diff; it != this->begin() + offset - 1; --it)
+            {
+                *(it + diff) = *(it);
+            }
+            for(auto it = this->begin()+offset; it != this->begin() + diff + offset; ++it)
+            {
+                *it = *(beg++);
+            }
+            DUMP("out");
+            return this->begin() + offset;
+
+
+        }
         void* operator new(size_t size, int init = 0);
         void* operator new[](size_t size, int init = 0);
     private:
