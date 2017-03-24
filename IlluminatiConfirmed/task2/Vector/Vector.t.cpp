@@ -356,7 +356,7 @@ TEST (VectorIteratorsTest, CheckIterators) //эммм..))
     ASSERT_TRUE(it4 != it5);
 
     ASSERT_FALSE(it4 == it5);
-
+/*
     //>
     Vector<double> v6 = {10,20,30,40,50,60};
     IlluminatiConfirmed::Vector<double>::iterator it6 = v6.begin();
@@ -370,7 +370,7 @@ TEST (VectorIteratorsTest, CheckIterators) //эммм..))
 
     i = 0;
     for(auto &it : v7)
-        ASSERT_EQ((it), ((i++)+1)*10);
+        ASSERT_EQ((it), ((i++)+1)*10);*/
 }
 
 TEST (BaseContainerTest, CheckAbstract) //эммм..))
@@ -378,12 +378,143 @@ TEST (BaseContainerTest, CheckAbstract) //эммм..))
     //IlluminatiConfirmed::ContainerInterface<double> s; //It does not compile if all is ok
 }
 
+TEST (VectorIteratorTest, Constractor)
+{
+    Vector<int> s1 = {10,20,60,70,80,90,100};
+    auto it = s1.begin();
+
+    ASSERT_EQ(*(it), 10);
+
+    const Vector<int> s2 = {10,20,60,70,80,90,100};
+    auto const_it = s2.begin();
+
+    ASSERT_EQ(*(const_it), 10);
+}
+
+TEST (VectorIteratorTest, Increment)
+{
+    Vector<int> s1 = {10,20,60,70,80,90,100};
+    auto it = s1.begin();
+
+    ASSERT_EQ(*it++, 10);
+    ASSERT_EQ(*it,   20);
+    ASSERT_EQ(*++it, 60);
+
+
+    const Vector<int> const_s1 = {10,20,60,70,80,90,100};
+    auto const_it = const_s1.begin();
+
+    ASSERT_EQ(*const_it++, 10);
+    ASSERT_EQ(*const_it,   20);
+    ASSERT_EQ(*++const_it, 60);
+}
+
+TEST (VectorIteratorTest, OpSum)
+{
+    Vector<int> s1 = {10,20,60,70,80,90,100};
+    auto it = s1.begin();
+
+    ASSERT_EQ(*(it + 3), 70);
+
+
+    const Vector<int> const_s1 = {10,20,60,70,80,90,100};
+    auto const_it = const_s1.begin();
+
+    ASSERT_EQ(*(const_it + 3), 70);
+}
+
+TEST (VectorIteratorTest, OpSub)
+{
+    Vector<int> s1 = {10,20,60,70,80,90,100};
+    auto it = s1.begin();
+    ++it; ++it;
+
+    ASSERT_EQ(*(it - 2), 10);
+
+
+    const Vector<int> const_s1 = {10,20,60,70,80,90,100};
+    auto const_it = const_s1.begin();
+    ++const_it; ++const_it;
+
+    ASSERT_EQ(*(const_it - 2), 10);
+}
+
+TEST (VectorIteratorTest, FriendFuncSub)
+{
+    Vector<int> s1 = {10,20,60,70,80,90,100};
+    auto it1 = s1.begin();
+    auto it2 = s1.end();
+
+    ASSERT_EQ(it2 - it1, 7);
+
+
+    const Vector<int> const_s1 = {10,20,60,70,80,90,100};
+    auto const_it1 = const_s1.begin();
+    auto const_it2 = const_s1.end();
+
+    ASSERT_EQ(const_it2 - const_it1, 7);
+}
+
+TEST (VectorIteratorTest, Equal)
+{
+    Vector<int> s1 = {10,20,60,70,80,90,100};
+    auto it1 = s1.begin();
+    auto it2 = s1.begin();
+
+    ASSERT_TRUE(it2 == it1);
+
+
+    const Vector<int> const_s1 = {10,20,60,70,80,90,100};
+    auto const_it1 = const_s1.begin();
+    auto const_it2 = const_s1.begin();
+
+    ASSERT_TRUE(const_it2 == const_it1);
+}
+
+TEST (VectorIteratorTest, NotEqual)
+{
+    Vector<int> s1 = {10,20,60,70,80,90,100};
+    auto it1 = s1.begin();
+    auto it2 = s1.end();
+
+    ASSERT_TRUE(it2 != it1);
+
+
+    const Vector<int> const_s1 = {10,20,60,70,80,90,100};
+    auto const_it1 = const_s1.begin();
+    auto const_it2 = const_s1.end();
+
+    ASSERT_TRUE(const_it2 != const_it1);
+}
+
+
 TEST (VectorTest, CheckInsert)
 {
     Vector<int> s1 = {10,20,60,70,80,90,100};
-    Vector<int> s2 = {30,40,50};
-    s1.insert(s1.begin()+2, s2.begin(), s2.end()); //FIXME: не знаю зачем я начал делать этот метод,
-    int i = 1;                                     //не знаю почему именно так, но я уже не мог остановиться
-    for (auto it : s1)                             //и возможно надо не до end, которого не существует. Не понял
-        ASSERT_EQ(it, (i++)*10);                   //как реализовано в стл
+    const Vector<int> s2 = {30,40,50};
+    s1.insert(s1.begin()+2, s2.begin(), s2.end());
+    int i = 1;
+    for (auto it : s1)
+        ASSERT_EQ(it, (i++)*10);
+
+
+    Vector<double> s3 = {10,20,60,70,80,90,100};
+
+    s3.insert(2, 30);
+    s3.insert(3, 40);
+    s3.insert(4, 50);
+
+    i = 1;
+    for (auto it : s3)
+        ASSERT_EQ(it, (i++)*10);
+
+
+    Vector<int> s4 = {10,20,60,70,80,90,100};
+
+    s4.insert(2, {30,40,50});
+
+    i = 1;
+    for (auto it : s4)
+        ASSERT_EQ(it, (i++)*10);
 }
+

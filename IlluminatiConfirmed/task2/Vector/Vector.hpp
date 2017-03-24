@@ -181,7 +181,8 @@ void Vector<Tp>::swap(Vector <Tp> & other)
     DUMP("in");
     std::swap(m_capacity, other.m_capacity);
     std::swap(this->m_size, other.m_size);
-    std::swap_ranges(this->begin(),this->end(),other.begin());
+    std::swap(this->m_dataPtr,other.m_dataPtr);
+    std::swap(m_data,other.m_data);
     DUMP("out");
 }
 

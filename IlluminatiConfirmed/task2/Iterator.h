@@ -34,10 +34,6 @@ namespace IlluminatiConfirmed
         inline reference operator[](int j) const { return *(m_ptr + j); }
         inline bool operator==(const self_type& rhs) const { return m_ptr == rhs.m_ptr; }
         inline bool operator!=(const self_type& rhs) const { return m_ptr != rhs.m_ptr; }
-        inline bool operator<(const self_type& other) const { return m_ptr < other.m_ptr; }
-        inline bool operator<=(const self_type& other) const { return m_ptr <= other.m_ptr; }
-        inline bool operator>(const self_type& other) const { return m_ptr > other.m_ptr; }
-        inline bool operator>=(const self_type& other) const { return m_ptr >= other.m_ptr; }
         inline pointer base() const { return m_ptr;}
     private:
         pointer m_ptr;

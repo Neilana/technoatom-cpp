@@ -28,8 +28,9 @@ namespace IlluminatiConfirmed
     class Vector : public ContainerInterface<Tp>
     {
     public:
-        typedef Iterator <Tp const> const_iterator;
-        typedef Iterator <Tp> iterator;
+        typedef typename ContainerInterface<Tp>::iterator iterator;
+        typedef typename ContainerInterface<Tp>::const_iterator const_iterator;
+
         // constructors, destructors and assignment
         /*!
          * \brief Vector Constructs an empty vector
@@ -154,13 +155,22 @@ namespace IlluminatiConfirmed
          * \param size number of bytes to allocate
          * \param init the value to initialize the new elements with
          */
+        void* operator new(size_t size, int init = 0);
+        void* operator new[](size_t size, int init = 0);
 
-        iterator insert(iterator pos, iterator beg, iterator end)
+        /*!
+         * \brief insert inserts elements from range [first, last) before pos
+         * \param pos Position
+         * \param first Iterator
+         * \param last Iterator
+         * \return Iterator pointing to the last inserted value
+         */
+        iterator insert(iterator pos, const_iterator first, const_iterator last)
         {
             DUMP("in");
 
             std::ptrdiff_t offset = pos - this->begin();
-            std::ptrdiff_t diff = end - beg;
+            std::ptrdiff_t diff = last - first;
             if (this->m_size + diff > m_capacity)
             {
                 reserve(m_capacity + ((diff > INCREMENT_CAPACITY) ? diff : INCREMENT_CAPACITY));
@@ -172,15 +182,33 @@ namespace IlluminatiConfirmed
             }
             for(auto it = this->begin()+offset; it != this->begin() + diff + offset; ++it)
             {
-                *it = *(beg++);
+                *it = *(first++);
             }
             DUMP("out");
-            return this->begin() + offset;
-
-
+            return this->begin() + offset + diff;
         }
-        void* operator new(size_t size, int init = 0);
-        void* operator new[](size_t size, int init = 0);
+
+        /*!
+         * \brief insert Overload: inserts value before pos
+         * \param index
+         * \param value
+         * \return
+         */
+        iterator insert(size_t index, const Tp & value)
+        {
+            return insert(this->begin() + index, const_iterator(&value), const_iterator(&value + 1));
+        }
+
+        /*!
+         * \brief insert Overload: inserts elements from initializer list ilist before pos
+         * \param index
+         * \param l
+         * \return
+         */
+        iterator insert(size_t index, const std::initializer_list<Tp> &l)
+        {
+            return insert(this->begin() + index, l.begin(), l.end());
+        }
     private:
         Tp *m_data;                 /// pointer to the first element
         size_t m_capacity;          /// current maximum capacity of the vector
