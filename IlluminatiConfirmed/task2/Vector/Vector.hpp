@@ -181,8 +181,8 @@ void Vector<Tp>::swap(Vector <Tp> & other)
     DUMP("in");
     std::swap(m_capacity, other.m_capacity);
     std::swap(this->m_size, other.m_size);
-    std::swap(this->m_dataPtr,other.m_dataPtr);
-    std::swap(m_data,other.m_data);
+    std::swap(this->m_dataPtr, other.m_dataPtr);
+    std::swap(m_data, other.m_data);
     DUMP("out");
 }
 
@@ -229,3 +229,5 @@ void* Vector<Tp>::operator new[](size_t size, int init)
     // std::cout << "New array of vector with address: " <<  p << "\n";
     return p;
 }
+
+

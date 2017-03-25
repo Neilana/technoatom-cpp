@@ -33,7 +33,7 @@ TEST(ArrayTest, CheckDefaultConstructor)
     ASSERT_EQ(actualSize, expectedSize);
 }
 
-TEST(ArrayTest, CheckCopyConstruct)
+TEST(ArrayTest, CheckCopyConstructor)
 {
     // given
     Array <int, 6> a1 = {10, 20, 30, 40, 50, 60};

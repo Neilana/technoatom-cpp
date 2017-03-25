@@ -17,7 +17,7 @@ using std::string;
 using std::exception;
 
 // custom headers and usings
-#include "ContainerInterface/ContainerInterface.h"
+#include "ContainerInterface.h"
 
 using IlluminatiConfirmed::ContainerInterface;
 
@@ -214,8 +214,36 @@ namespace IlluminatiConfirmed
         size_t m_capacity;          /// current maximum capacity of the vector
         const size_t INCREMENT_CAPACITY = 5; /// used when new memory allocated
     };
-}
 
+    // bool
+    template <>
+    class Vector <bool> : public ContainerInterface<bool>
+    {
+    public:
+        typedef class Iterator <bool> iterator;
+
+//        Vector();
+        Vector(size_t capacity = 0);
+        Vector(size_t capacity, const bool & def);
+        Vector(const Vector<bool> &other);
+        Vector(std::initializer_list<bool> l);
+        ~Vector();
+        Vector<bool> & operator=(const Vector<bool> &rhs);
+        void assign (size_t capacity, const bool& value);
+        BitPointer front() { if (m_data) return BitPointer(m_data, 0); }
+        BitPointer back() { DUMP("in/out"); if (m_data) return BitPointer(m_data, this->m_size); }
+        size_t capacity() const { /*DUMP("in/out"); */return m_capacity; }
+        void reserve(size_t capacity);
+        void push_back(const bool& value);
+        void pop_back() { if (this->m_size > 0) --(this->m_size); }
+        void clear() { this->m_size = 0; }
+        void swap (Vector <bool> & other);
+        void resize( size_t capacity, bool value = false );
+    private:
+        unsigned char * m_data;
+        size_t m_capacity;
+    };
+}
 
 // include template class implementation
 #include "Vector.hpp"
