@@ -222,61 +222,112 @@ TEST (ArrayTest, CheckAggregateInitialization)
     ASSERT_EQ(a7.at(0), 999);
 }
 
-TEST (ArrayIteratorsTest, CheckIterators) //эммм..))
+
+TEST (ArrayIteratorTest, Constractor)
 {
-    //--, ++, +, -
-    const Array<double, 6> v0 = {10,20,30,40,50,60};
+    Array<int,7> s1 = {10,20,60,70,80,90,100};
+    auto it = s1.begin();
 
-    IlluminatiConfirmed::Array<double, 6>::const_iterator it0 = v0.begin();
+    ASSERT_EQ(*(it), 10);
 
-    ASSERT_EQ(v0.at(3) , (*(it0+3)));
-    ASSERT_EQ(v0.at(0),(*(it0++)));
-    ASSERT_EQ(v0.at(1), (*(it0++)));
-    ASSERT_EQ(v0.at(1), (*(it0-1)));
-    ASSERT_EQ(v0.at(1), (*(--it0)));
-    ASSERT_EQ(v0.at(1), (*(it0--)));
+    const Array<int,7> s2 = {10,20,60,70,80,90,100};
+    auto const_it = s2.begin();
 
-    //begin, end
-    Array<double, 6> v1 = {10,20,30,40,50,60};
-    size_t i = 0;
-    ASSERT_EQ(6,v1.size());
-    for (IlluminatiConfirmed::Array<double, 6>::iterator it = v1.begin(); it != v1.end(); it++)
-        ASSERT_EQ((*it), ((i++)+1)*10);
+    ASSERT_EQ(*(const_it), 10);
+}
 
-    const Array<double, 6> v2 = {10,20,30,40,50,60};
+TEST (ArrayIteratorTest, Increment)
+{
+    Array<int,7> s1 = {10,20,60,70,80,90,100};
+    auto it = s1.begin();
 
-    ASSERT_EQ(6,v2.size());
+    ASSERT_EQ(*it++, 10);
+    ASSERT_EQ(*it,   20);
+    ASSERT_EQ(*++it, 60);
 
-    //begin, end, ++: check const
-    i = 0;
-    for (IlluminatiConfirmed::Array<double, 6>::const_iterator it = v2.begin(); it != v2.end(); it++)
-    {
-        //*it = 10; //It does not compile if all is ok
-        ASSERT_EQ((*it), ((i++)+1)*10);
-    }
 
-    //[]
-    const Array<double, 6> v3 = {10,20,30,40,50,60};
+    const Array<int,7> const_s1 = {10,20,60,70,80,90,100};
+    auto const_it = const_s1.begin();
 
-    IlluminatiConfirmed::Array<double, 6>::const_iterator it3 = v3.begin();
+    ASSERT_EQ(*const_it++, 10);
+    ASSERT_EQ(*const_it,   20);
+    ASSERT_EQ(*++const_it, 60);
+}
 
-    ASSERT_EQ(it3[5], 60);
+TEST (ArrayIteratorTest, OpSum)
+{
+    Array<int,7> s1 = {10,20,60,70,80,90,100};
+    auto it = s1.begin();
 
-    //==, !=
-    Array<double, 6> v4 = {10,20,30,40,50,60};
-    Array<double, 6> v5 = {10,20,30,40,50,60};
-    IlluminatiConfirmed::Array<double, 6>::iterator it4 = v4.begin();
-    IlluminatiConfirmed::Array<double, 6>::iterator it5 = v5.begin();
-    ASSERT_TRUE(it4 != it5);
+    ASSERT_EQ(*(it + 3), 70);
 
-    ASSERT_FALSE(it4 == it5);
 
-    //>
-    Array<double, 6> v6 = {10,20,30,40,50,60};
-    IlluminatiConfirmed::Array<double, 6>::iterator it6 = v6.begin();
-    IlluminatiConfirmed::Array<double, 6>::iterator it7 = v6.begin();
-    it7++;
-    ASSERT_TRUE(it6 < it7);
+    const Array<int,7> const_s1 = {10,20,60,70,80,90,100};
+    auto const_it = const_s1.begin();
 
-    ASSERT_TRUE(it7 > it6); // And so on .. this is utopia
+    ASSERT_EQ(*(const_it + 3), 70);
+}
+
+TEST (ArrayIteratorTest, OpSub)
+{
+    Array<int,7> s1 = {10,20,60,70,80,90,100};
+    auto it = s1.begin();
+    ++it; ++it;
+
+    ASSERT_EQ(*(it - 2), 10);
+
+
+    const Array<int,7> const_s1 = {10,20,60,70,80,90,100};
+    auto const_it = const_s1.begin();
+    ++const_it; ++const_it;
+
+    ASSERT_EQ(*(const_it - 2), 10);
+}
+
+TEST (ArrayIteratorTest, FriendFuncSub)
+{
+    Array<int,7> s1 = {10,20,60,70,80,90,100};
+    auto it1 = s1.begin();
+    auto it2 = s1.end();
+
+    ASSERT_EQ(it2 - it1, 7);
+
+
+    const Array<int,7> const_s1 = {10,20,60,70,80,90,100};
+    auto const_it1 = const_s1.begin();
+    auto const_it2 = const_s1.end();
+
+    ASSERT_EQ(const_it2 - const_it1, 7);
+}
+
+TEST (ArrayIteratorTest, Equal)
+{
+    Array<int,7> s1 = {10,20,60,70,80,90,100};
+    auto it1 = s1.begin();
+    auto it2 = s1.begin();
+
+    ASSERT_TRUE(it2 == it1);
+
+
+    const Array<int,7> const_s1 = {10,20,60,70,80,90,100};
+    auto const_it1 = const_s1.begin();
+    auto const_it2 = const_s1.begin();
+
+    ASSERT_TRUE(const_it2 == const_it1);
+}
+
+TEST (ArrayIteratorTest, NotEqual)
+{
+    Array<int,7> s1 = {10,20,60,70,80,90,100};
+    auto it1 = s1.begin();
+    auto it2 = s1.end();
+
+    ASSERT_TRUE(it2 != it1);
+
+
+    const Array<int,7> const_s1 = {10,20,60,70,80,90,100};
+    auto const_it1 = const_s1.begin();
+    auto const_it2 = const_s1.end();
+
+    ASSERT_TRUE(const_it2 != const_it1);
 }

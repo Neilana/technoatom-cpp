@@ -28,6 +28,9 @@ namespace IlluminatiConfirmed
     class Vector : public ContainerInterface<Tp>
     {
     public:
+        typedef typename ContainerInterface<Tp>::iterator iterator;
+        typedef typename ContainerInterface<Tp>::const_iterator const_iterator;
+
         // constructors, destructors and assignment
         /*!
          * \brief Vector Constructs an empty vector
@@ -53,7 +56,7 @@ namespace IlluminatiConfirmed
          * \brief Vector Constructs with aggregate list. If the compiler supports C++11 initializer lists.
          * \param l List
          */
-        Vector(std::initializer_list<Tp> l);
+        Vector(const std::initializer_list<Tp> &l);
         ~Vector();
 
         /*!
@@ -154,6 +157,58 @@ namespace IlluminatiConfirmed
          */
         void* operator new(size_t size, int init = 0);
         void* operator new[](size_t size, int init = 0);
+
+        /*!
+         * \brief insert inserts elements from range [first, last) before pos
+         * \param pos Position
+         * \param first Iterator
+         * \param last Iterator
+         * \return Iterator pointing to the last inserted value
+         */
+        iterator insert(iterator pos, const_iterator first, const_iterator last)
+        {
+            DUMP("in");
+
+            std::ptrdiff_t offset = pos - this->begin();
+            std::ptrdiff_t diff = last - first;
+            if (this->m_size + diff > m_capacity)
+            {
+                reserve(m_capacity + ((diff > INCREMENT_CAPACITY) ? diff : INCREMENT_CAPACITY));
+            }
+            this->m_size += diff;
+            for (auto it = this->end() - diff; it != this->begin() + offset - 1; --it)
+            {
+                *(it + diff) = *(it);
+            }
+            for(auto it = this->begin()+offset; it != this->begin() + diff + offset; ++it)
+            {
+                *it = *(first++);
+            }
+            DUMP("out");
+            return this->begin() + offset + diff;
+        }
+
+        /*!
+         * \brief insert Overload: inserts value before pos
+         * \param index
+         * \param value
+         * \return
+         */
+        iterator insert(size_t index, const Tp & value)
+        {
+            return insert(this->begin() + index, const_iterator(&value), const_iterator(&value + 1));
+        }
+
+        /*!
+         * \brief insert Overload: inserts elements from initializer list ilist before pos
+         * \param index
+         * \param l
+         * \return
+         */
+        iterator insert(size_t index, const std::initializer_list<Tp> &l)
+        {
+            return insert(this->begin() + index, l.begin(), l.end());
+        }
     private:
         Tp *m_data;                 /// pointer to the first element
         size_t m_capacity;          /// current maximum capacity of the vector

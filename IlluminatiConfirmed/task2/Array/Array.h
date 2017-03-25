@@ -30,8 +30,8 @@ namespace IlluminatiConfirmed
     class Array : public ContainerInterface<Tp>
     {
     public:
-        typedef class Iterator <Tp const> const_iterator;
-        typedef class Iterator <Tp> iterator;
+        typedef typename ContainerInterface<Tp>::iterator iterator;
+        typedef typename ContainerInterface<Tp>::const_iterator const_iterator;
 
         /*!
          * \brief Array Constructs array with def value
@@ -54,7 +54,9 @@ namespace IlluminatiConfirmed
          * \brief Array Constructs with aggregate list. If the compiler supports C++11 initializer lists.
          * \param l List
          */
+
         Array(const std::initializer_list<Tp>& l);
+        
         ~Array();
 
         /*!

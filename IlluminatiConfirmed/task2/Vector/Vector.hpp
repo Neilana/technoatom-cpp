@@ -73,7 +73,7 @@ Vector<Tp>::Vector(const Vector<Tp> &other) :
 }
 
 template<class Tp>
-Vector<Tp>::Vector(std::initializer_list<Tp> initList) :
+Vector<Tp>::Vector(const std::initializer_list<Tp> &initList) :
     ContainerInterface<Tp>(nullptr, initList.size()),
     m_data(nullptr),
     m_capacity(initList.size())

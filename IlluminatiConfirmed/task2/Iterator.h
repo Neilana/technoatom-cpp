@@ -1,6 +1,7 @@
 #pragma once
 
 #include "BitPointer.h"
+#include <cstddef>
 
 /*!
  * \brief The Iterator class An Iterator is any object that, pointing to some element in
@@ -18,11 +19,12 @@ namespace IlluminatiConfirmed
         typedef Tp & reference;
         typedef Tp * pointer;
         typedef std::forward_iterator_tag iterator_category;
-        typedef int difference_type;
+        typedef std::ptrdiff_t difference_type;
 
         Iterator() : m_bitPtr(nullptr) { }
         Iterator(pointer ptr) : m_bitPtr(ptr) { }
         ~Iterator() = default;
+
         inline self_type operator++() { ++m_bitPtr; return *this; }
         inline self_type operator++(int) { self_type i = *this; ++m_bitPtr; return i; }
         inline self_type& operator--() { --m_bitPtr; return *this; }
@@ -34,10 +36,7 @@ namespace IlluminatiConfirmed
         inline reference operator[](int j) const { return *(m_bitPtr + j); }
         inline bool operator==(const self_type& rhs) const { return m_bitPtr == rhs.m_bitPtr; }
         inline bool operator!=(const self_type& rhs) const { return m_bitPtr != rhs.m_bitPtr; }
-        inline bool operator<(const self_type& rhs) const { return m_bitPtr < rhs.m_bitPtr; }
-        inline bool operator<=(const self_type& rhs) const { return m_bitPtr <= rhs.m_bitPtr; }
-        inline bool operator>(const self_type& rhs) const { return m_bitPtr > rhs.m_bitPtr; }
-        inline bool operator>=(const self_type& rhs) const { return m_bitPtr >= rhs.m_bitPtr; }
+        inline pointer base() const { return m_ptr;}
 
     private:
         pointer m_bitPtr;
@@ -96,7 +95,7 @@ namespace IlluminatiConfirmed
                      (m_bitPtr.m_index != rhs.m_bitPtr.m_index) );
         }
 
-        inline bool operator<(const self_type& rhs) const
+      /*  inline bool operator<(const self_type& rhs) const
         {
             return (m_bitPtr.m_dataPtr == rhs.m_bitPtr.m_dataPtr) &&
                     (m_bitPtr.m_index < rhs.m_bitPtr.m_index);
@@ -121,7 +120,12 @@ namespace IlluminatiConfirmed
         }
 
         self_type operator=(const self_type& rhs) { m_bitPtr.m_dataPtr = rhs.m_bitPtr.m_dataPtr; m_bitPtr.m_index = rhs.m_bitPtr.m_index; return *this; }
+      */
+      // inline pointer base() const { return m_ptr;}
+
     private:
         BitPointer m_bitPtr;
     };
+    template <class Tp>
+    inline std::ptrdiff_t operator-(const Iterator<Tp> &lhs, const Iterator<Tp> &rhs) { return (lhs.base() - rhs.base()); }
 }
