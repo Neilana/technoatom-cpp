@@ -4,12 +4,27 @@ CONFIG -= app_bundle
 CONFIG -= qt
 
 SOURCES += main.cpp \
-    Array.cpp \
-    Array.t.cpp
-
+    Array/Array.t.cpp \
+    Vector/Vector.t.cpp
+    
 # Google Test
-INCLUDEPATH += /usr/include/gtest
-LIBS += -lgtest -L /usr/include/gtest
+unix|win32: LIBS += -L$$PWD/../../../googletest-master/googletest/lib/ -lgtest
+
+INCLUDEPATH += $$PWD/../../../googletest-master/googletest/include
+DEPENDPATH += $$PWD/../../../googletest-master/googletest/include
+
+INCLUDEPATH += Vector \
+            Array \
+            ContainerInterface
 
 HEADERS += \
-    Array.h
+    BugNumbers.h \
+    ContainerInterface.hpp \
+    Array/Array.h \
+    Array/Array.hpp \
+    ContainerInterface/ContainerInterface.h \
+    ContainerInterface/ContainerInterface.hpp \
+    Vector/Vector.h \
+    Vector/Vector.hpp \
+    Iterator.h
+
