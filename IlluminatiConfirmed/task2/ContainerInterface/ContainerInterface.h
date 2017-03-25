@@ -24,23 +24,29 @@
 #include <exception>
 #include <new>
 #include <fstream>
+#include <typeinfo>
+#include <ctime>
 
 using std::size_t;
 using std::string;
 using std::exception;
 
 // custom headers
+#include "BitPointer.h"               //for ContainerInterface<bool>
 #include "Iterator.h"
+using IlluminatiConfirmed::BitPointer;
 using IlluminatiConfirmed::Iterator;
 
 namespace IlluminatiConfirmed
 {
+    // for all types except for bool
     template <class Tp>
     class ContainerInterface
     {
     public:
         typedef Iterator <Tp const> const_iterator;
         typedef Iterator <Tp> iterator;
+
         ContainerInterface(Tp * data_Ptr, size_t size) : m_dataPtr(data_Ptr), m_size (size){ DUMP("in/out");}
         virtual  ~ContainerInterface() = 0;
 
@@ -94,7 +100,7 @@ namespace IlluminatiConfirmed
         /*!
           * \brief returns the maximum number of elements the container is able to hold due to system or library implementation limitations.
           * \return maximum number of elements.
-          * \author Neilanahis->
+          * \author Neilana
          */
         inline size_t max_size() const { DUMP("in/out"); return size_t(-1)/sizeof(Tp); /*return std::numeric_limits<size_t>::max();*/ }
 
@@ -144,6 +150,62 @@ namespace IlluminatiConfirmed
     protected:
         Tp *m_dataPtr;          /// pointer at the first element
         size_t m_size;          /// the number of elements in the container
+    };
+
+    // bool
+    template <>
+    class ContainerInterface <bool>
+    {
+        typedef Iterator <bool const> const_iterator;
+        typedef Iterator <bool> iterator;
+    public:
+        ContainerInterface(unsigned char * data_Ptr, size_t size) : m_dataPtr(data_Ptr), m_size (size){ DUMP("in/out"); }
+        virtual ~ContainerInterface() {}
+
+        BitPointer operator[](int n) const
+        {
+            BitPointer result (m_dataPtr, n);
+            return result;
+        }
+
+        /*!
+         * \brief begin Returns an STL-style Iterator pointing to the first item in the vector.
+         * \return Iterator to begin
+         */
+        iterator begin() { return iterator( BitPointer(m_dataPtr, 0) ); }
+
+        /*!
+         * \brief end Returns an STL-style Iterator pointing to the imaginary item after the last item in the vector.
+         * \return Iterator to end
+         */
+        iterator end() { return iterator( BitPointer(m_dataPtr, m_size) ); }
+
+        /*!
+         * \brief begin Overload
+         * \return
+         */
+        //const_iterator begin() const { return const_iterator( BitPointer(m_dataPtr, 0) ); }
+
+        /*!
+         * \brief end
+         * \return
+         */
+        //const_iterator end() const { return const_iterator( BitPointer(m_dataPtr, m_size) ); }
+        BitPointer at(size_t index) const { return operator[](index); }
+        size_t size() const { /*DUMP("in/out");*/ return this->m_size; }
+        inline bool empty() const { DUMP("in/out"); return this->m_size == 0;}
+        inline size_t max_size() const { DUMP("in/out"); return size_t(-1)/sizeof(unsigned char);} // !!! * 8 ?
+        // other functions
+        /*!
+          * \brief dump Debug information about the array's container
+          * \param func Name of the function from which dump is called
+          * \author penguinlav
+          */
+        void dump(std::string str) const;
+
+    protected:
+        unsigned char* m_dataPtr;
+        size_t m_size;
     };
 }
 
