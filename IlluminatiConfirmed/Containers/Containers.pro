@@ -18,7 +18,6 @@ INCLUDEPATH += Vector \
             ContainerInterface
 
 HEADERS += \
-    BugNumbers.h \
     ContainerInterface.hpp \
     Array/Array.h \
     Array/Array.hpp \
