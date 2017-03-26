@@ -19,7 +19,8 @@ HEADERS += \
     ../Containers/Vector/Vector.h \
     ../Containers/Vector/Vector.hpp \
     ../Containers/Array/Array.h \
-    ../Containers/Array/Array.hpp
+    ../Containers/Array/Array.hpp \
+    Print.h
 
 INCLUDEPATH += ../Containers/Vector \
             ../Containers/Array \
