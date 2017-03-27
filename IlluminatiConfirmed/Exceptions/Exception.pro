@@ -7,3 +7,6 @@ SOURCES += main.cpp
 
 HEADERS += \
     Exception.h
+
+INCLUDEPATH += ..\Containers\ContainerInterface \
+                ..\Containers\

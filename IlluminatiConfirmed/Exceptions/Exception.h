@@ -1,6 +1,8 @@
 #pragma once
 
 #include <string>
+#include <sstream>
+#include <iostream>
 using std::string;
 
 namespace IlluminatiConfirmed
@@ -8,45 +10,73 @@ namespace IlluminatiConfirmed
     class Exception
     {
     public:
-        Exception(int code, const char *mess, const char *line, const char *file) : m_str("")
+
+        /*!
+         * \brief Exception Forms a string with information about the error
+         * \param code Error code
+         * \param mess Message
+         * \param line Line of code where it have happened
+         * \param file File of line where it have happened
+         * \param func Function of file where it have happened
+         */
+        Exception(int code, const char *mess, int line, const char *file, const char *func)
         {
-            m_str = string("#")  + std::to_string(code) + string(mess) + string(line) + string(file) + string("\n");
+            std::stringstream os;
+            m_str = new string();
+            os<<"#"<<"Error code: "<<code<<". On line: "<<line<<", in file: "<<file<<" in func: "<<func<<". Message: "<<mess<<"\n";
+            *m_str = os.str();
         }
 
-        const Exception operator+( const Exception &rhs)
+        /*!
+         * \brief Exception Overload
+         * \param other
+         */
+        Exception (const Exception &other)
         {
-            m_str += rhs.m_str;
-            return *this;
+            m_str = new string(*(other.m_str));
         }
 
+        /*!
+         * \brief operator + Allows you to accumulate information about errors
+         * \param rhs The exception which has just been captured
+         * \return Copy
+         */
+        const Exception operator+(const Exception &rhs)
+        {
+            Exception temp(*this);
+            *(temp.m_str) += *rhs.m_str;
+            return temp;
+        }
+
+        ~Exception()
+        {
+            delete m_str;
+        }
+
+        /*!
+         * \brief what Returns the explanatory string.
+         * \return String
+         */
         const char* what() const
         {
-/* FIXME: Боже я в душе не понимаю что от меня хочет этот компилятор! Что значит "ошибка: passing 'const string
- *          {aka const std::__cxx11::basic_string<char>}' as 'this' argument discards qualifiers [-fpermissive]"?!
- *                    m_str.erase(i, 1);
- *                                    ^
-            auto space = []() -> const string
+            auto space = [](int j) -> const string
             {
-                    static int j;
-                    int i = j++;
                     string sp = "";
-                    while (i-- > 0) sp += "    ";
+                    while (j-- > 0) sp += "    ";
                     return sp;
         };
-
-            for (int i = 0; i < m_str.size(); ++i)
+            for (int i = m_str->size() - 1, j = 0; i >= 0 ; --i)
             {
-                if (m_str.at(i) == '#')
+                if (m_str->at(i) == '#')
                 {
-                    m_str.erase(i, 1);
-                    m_str.insert(i, space());
+                    m_str->erase(i, 1);
+                    m_str->insert(i, space(j++));
                 }
             }
-*/
-            return m_str.c_str();
+            return m_str->c_str();
         }
     private:
-        std::string m_str;
+        std::string *m_str;
     };
 }
 
