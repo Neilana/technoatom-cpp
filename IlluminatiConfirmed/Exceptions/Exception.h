@@ -23,7 +23,7 @@ namespace IlluminatiConfirmed
         {
             std::stringstream os;
             m_str = new string();
-            os<<"#"<<"Error code: "<<code<<". On line: "<<line<<", in file: "<<file<<" in func: "<<func<<". Message: "<<mess<<"\n";
+            os<<"#"<<"Error code: "<<code<<".\n On line: "<<line<<".\n In file: "<<file<<"\n in func: "<<func<<".\n Message: "<<mess<<"\n\n%";
             *m_str = os.str();
         }
 
@@ -70,7 +70,14 @@ namespace IlluminatiConfirmed
                 if (m_str->at(i) == '#')
                 {
                     m_str->erase(i, 1);
-                    m_str->insert(i, space(j++));
+                    m_str->insert(i, space(++j));
+                }
+                if (m_str->at(i) == '\n')
+                {
+                    if (m_str->at(i + 1) != '%')
+                    {
+                        m_str->insert(i + 1, space(j));
+                    } else m_str->erase(i + 1, 1);
                 }
             }
             return m_str->c_str();

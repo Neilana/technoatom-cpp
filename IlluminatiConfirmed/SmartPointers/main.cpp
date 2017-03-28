@@ -1,72 +1,58 @@
 #include <iostream>
-#include "Exception.h"
-#include "..\Containers\Array\Array.h"
+#include <vector>
+#include <algorithm>
+#include "auto_ptr.h"
+#include "unique_ptr.h"
 
+#define TEST(str) do { std::cout<<"Start testing "<<str<<std::endl; }while(0);
+#define END() do { std::cout<<"Test complete "<<std::endl; }while(0);
 
+using IlluminatiConfirmed::auto_ptr;
+using IlluminatiConfirmed::unique_ptr;
 using std::string;
-using std::cout;
-using std::endl;
+using std::vector;
+
+struct Foo {
+    explicit Foo(): m_str("aazazz") { std::cout << "Foo\n"; }
+    ~Foo() { std::cout << "~Foo\n"; }
+    string m_str;
+};
+
+std::ostream& operator<<(std::ostream& os, const Foo& obj)
+{
+    (void) obj;
+    os<<"speech of foo";
+    return os;
+}
 
 int main(int argc, char *argv[])
 {
-    cout << "Hello World!" << endl;
-    /*{
-        IlluminatiConfirmed::Exception e1(33,"Msg_1", __LINE__, __FILE__, __PRETTY_FUNCTION__);
-        IlluminatiConfirmed::Exception e2(42,"Msg_1", __LINE__, __FILE__, __PRETTY_FUNCTION__);
-        cout<<(e1 + e2).what();
-        cout<<endl;
-        cout<<endl;
-        cout<<(e2 + e1).what();
-    }*/
-    IlluminatiConfirmed::Array<string, 8> a1 = {"One", "two", "three", "four", "five", "bunny", "went out for",  "a walk"};
+    (void) argc;
+    (void) argv;
+    TEST("auto_ptr")
+    {
+        vector<auto_ptr<Foo>> p(3);
+        for (auto & it : p)
+            it.reset(new Foo());
 
-    try
-    {
-        cout << a1.at(20);
-    } catch(IlluminatiConfirmed::Exception &e)
-    {
-        cout << e.what();
+        auto_ptr<Foo> IWhantToCreateThisPointer = p.at(0); //There is crash
+
+        std::for_each(p.begin(), p.end(), [](auto_ptr<Foo>& p) { std::cout<<*p<<"\n"; });
     }
+    END()
 
-//FIXME: не ловится, хотя должно.. по крайней мере на мсдн есть пример с лямбдами и трай кач блоками
-    auto uberfunc = [a1]()->string
-            {
-                string temp = "";
-                auto uberfunc = [a1](int i)->string
-                        {
-                            string temp = "";
-                            try
-                            {
-                                temp = a1.at(i);
-                            } catch (IlluminatiConfirmed::Exception &e)
-                            {
-                                cout<<"tadams";
-                                throw IlluminatiConfirmed::Exception(100, "Oh and oh", 1, "__FILE__",__PRETTY_FUNCTION__ ) + e;
-                            }
-                            temp+= string(" ");
-                            return temp;
-                        };
+    TEST("unique_ptr")
+    {
+        vector<unique_ptr<Foo>> p(3);
+        for (auto & it : p)
+            it.reset( new Foo());
 
-                for (int i = 0; i < 10; ++i)
-                {
-                    try
-                    {
-                        temp += uberfunc(i);
-                    } catch (IlluminatiConfirmed::Exception &e)
-                    {
-                        throw IlluminatiConfirmed::Exception(200, "Vah vah", 1, "__FILE__", __PRETTY_FUNCTION__ ) + e;
-                    }
-                }
-                return temp;
-            };
-    try
-    {
-        cout << uberfunc();
-    } catch (IlluminatiConfirmed::Exception &e)
-    {
-        cout << e.what();
+        //unique_ptr<Foo> IWhantToCreateThisPointer = p.at(0); // It does not compile
+        //unique_ptr<Foo> IWhantToCreateThisPointer2; IWhantToCreateThisPointer2 = p.at(0); // It does not compile
+
+        std::for_each(p.begin(), p.end(), [](unique_ptr<Foo>& p) { std::cout<<*p<<"\n"; });
     }
-
+    END()
 
     return 0;
 }
