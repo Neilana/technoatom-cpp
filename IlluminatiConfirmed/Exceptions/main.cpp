@@ -8,7 +8,7 @@
 using std::string;
 using std::cout;
 using std::endl;
-string uberfunc1 (IlluminatiConfirmed::Array<string, 8>& a1,int i);
+string uberfunc1 (IlluminatiConfirmed::Array<string, 8>& a1, int i);
 string uberfunc2 (IlluminatiConfirmed::Array<string, 8>& a1);
 int main(int argc, char *argv[])
 {
@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
     (void) argv;
     TEST("Simple ex")
     {
-        IlluminatiConfirmed::Exception e1(33,"Msg_1", __LINE__, __FILE__, __PRETTY_FUNCTION__);
+        IlluminatiConfirmed::Exception e1(33,"Sorce", __LINE__, __FILE__, __PRETTY_FUNCTION__);
         IlluminatiConfirmed::Exception e2(42,"Msg_1", __LINE__, __FILE__, __PRETTY_FUNCTION__);
         cout<<(e1 + e2).what();
         cout<<endl;
@@ -38,7 +38,7 @@ int main(int argc, char *argv[])
         }
     }
     END()
-            //FIXME: не ловится, хотя должно.. по крайней мере на мсдн есть пример с лямбдами и трай кач блоками
+
     TEST("Ex with array")
     {
         IlluminatiConfirmed::Array<string, 8> a2 = {"One", "two", "three", "four", "five", "bunny", "went out for",  "a walk"};
@@ -52,7 +52,7 @@ int main(int argc, char *argv[])
     }
     END()
 
-            return 0;
+    return 0;
 }
 
 string uberfunc1 (IlluminatiConfirmed::Array<string, 8>& a1,int i)
@@ -81,7 +81,7 @@ string uberfunc2 (IlluminatiConfirmed::Array<string, 8>& a1)
             temp += uberfunc1(a1, i);
         } catch (IlluminatiConfirmed::Exception &e)
         {
-            throw IlluminatiConfirmed::Exception(200, "Vah vah", __LINE__, __FILE__, __PRETTY_FUNCTION__ ) + e;
+            throw IlluminatiConfirmed::Exception(200, "Vah vah luchshiy exception in the whole world", __LINE__, __FILE__, __PRETTY_FUNCTION__ ) + e;
         }
     }
     return temp;
