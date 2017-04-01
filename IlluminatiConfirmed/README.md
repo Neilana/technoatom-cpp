@@ -37,7 +37,7 @@
 
 # Задание 5
 1. - [x] auto_ptr.
-2. - [ ] shared_ptr.
+2. - [x] shared_ptr.
 3. - [x] unique_ptr.
 4. - [x] Пример падения программы при использовании auto_ptr.
 5. - [x] Реализовать класс Exceptions.
