@@ -6,5 +6,7 @@ CONFIG -= qt
 SOURCES += main.cpp
 
 HEADERS += \
-    auto_ptr.h \
-    unique_ptr.h
+    Exception.h \
+
+INCLUDEPATH += ../Containers/ContainerInterface \
+                ../Containers
