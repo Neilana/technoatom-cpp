@@ -6,7 +6,7 @@
 // macroses
 #define UNUSED(var) (void)var;
 #define NAME_VAR(VAR) #VAR
-#define DEBUG_ON
+//#define DEBUG_ON
 #if defined(DEBUG_ON)
 #define DUMP(ch) do {this->dump(string(__PRETTY_FUNCTION__)+string(" ")+string(ch));} while(0);
 #define ASSERT_OK(cond) do { if (!cond)  {this->dump(string(__PRETTY_FUNCTION__) + string(" ")+ string(#cond));}} while(0);

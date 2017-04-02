@@ -56,7 +56,7 @@ TEST(VectorTest, CheckAccessWithBrackets)
     Vector <int> v2;
     ASSERT_ANY_THROW(v2[2]);    // empty
 
-    Vector <int> v3(5);
+    Vector <int> v3(5, 0);
     v3[0] = 100;
     ASSERT_EQ(v3[0], 100);
 }
@@ -147,13 +147,13 @@ TEST(VectorTest, CheckMaxSize)
 
 TEST(VectorTest, CheckOperatorAssignment)
 {
-    Vector<double> v1(10);
+    Vector<double> v1(10, 0);
     for (size_t i = 0; i<10; i++)
     {
 
         v1[i] = i*10;
     }
-    Vector<double> v2(10);
+    Vector<double> v2(10, 0);
     for (size_t i = 0; i<10; i++)
     {
         v2[i] = i*1000;
@@ -176,7 +176,7 @@ TEST(VectorTest, CheckConstructorDefaultValue)
         ASSERT_EQ(v1.at(i), 10.1);
     }
 
-    Vector <std::string> v3(10);
+    Vector <std::string> v3(10, "");
     for (size_t i = 0; i < 10; i++)
     {
         ASSERT_EQ(v3.at(i), "");
@@ -218,11 +218,11 @@ TEST(VectorTest, CheckReserve)
 
 TEST (VectorTest, CheckSwap)
 {
-    Vector <double> v1(10);
+    Vector <double> v1(10, 0.0);
     for (size_t i = 0; i<10; i++)
         v1[i] = i+10;
 
-    Vector <double> v2(5);
+    Vector <double> v2(5, 0.0);
     for (size_t i = 0; i<5; i++)
         v2[i] = i+1000;
 
@@ -238,7 +238,7 @@ TEST (VectorTest, CheckSwap)
 TEST (VectorTest, CheckResize)
 {
     // test 1
-    Vector <double> v1(10);
+    Vector <double> v1(10, 0.0);
     for (size_t i = 0; i<10; i++)
         v1[i] = i*10;
 
@@ -247,7 +247,7 @@ TEST (VectorTest, CheckResize)
         ASSERT_EQ(v1[i], i*10);
 
     // test 2
-    Vector <double> v2(5);
+    Vector <double> v2(5, 0.0);
     for (size_t i = 0; i<5; i++)
         v2[i] = i*1000;
 
@@ -286,7 +286,7 @@ TEST (VectorTest, CheckNewElement)
     ASSERT_EQ(v1->size(), 0);
 
     Vector <int> *v2 = new (0) Vector <int> (3);        // i don't know who might use that form and why... but it works
-    ASSERT_EQ(v2->size(), 3);
+    ASSERT_EQ(v2->capacity(), 3);
 }
 
 TEST (VectorTest, CheckNewArray)

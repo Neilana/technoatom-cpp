@@ -3,6 +3,14 @@
 // include guard 
 #pragma once
 
+//  macroses
+//#define DEBUG_ON
+#if defined(DEBUG_ON)
+#define DUMP(ch) do {this->dump(string(__PRETTY_FUNCTION__)+string(" ")+string(ch));} while(0);
+#else
+#define DUMP(ch)
+#endif
+
 // headers
 #include <iostream>
 #include <fstream>
@@ -47,10 +55,11 @@ namespace MyNamespace
         Stack<T>& operator=(const Stack<T> obj2);    ///< assignment operator overload
 
         // getters
-        size_type capacity() const { return m_capacity; };
-        size_type size() const { return m_id; } ; ///< returns current number of elemetns in the stack
-        size_type id() const { return m_id; };     ///< returns id of the stack
+        size_type capacity() const { return m_capacity; }
+        size_type size() const { return m_size; }  ///< returns current number of elements in the stack
+        size_type id() const { return m_id; }     ///< returns id of the stack
 
+        std::string writeElementsToString() const;
 
     private:
         // static class members
@@ -147,7 +156,7 @@ Stack<T>::Stack(Stack::size_type capacity) : m_size(0), m_capacity(capacity),
         string error = e.what();
         message += " Hey, sth is wrong! Exception caught: " + error; 
     }
-    dump(message);
+    DUMP(message);
 }
 
 /**
@@ -179,7 +188,7 @@ Stack<T>::Stack(const Stack &obj)
         string error = e.what();
         string message = "We've got some problems! Exception caught: " + error + ".\n" +
                          __FUNCTION__ + " line: " + std::to_string(__LINE__) + "\n";
-        dump(message);
+        DUMP(message);
     }
 }
 
@@ -190,7 +199,7 @@ Stack<T>::Stack(const Stack &obj)
 template <class T>
 Stack<T>::~Stack()
 {
-    dump("Freeing memory...\n");
+    DUMP("Freeing memory...\n");
     if (m_data != NULL) 
         delete [] m_data;
 }
@@ -221,7 +230,7 @@ void Stack<T>::push(const T& value)
         {
             string error = e.what();
             string message = "Trying to push()... Exception caught: " + error + ".\n";
-            dump(message);
+            DUMP(message);
         }
     }
     else
@@ -238,7 +247,9 @@ void Stack<T>::pop()
     if (!empty())
         m_size--;
     else
-        dump("Trying pop()... Stack is empty!\n");
+    {
+        DUMP("Trying pop()... Stack is empty!\n");
+    }
 }
 
 /**
@@ -254,7 +265,9 @@ T& Stack<T>::top()
     if (!empty())
         result = &m_data[m_size-1];
     else
-       dump("Trying top()... Stack is empty!\n");
+    {
+        DUMP("Trying top()... Stack is empty!\n");
+    }
 
     return *result; 
 }
@@ -295,6 +308,7 @@ void Stack<T>::dump(const string &message) const
     // FYI: Лучше держать файл с логами всегда открытым и писать туда когда нужно.
 
     // open dump file and write main info abot the stack
+   // std::ofstream dumpFile(dumpFileName);
     std::ofstream dumpFile(dumpFileName, std::ios_base::app);
     dumpFile << "Stack #" << m_id << endl;
     dumpFile << "(Size: " << m_size << ", capacity: " << m_capacity << ")\n";
@@ -320,4 +334,14 @@ Stack<T>& Stack<T>::operator=(const Stack<T> obj2)
     swap(m_data, obj2.m_data);
     
     return *this;
+}
+
+template <class T>
+string Stack<T>::writeElementsToString() const
+{
+    string elements = "";
+    if (m_size > 0)
+       for (size_type i = 0; i < m_size; i++)
+           elements += "    [" +to_string(i) + "] = " + to_string(m_data[i]) + "\n";
+    return elements;
 }

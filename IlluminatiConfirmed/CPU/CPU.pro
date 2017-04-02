@@ -4,15 +4,21 @@ CONFIG -= app_bundle
 CONFIG -= qt
 
 SOURCES += main.cpp \
-    shared_ptr.t.cpp
+    CPU.cpp \
+    CPU.t.cpp
 
 HEADERS += \
-    auto_ptr.h \
-    unique_ptr.h \
-    shared_ptr.h
+    CPU.h
 
 # Google Test
 unix|win32: LIBS += -L$$PWD/../../../googletest-master/googletest/lib/ -lgtest
 
 INCLUDEPATH += $$PWD/../../../googletest-master/googletest/include
 DEPENDPATH += $$PWD/../../../googletest-master/googletest/include
+
+# Array, Vector, Stack
+INCLUDEPATH += ../Containers \
+            ../Containers/Vector \
+            ../Containers/Array \
+            ../Containers/ContainerInterface \
+            ../../foreveralone/Stack

@@ -66,9 +66,6 @@ Makefile*
 # QtCtreator CMake
 CMakeLists.txt.user*
 
-
-lectures/
-comments.txt
-task1/docs/html/
-task1/docs/latex/
-IlluminatiConfirmed/task2/task2.pro
+foreveralone/Stack/docs
+IlluminatiConfirmed/Containers/docs
+IlluminatiConfirmed/CPU/dumps

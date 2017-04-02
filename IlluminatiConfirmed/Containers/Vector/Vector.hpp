@@ -21,7 +21,8 @@ Vector<Tp>::Vector(size_t capacity) :
     {
         m_data = new Tp[capacity];
         m_capacity = capacity;
-        this->m_size = capacity;
+        //this->m_size = capacity;
+        this->m_size = 0;
         this->m_dataPtr = m_data;
 
     } catch (exception& e)
