@@ -6,8 +6,8 @@
 
 #include "gtest/gtest.h"
 
-#define TEST(str) do { std::cout << "Start testing " << str << std::endl; } while(0);
-#define END() do { std::cout << "Test complete " << std::endl; } while(0);
+#define TEST_(str) do { std::cout << "Start testing " << str << std::endl; } while(0);
+#define END_() do { std::cout << "Test complete " << std::endl; } while(0);
 
 using IlluminatiConfirmed::auto_ptr;
 using IlluminatiConfirmed::unique_ptr;
@@ -31,7 +31,7 @@ int main(int argc, char *argv[])
 {
     (void) argc;
     (void) argv;
-    TEST("auto_ptr")
+    TEST_("auto_ptr")
     {
         vector<auto_ptr<Foo>> p(3);
         for (auto & it : p)
@@ -41,9 +41,9 @@ int main(int argc, char *argv[])
 
         std::for_each(p.begin(), p.end(), [](auto_ptr<Foo>& p) { std::cout<<*p<<"\n"; });
     }
-    END()
+    END_()
 
-    TEST("unique_ptr")
+    TEST_("unique_ptr")
     {
         vector<unique_ptr<Foo>> p(3);
         for (auto & it : p)
@@ -54,9 +54,7 @@ int main(int argc, char *argv[])
 
         std::for_each(p.begin(), p.end(), [](unique_ptr<Foo>& p) { std::cout << *p << "\n"; });
     }
-    END()
-
-
+    END_()
 
 
     ::testing::InitGoogleTest(&argc, argv);

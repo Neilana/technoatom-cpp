@@ -47,7 +47,7 @@ namespace IlluminatiConfirmed
          */
         const Exception operator+(const Exception &rhs)
         {
-            if (m_number >= rhs.m_number)
+            if (m_number <= rhs.m_number)
             {
                 Exception temp(*this);
                 *(temp.m_str) += *rhs.m_str;
@@ -114,7 +114,7 @@ namespace IlluminatiConfirmed
         static int count;
         static int countObjects; //нужно больше говнокода
     };
-    int IlluminatiConfirmed::Exception::count = 0;
-    int IlluminatiConfirmed::Exception::countObjects = 0;
 }
 
+int IlluminatiConfirmed::Exception::count = 0;
+int IlluminatiConfirmed::Exception::countObjects = 0;

@@ -4,7 +4,9 @@ CONFIG -= app_bundle
 CONFIG -= qt
 
 SOURCES += main.cpp \
-    shared_ptr.t.cpp
+    shared_ptr.t.cpp \
+    auto_ptr.t.cpp \
+    unique_ptr.t.cpp
 
 HEADERS += \
     auto_ptr.h \
