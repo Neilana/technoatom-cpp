@@ -83,8 +83,15 @@ namespace  IlluminatiConfirmed
     public:
         CPU();                                              ///< constructor
 
+        // operations for commands
         void writeCommandToMemory(Command cmd, int arg1 = 0);
         void runProgram();
+
+        // file operations
+        bool saveMemoryToTextFile(string fileName = "../savings/file1.txt");
+        bool loadMemoryFromTextFile(string fileName = "../savings/file1.txt");
+        bool saveMemoryToBinaryFile(string fileName = "../savings/file1.bin");
+        bool loadMemoryFromBinaryFile(string fileName = "../savings/file1.bin");
 
     private:
         // constants

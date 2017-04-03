@@ -106,7 +106,7 @@ void CPU::writeCommandToMemory(Command cmd, int arg1)
     }
 }
 
-// run programs from memory
+// run commands from memory
 void CPU::runProgram()
 {
     DUMP_CPU("Start program...");
@@ -171,4 +171,109 @@ void CPU::runProgram()
         DUMP_CPU(to_string(ip));
     }
     DUMP_CPU("...program finished.");
+}
+
+// // run commands from memory
+//void CPU::runProgram()
+//{
+//    while (!onePass()) {};
+//}
+
+
+// save (not binary)
+bool CPU::saveMemoryToTextFile(string fileName)
+{
+    bool result = false;
+    try
+    {
+        std::ofstream saveFile(fileName);
+        for (auto it : m_memory)
+            saveFile << it << " ";
+        saveFile.close();
+        result = true;
+    }
+    catch (...)
+    {
+        result = false;
+    }
+    return result;
+}
+
+// load (not binary)
+bool CPU::loadMemoryFromTextFile(string fileName)
+{
+    DUMP_CPU("Loading memory from text file...");
+
+    m_memory.clear();
+    bool result = false;
+    try
+    {
+        std::ifstream loadFile(fileName);
+        int buf;
+        while (loadFile >> buf)
+        {
+            m_memory.push_back(buf);
+        }
+
+        loadFile.close();
+        result = true;
+    }
+    catch (...)
+    {
+        result = false;
+    }
+
+    DUMP_CPU("...loading finished.");
+    return result;
+}
+
+// save (binary)
+bool CPU::saveMemoryToBinaryFile(string fileName)
+{
+    bool result = false;
+    try
+    {
+        std::ofstream saveFile(fileName, std::ios::binary);
+
+        // magic with writing vector into a file explained here:
+        // http://stackoverflow.com/questions/14089266/how-to-correctly-write-vector-to-binary-file-in-c
+        saveFile.write( (char*)&m_memory[0], sizeof(int) * m_memory.size() );
+
+        saveFile.close();
+        result = true;
+    }
+    catch (...)
+    {
+        result = false;
+    }
+    return result;
+}
+
+// load (binary)
+bool CPU::loadMemoryFromBinaryFile(string fileName)
+{
+    DUMP_CPU("Loading memory from binary file...");
+
+    bool result = false;
+    m_memory.clear();
+    try
+    {
+        std::ifstream loadFile(fileName, std::ios::binary);
+        //loadFile.read(reinterpret_cast<char*>(&m_memory[0]), 3 * sizeof(int)); // or &buf[0]
+        int buf;
+        while (loadFile.read(reinterpret_cast<char*>(&buf), sizeof(buf)))
+        {
+            m_memory.push_back(buf);
+        }
+
+        loadFile.close();
+        result = true;
+    }
+    catch (...)
+    {
+        result = false;
+    }
+
+    DUMP_CPU("...loading finished.");
+    return result;
 }
