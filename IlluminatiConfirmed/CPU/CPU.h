@@ -84,12 +84,15 @@ namespace  IlluminatiConfirmed
     class CPU
     {
     public:
+        typedef int value_type;         ///< type of memory cells, stack, registres
+        typedef size_t size_type;       ///< type of indexes used in the memory
+
         CPU();                                              ///< constructor
 
         // operations for commands
         void writeCommandToMemory(Command cmd, int arg1 = 0);
         void runProgram();
-        int getCommandId(Command cmd) { return static_cast<int>(cmd); }
+        int getCommandId(Command cmd) { return static_cast<value_type>(cmd); }
 
 
         // assembler
@@ -106,21 +109,21 @@ namespace  IlluminatiConfirmed
 
     private:
         // constants
-        static const size_t STACK_CAPACITY = 20;            ///< maximum number of commands stored int the CPU's stack
-        static const size_t REGISTERS_COUNT = 6;            ///< number of availible registers
-        static const size_t MEMORY_CAPACITY = 100;          ///< maximum number of memory "cells" (one cell = one number (command or command's argument) )
+        static const size_type STACK_CAPACITY = 20;            ///< maximum number of commands stored int the CPU's stack
+        static const size_type REGISTERS_COUNT = 6;            ///< number of availible registers
+        static const size_type MEMORY_CAPACITY = 100;          ///< maximum number of memory "cells" (one cell = one number (command or command's argument) )
 
         // private atributes
-        Stack<int> m_stack;
-        Array<int, REGISTERS_COUNT> m_registres;
-        Vector<int> m_memory;                               ///< stores commands to perform
+        Stack<value_type> m_stack;
+        Array<value_type, REGISTERS_COUNT> m_registres;
+        Vector<value_type> m_memory;                               ///< stores commands to perform
 
         Stack<int> m_calls;                                 ///< to remember IP's where functions where called
 
         //Vector<CommandInfo> m_commandsInfo;   ///< stores information about all CPU commands (names, arguments count)
         map<Command, CommandInfo> m_commandsInfo;     ///< stores information about all CPU commands (names, arguments count)
         map<string, Command> m_commandsByName;        ///< stores commands that can be accessed by its string name
-        map<string, int> m_labels;                    ///< stores info about m_labels and its IP
+        map<string, size_type> m_labels;                    ///< stores info about m_labels and its IP
 
         string m_dumpFileName;        ///< name of the file where debug information is stored
 

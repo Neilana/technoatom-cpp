@@ -69,31 +69,31 @@ void CPU::dump(const std::string &message) const
 void CPU::initializeCommandsInfo()
 {
     // push/pop commands
-    m_commandsInfo[Command::Push] = CommandInfo{static_cast<int>(Command::Push), 1, ArgType::Value, "push"};
-    m_commandsInfo[Command::PushConst] = CommandInfo{static_cast<int>(Command::PushConst), 1, ArgType::Value, "push"};
-    m_commandsInfo[Command::PushReg] = CommandInfo{static_cast<int>(Command::PushReg), 1, ArgType::Value, "push"};
-    m_commandsInfo[Command::Pop] = CommandInfo{static_cast<int>(Command::Pop), 0, ArgType::None, "pop"};
+    m_commandsInfo[Command::Push] = CommandInfo{static_cast<value_type>(Command::Push), 1, ArgType::Value, "push"};
+    m_commandsInfo[Command::PushConst] = CommandInfo{static_cast<value_type>(Command::PushConst), 1, ArgType::Value, "push"};
+    m_commandsInfo[Command::PushReg] = CommandInfo{static_cast<value_type>(Command::PushReg), 1, ArgType::Value, "push"};
+    m_commandsInfo[Command::Pop] = CommandInfo{static_cast<value_type>(Command::Pop), 0, ArgType::None, "pop"};
 
     // math commands
-    m_commandsInfo[Command::Add] = CommandInfo{static_cast<int>(Command::Add), 0, ArgType::None, "add"};
-    m_commandsInfo[Command::Sub] = CommandInfo{static_cast<int>(Command::Sub), 0, ArgType::None, "sub"};
-    m_commandsInfo[Command::Div] = CommandInfo{static_cast<int>(Command::Div), 0, ArgType::None, "div"};
-    m_commandsInfo[Command::Mul] = CommandInfo{static_cast<int>(Command::Mul), 0, ArgType::None, "mul"};
+    m_commandsInfo[Command::Add] = CommandInfo{static_cast<value_type>(Command::Add), 0, ArgType::None, "add"};
+    m_commandsInfo[Command::Sub] = CommandInfo{static_cast<value_type>(Command::Sub), 0, ArgType::None, "sub"};
+    m_commandsInfo[Command::Div] = CommandInfo{static_cast<value_type>(Command::Div), 0, ArgType::None, "div"};
+    m_commandsInfo[Command::Mul] = CommandInfo{static_cast<value_type>(Command::Mul), 0, ArgType::None, "mul"};
 
     // jump commands
-    m_commandsInfo[Command::Jmp] = CommandInfo{static_cast<int>(Command::Jmp), 1, ArgType::Label, "jmp"};        // Argument::None, Value, Label ???
-    m_commandsInfo[Command::Ja] = CommandInfo{static_cast<int>(Command::Ja), 1, ArgType::Label, "ja"};
-    m_commandsInfo[Command::Jae] = CommandInfo{static_cast<int>(Command::Jae), 1, ArgType::Label, "jae"};
-    m_commandsInfo[Command::Jb] = CommandInfo{static_cast<int>(Command::Jb), 1, ArgType::Label, "jb"};
-    m_commandsInfo[Command::Jbe] = CommandInfo{static_cast<int>(Command::Jbe), 1, ArgType::Label, "jbe"};
-    m_commandsInfo[Command::Je] = CommandInfo{static_cast<int>(Command::Je), 1, ArgType::Label, "je"};
-    m_commandsInfo[Command::Jne] = CommandInfo{static_cast<int>(Command::Jne), 1, ArgType::Label, "jne"};
+    m_commandsInfo[Command::Jmp] = CommandInfo{static_cast<value_type>(Command::Jmp), 1, ArgType::Label, "jmp"};        // Argument::None, Value, Label ???
+    m_commandsInfo[Command::Ja] = CommandInfo{static_cast<value_type>(Command::Ja), 1, ArgType::Label, "ja"};
+    m_commandsInfo[Command::Jae] = CommandInfo{static_cast<value_type>(Command::Jae), 1, ArgType::Label, "jae"};
+    m_commandsInfo[Command::Jb] = CommandInfo{static_cast<value_type>(Command::Jb), 1, ArgType::Label, "jb"};
+    m_commandsInfo[Command::Jbe] = CommandInfo{static_cast<value_type>(Command::Jbe), 1, ArgType::Label, "jbe"};
+    m_commandsInfo[Command::Je] = CommandInfo{static_cast<value_type>(Command::Je), 1, ArgType::Label, "je"};
+    m_commandsInfo[Command::Jne] = CommandInfo{static_cast<value_type>(Command::Jne), 1, ArgType::Label, "jne"};
 
     // functions
-    m_commandsInfo[Command::Call] = CommandInfo{static_cast<int>(Command::Call), 1, ArgType::Label, "call"};
-    m_commandsInfo[Command::Ret] = CommandInfo{static_cast<int>(Command::Ret), 0, ArgType::None, "ret"};
+    m_commandsInfo[Command::Call] = CommandInfo{static_cast<value_type>(Command::Call), 1, ArgType::Label, "call"};
+    m_commandsInfo[Command::Ret] = CommandInfo{static_cast<value_type>(Command::Ret), 0, ArgType::None, "ret"};
 
-    m_commandsInfo[Command::End] = CommandInfo{static_cast<int>(Command::End), 0, ArgType::None, "end"};
+    m_commandsInfo[Command::End] = CommandInfo{static_cast<value_type>(Command::End), 0, ArgType::None, "end"};
 
     // names
     // push/pop commands
@@ -141,7 +141,7 @@ void CPU::runProgram()
 {
     DUMP_CPU("Start program...");
 
-    size_t ip = 0;
+    size_type ip = 0;
     while (ip < m_memory.size())
     {
         Command cmd = static_cast<Command> (m_memory[ip]);
@@ -157,9 +157,9 @@ void CPU::runProgram()
 
             case Command::Add:
             {
-                int buf1 = m_stack.top();
+                value_type buf1 = m_stack.top();
                 m_stack.pop();
-                int buf2 = m_stack.top();
+                value_type buf2 = m_stack.top();
                 m_stack.pop();
 
                 m_stack.push(buf1 + buf2);
@@ -170,9 +170,9 @@ void CPU::runProgram()
 
             case Command::Sub:
             {
-                int buf1 = m_stack.top();
+                value_type buf1 = m_stack.top();
                 m_stack.pop();
-                int buf2 = m_stack.top();
+                value_type buf2 = m_stack.top();
                 m_stack.pop();
 
                 m_stack.push(buf2 - buf1);
@@ -183,10 +183,10 @@ void CPU::runProgram()
 
             case Command::Div:
             {
-                int buf1 = m_stack.top();
+                value_type buf1 = m_stack.top();
                 m_stack.pop();
 
-                int buf2 = m_stack.top();
+                value_type buf2 = m_stack.top();
                 m_stack.pop();
 
                 m_stack.push(buf2 / buf1);
@@ -197,10 +197,10 @@ void CPU::runProgram()
 
             case Command::Mul:
             {
-                int buf1 = m_stack.top();
+                value_type buf1 = m_stack.top();
                 m_stack.pop();
 
-                int buf2 = m_stack.top();
+                value_type buf2 = m_stack.top();
                 m_stack.pop();
 
                 m_stack.push(buf1 * buf2);
@@ -217,10 +217,10 @@ void CPU::runProgram()
 
             case Command::Ja:
             {
-                int second = m_stack.top();
+                value_type second = m_stack.top();
                 m_stack.pop();
 
-                int first = m_stack.top();
+                value_type first = m_stack.top();
                 m_stack.pop();
 
                 if (first > second)
@@ -232,10 +232,10 @@ void CPU::runProgram()
 
             case Command::Jae:
             {
-                int second = m_stack.top();
+                value_type second = m_stack.top();
                 m_stack.pop();
 
-                int first = m_stack.top();
+                value_type first = m_stack.top();
                 m_stack.pop();
 
                 if (first >= second)
@@ -247,10 +247,10 @@ void CPU::runProgram()
 
             case Command::Jb:
             {
-                int second = m_stack.top();
+                value_type second = m_stack.top();
                 m_stack.pop();
 
-                int first = m_stack.top();
+                value_type first = m_stack.top();
                 m_stack.pop();
 
                 if (first < second)
@@ -262,10 +262,10 @@ void CPU::runProgram()
 
             case Command::Jbe:
             {
-                int second = m_stack.top();
+                value_type second = m_stack.top();
                 m_stack.pop();
 
-                int first = m_stack.top();
+                value_type first = m_stack.top();
                 m_stack.pop();
 
                 if (first <= second)
@@ -277,10 +277,10 @@ void CPU::runProgram()
 
             case Command::Je:
             {
-                int second = m_stack.top();
+                value_type second = m_stack.top();
                 m_stack.pop();
 
-                int first = m_stack.top();
+                value_type first = m_stack.top();
                 m_stack.pop();
 
                 if (first == second)
@@ -292,10 +292,10 @@ void CPU::runProgram()
 
             case Command::Jne:
             {
-                int second = m_stack.top();
+                value_type second = m_stack.top();
                 m_stack.pop();
 
-                int first = m_stack.top();
+                value_type first = m_stack.top();
                 m_stack.pop();
 
                 if (first != second)
@@ -372,7 +372,7 @@ bool CPU::loadMemoryFromTextFile(const string &fileName)
     try
     {
         std::ifstream loadFile(fileName);
-        int buf;
+        value_type buf;
         while (loadFile >> buf)
         {
             m_memory.push_back(buf);
@@ -400,7 +400,7 @@ bool CPU::saveMemoryToBinaryFile(const string &fileName)
 
         // magic with writing vector into a file explained here:
         // http://stackoverflow.com/questions/14089266/how-to-correctly-write-vector-to-binary-file-in-c
-        saveFile.write( (char*)&m_memory[0], sizeof(int) * m_memory.size() );
+        saveFile.write( (char*)&m_memory[0], sizeof(value_type) * m_memory.size() );
 
         saveFile.close();
         result = true;
@@ -423,7 +423,7 @@ bool CPU::loadMemoryFromBinaryFile(const string &fileName)
     {
         std::ifstream loadFile(fileName, std::ios::binary);
         //loadFile.read(reinterpret_cast<char*>(&m_memory[0]), 3 * sizeof(int)); // or &buf[0]
-        int buf;
+        value_type buf;
         while (loadFile.read(reinterpret_cast<char*>(&buf), sizeof(buf)))
         {
             m_memory.push_back(buf);
@@ -472,19 +472,19 @@ bool CPU::runAssemblerForFile(const string &fileName)
 
                     if (cmd == Command::Push)
                     {
-                        m_memory.push_back(static_cast<int>(Command::PushConst));
-                        int bufInt;
-                        loadFile >> bufInt;
-                        m_memory.push_back(bufInt);
+                        m_memory.push_back(static_cast<value_type>(Command::PushConst));
+                        value_type bufValue;
+                        loadFile >> bufValue;
+                        m_memory.push_back(bufValue);
                         // a register
                         // get register #
-                        // m_memory.push_back(static_cast<int>(Command::PushReg));
+                        // m_memory.push_back(static_cast<value_type>(Command::PushReg));
                         // m_memory.push_back(#); // register #
                     }
                     else        // not push
                     {
                         //    Command cmd = m_commandsByName[buf];
-                        m_memory.push_back(static_cast<int>(cmd));
+                        m_memory.push_back(static_cast<value_type>(cmd));
 
                         // if cmd == jmp or smth
                         if (m_commandsInfo[cmd].argType == ArgType::Label)  // jmp, call, ja etc
