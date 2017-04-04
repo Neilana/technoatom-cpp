@@ -117,12 +117,12 @@ namespace  IlluminatiConfirmed
 
         Stack<int> m_calls;                                 ///< to remember IP's where functions where called
 
-        //Vector<CommandInfo> commandsInfo;   ///< stores information about all CPU commands (names, arguments count)
-        map<Command, CommandInfo> commandsInfo;     ///< stores information about all CPU commands (names, arguments count)
-        map<string, Command> commandsByName;        ///< stores commands that can be accessed by its string name
-        map<string, int> labels;                    ///< stores info about labels and its IP
+        //Vector<CommandInfo> m_commandsInfo;   ///< stores information about all CPU commands (names, arguments count)
+        map<Command, CommandInfo> m_commandsInfo;     ///< stores information about all CPU commands (names, arguments count)
+        map<string, Command> m_commandsByName;        ///< stores commands that can be accessed by its string name
+        map<string, int> m_labels;                    ///< stores info about m_labels and its IP
 
-        string dumpFileName;        ///< name of the file where debug information is stored
+        string m_dumpFileName;        ///< name of the file where debug information is stored
 
         // private methods
         void dump(const string &message) const;

@@ -23,8 +23,8 @@ using IlluminatiConfirmed::Vector;
 using MyNamespace::Stack;
 
 CPU::CPU() :
-    m_stack(STACK_CAPACITY), m_memory(MEMORY_CAPACITY), m_calls(), commandsInfo(),
-    commandsByName(), labels(), dumpFileName("")
+    m_stack(STACK_CAPACITY), m_memory(MEMORY_CAPACITY), m_calls(), m_commandsInfo(),
+    m_commandsByName(), m_labels(), m_dumpFileName("")
 {
     // generate dump file name
     time_t nowTime = time(0);
@@ -33,7 +33,7 @@ CPU::CPU() :
 
     strftime(nowStr1, 40, "%F %T", &nowInfo);
     string nowStr2 (nowStr1);
-    dumpFileName = "../dumps/"+ nowStr2;
+    m_dumpFileName = "../dumps/"+ nowStr2;
 
     string message = "Creating CPU...";
     DUMP_CPU(message);
@@ -45,7 +45,7 @@ CPU::CPU() :
 void CPU::dump(const std::string &message) const
 {
     // open dump file and write main info about the CPU
-    std::ofstream dumpFile(dumpFileName, std::ios_base::app);
+    std::ofstream dumpFile(m_dumpFileName, std::ios_base::app);
     dumpFile << message << endl;
     dumpFile << "CPU: " << endl;
     dumpFile << "   (Stack size: " << m_stack.size() << ", stack capacity: " << m_stack.capacity() << ")\n";
@@ -69,69 +69,69 @@ void CPU::dump(const std::string &message) const
 void CPU::initializeCommandsInfo()
 {
     // push/pop commands
-    commandsInfo[Command::Push] = CommandInfo{static_cast<int>(Command::Push), 1, ArgType::Value, "push"};
-    commandsInfo[Command::PushConst] = CommandInfo{static_cast<int>(Command::PushConst), 1, ArgType::Value, "push"};
-    commandsInfo[Command::PushReg] = CommandInfo{static_cast<int>(Command::PushReg), 1, ArgType::Value, "push"};
-    commandsInfo[Command::Pop] = CommandInfo{static_cast<int>(Command::Pop), 0, ArgType::None, "pop"};
+    m_commandsInfo[Command::Push] = CommandInfo{static_cast<int>(Command::Push), 1, ArgType::Value, "push"};
+    m_commandsInfo[Command::PushConst] = CommandInfo{static_cast<int>(Command::PushConst), 1, ArgType::Value, "push"};
+    m_commandsInfo[Command::PushReg] = CommandInfo{static_cast<int>(Command::PushReg), 1, ArgType::Value, "push"};
+    m_commandsInfo[Command::Pop] = CommandInfo{static_cast<int>(Command::Pop), 0, ArgType::None, "pop"};
 
     // math commands
-    commandsInfo[Command::Add] = CommandInfo{static_cast<int>(Command::Add), 0, ArgType::None, "add"};
-    commandsInfo[Command::Sub] = CommandInfo{static_cast<int>(Command::Sub), 0, ArgType::None, "sub"};
-    commandsInfo[Command::Div] = CommandInfo{static_cast<int>(Command::Div), 0, ArgType::None, "div"};
-    commandsInfo[Command::Mul] = CommandInfo{static_cast<int>(Command::Mul), 0, ArgType::None, "mul"};
+    m_commandsInfo[Command::Add] = CommandInfo{static_cast<int>(Command::Add), 0, ArgType::None, "add"};
+    m_commandsInfo[Command::Sub] = CommandInfo{static_cast<int>(Command::Sub), 0, ArgType::None, "sub"};
+    m_commandsInfo[Command::Div] = CommandInfo{static_cast<int>(Command::Div), 0, ArgType::None, "div"};
+    m_commandsInfo[Command::Mul] = CommandInfo{static_cast<int>(Command::Mul), 0, ArgType::None, "mul"};
 
     // jump commands
-    commandsInfo[Command::Jmp] = CommandInfo{static_cast<int>(Command::Jmp), 1, ArgType::Label, "jmp"};        // Argument::None, Value, Label ???
-    commandsInfo[Command::Ja] = CommandInfo{static_cast<int>(Command::Ja), 1, ArgType::Label, "ja"};
-    commandsInfo[Command::Jae] = CommandInfo{static_cast<int>(Command::Jae), 1, ArgType::Label, "jae"};
-    commandsInfo[Command::Jb] = CommandInfo{static_cast<int>(Command::Jb), 1, ArgType::Label, "jb"};
-    commandsInfo[Command::Jbe] = CommandInfo{static_cast<int>(Command::Jbe), 1, ArgType::Label, "jbe"};
-    commandsInfo[Command::Je] = CommandInfo{static_cast<int>(Command::Je), 1, ArgType::Label, "je"};
-    commandsInfo[Command::Jne] = CommandInfo{static_cast<int>(Command::Jne), 1, ArgType::Label, "jne"};
+    m_commandsInfo[Command::Jmp] = CommandInfo{static_cast<int>(Command::Jmp), 1, ArgType::Label, "jmp"};        // Argument::None, Value, Label ???
+    m_commandsInfo[Command::Ja] = CommandInfo{static_cast<int>(Command::Ja), 1, ArgType::Label, "ja"};
+    m_commandsInfo[Command::Jae] = CommandInfo{static_cast<int>(Command::Jae), 1, ArgType::Label, "jae"};
+    m_commandsInfo[Command::Jb] = CommandInfo{static_cast<int>(Command::Jb), 1, ArgType::Label, "jb"};
+    m_commandsInfo[Command::Jbe] = CommandInfo{static_cast<int>(Command::Jbe), 1, ArgType::Label, "jbe"};
+    m_commandsInfo[Command::Je] = CommandInfo{static_cast<int>(Command::Je), 1, ArgType::Label, "je"};
+    m_commandsInfo[Command::Jne] = CommandInfo{static_cast<int>(Command::Jne), 1, ArgType::Label, "jne"};
 
     // functions
-    commandsInfo[Command::Call] = CommandInfo{static_cast<int>(Command::Call), 1, ArgType::Label, "call"};
-    commandsInfo[Command::Ret] = CommandInfo{static_cast<int>(Command::Ret), 0, ArgType::None, "ret"};
+    m_commandsInfo[Command::Call] = CommandInfo{static_cast<int>(Command::Call), 1, ArgType::Label, "call"};
+    m_commandsInfo[Command::Ret] = CommandInfo{static_cast<int>(Command::Ret), 0, ArgType::None, "ret"};
 
-    commandsInfo[Command::End] = CommandInfo{static_cast<int>(Command::End), 0, ArgType::None, "end"};
+    m_commandsInfo[Command::End] = CommandInfo{static_cast<int>(Command::End), 0, ArgType::None, "end"};
 
     // names
     // push/pop commands
-    commandsByName["push"] = Command::Push;    // not obvious! (const or reg)
-    commandsByName["pop"] = Command::Pop;
+    m_commandsByName["push"] = Command::Push;    // not obvious! (const or reg)
+    m_commandsByName["pop"] = Command::Pop;
 
     // math commands
-    commandsByName["add"] = Command::Add;
-    commandsByName["sub"] = Command::Sub;
-    commandsByName["div"] = Command::Div;
-    commandsByName["mul"] = Command::Mul;
+    m_commandsByName["add"] = Command::Add;
+    m_commandsByName["sub"] = Command::Sub;
+    m_commandsByName["div"] = Command::Div;
+    m_commandsByName["mul"] = Command::Mul;
 
     // jump commands
-    commandsByName["jmp"] = Command::Jmp;
-    commandsByName["ja"] = Command::Ja;
-    commandsByName["jae"] = Command::Jae;
-    commandsByName["jb"] = Command::Jb;
-    commandsByName["jbe"] = Command::Jbe;
-    commandsByName["je"] = Command::Je;
-    commandsByName["jne"] = Command::Jne;
+    m_commandsByName["jmp"] = Command::Jmp;
+    m_commandsByName["ja"] = Command::Ja;
+    m_commandsByName["jae"] = Command::Jae;
+    m_commandsByName["jb"] = Command::Jb;
+    m_commandsByName["jbe"] = Command::Jbe;
+    m_commandsByName["je"] = Command::Je;
+    m_commandsByName["jne"] = Command::Jne;
 
     // function commands
-    commandsByName["call"] = Command::Call;
-    commandsByName["ret"] = Command::Ret;
-//    commandsByName[""] = Command::Label;
+    m_commandsByName["call"] = Command::Call;
+    m_commandsByName["ret"] = Command::Ret;
+//    m_commandsByName[""] = Command::Label;
 
-    commandsByName["end"] = Command::End;
+    m_commandsByName["end"] = Command::End;
 }
 
 // just writes commands in memory, we don't need to actualy run any command yet (no operation with stack)
 void CPU::writeCommandToMemory(Command cmd, int arg1)
 {
     // if we have enough free memory
-    if (m_memory.size() + commandsInfo[cmd].argsCount + 1 <= m_memory.capacity())
+    if (m_memory.size() + m_commandsInfo[cmd].argsCount + 1 <= m_memory.capacity())
     {
-        m_memory.push_back(commandsInfo[cmd].id);
+        m_memory.push_back(m_commandsInfo[cmd].id);
 
-        if (commandsInfo[cmd].argsCount == 1)
+        if (m_commandsInfo[cmd].argsCount == 1)
           m_memory.push_back(arg1);
     }
 }
@@ -460,14 +460,14 @@ bool CPU::runAssemblerForFile(const string &fileName)
 
             std::size_t found = buf.find(":");
             if (found != std::string::npos)    // if label
-                labels[buf] = m_memory.size();      // label is pointing to the current (next) command
+                m_labels[buf] = m_memory.size();      // label is pointing to the current (next) command
             else
             {
-                Command cmd = commandsByName[buf];
+                Command cmd = m_commandsByName[buf];
                 // if we have enough memory
-                if ((m_memory.size() + 1 + commandsInfo[cmd].argsCount) < m_memory.capacity())
+                if ((m_memory.size() + 1 + m_commandsInfo[cmd].argsCount) < m_memory.capacity())
                 {
-                   // if (commandsInfo[cmd].argsCount == 1)
+                   // if (m_commandsInfo[cmd].argsCount == 1)
                     //    loadFile >> buf;
 
                     if (cmd == Command::Push)
@@ -483,18 +483,18 @@ bool CPU::runAssemblerForFile(const string &fileName)
                     }
                     else        // not push
                     {
-                        //    Command cmd = commandsByName[buf];
+                        //    Command cmd = m_commandsByName[buf];
                         m_memory.push_back(static_cast<int>(cmd));
 
                         // if cmd == jmp or smth
-                        if (commandsInfo[cmd].argType == ArgType::Label)  // jmp, call, ja etc
+                        if (m_commandsInfo[cmd].argType == ArgType::Label)  // jmp, call, ja etc
                         {
                             string bufLabel;
                             loadFile >> bufLabel;
 
                             int bufIp = -1; // by default label not found
-                            if (labels.count(bufLabel) > 0)     // if label was found
-                                bufIp = labels[bufLabel];
+                            if (m_labels.count(bufLabel) > 0)     // if label was found
+                                bufIp = m_labels[bufLabel];
                             m_memory.push_back(bufIp);
                         }
                     }
