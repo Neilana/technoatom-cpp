@@ -33,6 +33,7 @@ namespace  IlluminatiConfirmed
     enum class Command
     {
         // push/pop commands
+        Push,           // not sure we need it
         PushConst,      ///< push constant value (e.g. push 2)
         PushReg,        ///< push value from the specified register (e.g. push m_registres[0])
         Pop,            ///< pop last value
@@ -55,24 +56,26 @@ namespace  IlluminatiConfirmed
         // functions
         Call,           ///< call function
         Ret,            ///< return from function
+        Label,          ///< begining of the segment
 
         End             ///< end of program
     };
 
-//    enum class ArgsType
-//    {
-//        None,           ///< command has no arguments (e.g. add, div)
-//        Value,          ///< argument is a value (register or constant) (e.g. push)
-//        Label           ///< argument is a label to jump
-//    }
+    /// enum for arguments types
+    enum class ArgType
+    {
+        None,           ///< command has no arguments (e.g. add, div)
+        Value,          ///< argument is a value (register or constant) (e.g. push)
+        Label           ///< argument is a label to jump
+    };
 
     /// structure for command
     struct CommandInfo
     {
         int id;
         //Command cmd;
-        //ArgType arg;
         unsigned char argsCount;
+        ArgType argType;
         string name;
         bool operator!=(const CommandInfo& rhs) const { return (id != rhs.id); }
     };
@@ -86,12 +89,20 @@ namespace  IlluminatiConfirmed
         // operations for commands
         void writeCommandToMemory(Command cmd, int arg1 = 0);
         void runProgram();
+        int getCommandId(Command cmd) { return static_cast<int>(cmd); }
 
-        // file operations
-        bool saveMemoryToTextFile(string fileName = "../savings/file1.txt");
-        bool loadMemoryFromTextFile(string fileName = "../savings/file1.txt");
-        bool saveMemoryToBinaryFile(string fileName = "../savings/file1.bin");
-        bool loadMemoryFromBinaryFile(string fileName = "../savings/file1.bin");
+
+        // assembler
+        bool runAssemblerForFile(const string &fileName = "../savings/example1.code");
+        //void readAssemblerCodeFromFile(const string &fileName = "../savings/example1.code");
+
+        //disassembler
+
+        // memory file operations
+        bool saveMemoryToTextFile(const string &fileName = "../savings/save.memory.txt");
+        bool loadMemoryFromTextFile(const string &fileName = "../savings/save.memory.txt");
+        bool saveMemoryToBinaryFile(const string &fileName = "../savings/save.memory.bin");
+        bool loadMemoryFromBinaryFile(const string &fileName = "../savings/save.memory.bin");
 
     private:
         // constants
@@ -102,11 +113,14 @@ namespace  IlluminatiConfirmed
         // private atributes
         Stack<int> m_stack;
         Array<int, REGISTERS_COUNT> m_registres;
-        //Array<int, MEMORY_CAPACITY> m_memory;
         Vector<int> m_memory;                               ///< stores commands to perform
 
+        Stack<int> m_calls;                                 ///< to remember IP's where functions where called
+
         //Vector<CommandInfo> commandsInfo;   ///< stores information about all CPU commands (names, arguments count)
-        map<Command, CommandInfo> commandsInfo;   ///< stores information about all CPU commands (names, arguments count)
+        map<Command, CommandInfo> commandsInfo;     ///< stores information about all CPU commands (names, arguments count)
+        map<string, Command> commandsByName;        ///< stores commands that can be accessed by its string name
+        map<string, int> labels;                    ///< stores info about labels and its IP
 
         string dumpFileName;        ///< name of the file where debug information is stored
 

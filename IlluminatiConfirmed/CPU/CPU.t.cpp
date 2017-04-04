@@ -11,6 +11,7 @@ TEST(CPUTest, Check1)
     CPU cpu1;
 
     // заполняем память командами (типа напрямую записываем в процессор)
+    // уже не нужно, надо будет удалить
     cpu1.writeCommandToMemory(Command::PushConst, 10);
     cpu1.writeCommandToMemory(Command::PushConst, 3);
     cpu1.writeCommandToMemory(Command::Add);
@@ -28,6 +29,10 @@ TEST(CPUTest, Check1)
     //cpu2.loadMemoryFromTextFile();
     cpu2.loadMemoryFromBinaryFile();        // проверяем ручками дампы - всё океюшки, память cpu1 == cpu2
 
+    // проверяем чтение из файла самой проги
+    CPU cpu3;
+    cpu3.runAssemblerForFile();
+    cpu3.saveMemoryToTextFile();
 
     //Command buf = static_cast<Command> (1);
 //    cpu1.saveFromMemoryToFile();
