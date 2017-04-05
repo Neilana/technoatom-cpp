@@ -23,7 +23,7 @@ using IlluminatiConfirmed::Vector;
 using MyNamespace::Stack;
 
 CPU::CPU() :
-    m_stack(STACK_CAPACITY), m_memory(MEMORY_CAPACITY), m_calls(), m_commandsInfo(),
+    m_stack(STACK_CAPACITY), m_registres(0), m_memory(MEMORY_CAPACITY), m_calls(), m_commandsInfo(),
     m_commandsByName(), m_labels(), m_dumpFileName("")
 {
     // generate dump file name
@@ -52,6 +52,14 @@ void CPU::dump(const std::string &message) const
     dumpFile << "   (Registers count: " << m_registres.size() << ")\n";
     dumpFile << "   (Memory size: " << m_memory.size() << ", memory capacity: " << m_memory.capacity() << ")\n";
 
+    // registres
+    dumpFile << "Registres: \n" ;
+    int i = 0;
+    for (auto it = m_registres.begin(); it != m_registres.end(); ++it, i++)
+        dumpFile << "   x"<< i << " = " << *it << "\n";
+
+    dumpFile << "\n";
+
     // write memory state into file
     dumpFile << "Memory state:  ";
     for (auto it : m_memory)
@@ -62,6 +70,12 @@ void CPU::dump(const std::string &message) const
     string stackElements = "";
     stackElements = m_stack.writeElementsToString();
     dumpFile << "Stack state: \n" << stackElements << "\n";
+
+    // known labels
+    dumpFile << "Known labels: \n" ;
+    for (auto it = m_labels.begin(); it != m_labels.end(); ++it)
+        dumpFile << "   " << it->first << " (" << it->second << ")\n";
+    dumpFile << "\n";
 
     dumpFile.close();
 }
@@ -142,15 +156,28 @@ void CPU::runProgram()
     DUMP_CPU("Start program...");
 
     size_type ip = 0;
-    while (ip < m_memory.size())
+    int pass = 0;
+    bool end = false;
+    //while (ip < m_memory.size() && pass < ITERATIONS_MAX)
+    while (!end && pass < ITERATIONS_MAX)
     {
         Command cmd = static_cast<Command> (m_memory[ip]);
-
+        ++pass;
+        //std::cout << pass << " ";
         switch (cmd)
         {
             case Command::PushConst:
             {
                 m_stack.push(m_memory[ip + 1]);
+                ip = ip + 2;
+            }
+            break;
+
+            case Command::PushReg:
+            {
+                // value tupe -> size type ???
+                size_type regNumber = m_memory[ip + 1];
+                m_stack.push(m_registres[regNumber]);
                 ip = ip + 2;
             }
             break;
@@ -307,7 +334,7 @@ void CPU::runProgram()
 
             case Command::Call:
             {
-                m_calls.push(ip);
+                m_calls.push(ip + 2);
                 ip = m_memory[ip + 1];
             }
             break;
@@ -321,7 +348,7 @@ void CPU::runProgram()
 
             case Command::End:
             {
-                ip = ip + 1;
+                end = true;
             }
             break;
 
@@ -329,9 +356,8 @@ void CPU::runProgram()
             break;
         }
 
-        // if not jmp
-
-        DUMP_CPU(to_string(ip));
+        string cmdStr = m_commandsInfo[cmd].name;
+        DUMP_CPU(cmdStr);
     }
     DUMP_CPU("...program finished.");
 }
@@ -455,9 +481,6 @@ bool CPU::runAssemblerForFile(const string &fileName)
         while (loadFile >> buf)
         {
             std::transform(buf.begin(), buf.end(), buf.begin(), ::tolower);  // buf to lower case
-            std::cout << buf << std::endl;
-            // search for ":" (label)
-
             std::size_t found = buf.find(":");
             if (found != std::string::npos)    // if label
                 m_labels[buf] = m_memory.size();      // label is pointing to the current (next) command
@@ -472,15 +495,27 @@ bool CPU::runAssemblerForFile(const string &fileName)
 
                     if (cmd == Command::Push)
                     {
-                        m_memory.push_back(static_cast<value_type>(Command::PushConst));
-                        value_type bufValue;
-                        loadFile >> bufValue;
-                        m_memory.push_back(bufValue);
-                        // a register
-                        // get register #
-                        // m_memory.push_back(static_cast<value_type>(Command::PushReg));
-                        // m_memory.push_back(#); // register #
+                        loadFile >> buf;
+                        if (buf[0] == 'x') // arg = register
+                        {
+                            loadFile.seekg(-buf.length() + 1, std::ios_base::cur);
+                            m_memory.push_back(static_cast<value_type>(Command::PushReg));
+
+                            value_type bufRegN;
+                            loadFile >> bufRegN;
+                            m_memory.push_back(bufRegN);
+                        }
+                        else // push const
+                        {
+                            loadFile.seekg(-buf.length(), std::ios_base::cur);
+                            m_memory.push_back(static_cast<value_type>(Command::PushConst));
+
+                            value_type bufValue;
+                            loadFile >> bufValue;
+                            m_memory.push_back(bufValue);
+                        }
                     }
+
                     else        // not push
                     {
                         //    Command cmd = m_commandsByName[buf];

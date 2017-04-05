@@ -113,6 +113,9 @@ namespace  IlluminatiConfirmed
         static const size_type REGISTERS_COUNT = 6;            ///< number of availible registers
         static const size_type MEMORY_CAPACITY = 100;          ///< maximum number of memory "cells" (one cell = one number (command or command's argument) )
 
+        // не уверена, что эта штука должна находится внутри класса
+        static const int ITERATIONS_MAX = 2000;                ///< maximum number of iterations (in order to prevent endless cycles)
+
         // private atributes
         Stack<value_type> m_stack;
         Array<value_type, REGISTERS_COUNT> m_registres;
