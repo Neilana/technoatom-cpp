@@ -1,6 +1,6 @@
 #pragma once
 
-//#include "../Exceptions/Exception.h"
+#include "Exception.h"
 
 using IlluminatiConfirmed::ContainerInterface;
 
@@ -25,7 +25,6 @@ Tp& ContainerInterface<Tp>::at(size_t index)
 {
     DUMP("in mb out");
     //ASSERT_OK((index < m_size));
-    //throw IlluminatiConfirmed::Exception( 33, "Out of range", __LINE__, __FILE__, __PRETTY_FUNCTION__ );
     if (index < m_size)
     {
         return m_dataPtr[index];
@@ -33,7 +32,8 @@ Tp& ContainerInterface<Tp>::at(size_t index)
     else
     {
         ASSERT_OK(!"Out of range");
-        throw std::out_of_range("ERRROOOORRRRR");
+        throw EXCEPTION("out of range", nullptr);
+        //throw std::out_of_range("ERRROOOORRRRR");
     }
 }
 

@@ -18,7 +18,8 @@ DEPENDPATH += $$PWD/../../../googletest-master/googletest/include
 
 INCLUDEPATH += Vector \
             Array \
-            ContainerInterface
+            ContainerInterface \
+            ..\Exceptions
 
 HEADERS += \
     ContainerInterface.hpp \
