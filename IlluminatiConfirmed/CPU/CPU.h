@@ -12,6 +12,8 @@
 #include <iostream>
 #include <string>
 #include <map>
+#include <functional>
+#include <algorithm>
 
 // custom headers
 #include "Vector.h"
@@ -29,6 +31,7 @@ using MyNamespace::Stack;
 
 namespace  IlluminatiConfirmed
 {
+    class CPU;
     /// enum for CPU commands
     enum class Command
     {
@@ -69,16 +72,7 @@ namespace  IlluminatiConfirmed
         Label           ///< argument is a label to jump
     };
 
-    /// structure for command
-    struct CommandInfo
-    {
-        int id;
-        //Command cmd;
-        unsigned char argsCount;
-        ArgType argType;
-        string name;
-        bool operator!=(const CommandInfo& rhs) const { return (id != rhs.id); }
-    };
+    struct CommandInfo;
 
     /// CPU class
     class CPU
@@ -133,5 +127,17 @@ namespace  IlluminatiConfirmed
         // private methods
         void dump(const string &message) const;
         void initializeCommandsInfo();      ///< fill information about commands (names, arguments count)
+    };
+
+    /// structure for command
+    struct CommandInfo
+    {
+        int id;
+        //Command cmd;
+        unsigned char argsCount;
+        ArgType argType;
+        string name;
+        std::function<void(Vector<CPU::value_type>::iterator&)> lambda;
+        bool operator!=(const CommandInfo& rhs) const { return (id != rhs.id); }
     };
 }
