@@ -87,10 +87,10 @@ void CPU::initializeCommandsInfo()
     m_commandsInfo[Command::Push] = CommandInfo{static_cast<value_type>(Command::Push), 1, ArgType::Value, "push", ([this](Vector<value_type>::iterator& it) {
         //do nothing
     })};
-    m_commandsInfo[Command::PushConst] = CommandInfo{static_cast<value_type>(Command::PushConst), 1, ArgType::Value, "push", [this](Vector<value_type>::iterator& it) {
+    m_commandsInfo[Command::PushConst] = CommandInfo{static_cast<value_type>(Command::PushConst), 1, ArgType::Value, "pushConst", [this](Vector<value_type>::iterator& it) {
         m_stack.push(*(++it));
     }};
-    m_commandsInfo[Command::PushReg] = CommandInfo{static_cast<value_type>(Command::PushReg), 1, ArgType::Value, "push", [this](Vector<value_type>::iterator& it) {
+    m_commandsInfo[Command::PushReg] = CommandInfo{static_cast<value_type>(Command::PushReg), 1, ArgType::Value, "pushReg", [this](Vector<value_type>::iterator& it) {
         size_type regNumber = *(++it);
         m_stack.push(m_registres[regNumber]);
     }};
@@ -106,7 +106,6 @@ void CPU::initializeCommandsInfo()
         m_stack.pop();
 
         m_stack.push(buf1 + buf2);
-         ++it;
     }};
     m_commandsInfo[Command::Sub] = CommandInfo{static_cast<value_type>(Command::Sub), 0, ArgType::None, "sub", [this](Vector<value_type>::iterator& it) {
         value_type buf1 = m_stack.top();
@@ -257,34 +256,6 @@ void CPU::initializeCommandsInfo()
     std::for_each(m_commandsInfo.begin(), m_commandsInfo.end(), [this](std::pair<Command, CommandInfo> info){
         m_commandsByName[info.second.name] = info.first;
     });
-
-    m_commandsByName.erase("end"); //эм я на это потратил 30 минут недоумения, почему мой фореач не работает)
-    m_commandsByName["push"] = Command::Push;
-     //push/pop commands
-//    m_commandsByName["push"] = Command::Push;    // not obvious! (const or reg)
-//    m_commandsByName["pop"] = Command::Pop;
-
-//    // math commands
-//    m_commandsByName["add"] = Command::Add;
-//    m_commandsByName["sub"] = Command::Sub;
-//    m_commandsByName["div"] = Command::Div;
-//    m_commandsByName["mul"] = Command::Mul;
-
-//    // jump commands
-//    m_commandsByName["jmp"] = Command::Jmp;
-//    m_commandsByName["ja"] = Command::Ja;
-//    m_commandsByName["jae"] = Command::Jae;
-//    m_commandsByName["jb"] = Command::Jb;
-//    m_commandsByName["jbe"] = Command::Jbe;
-//    m_commandsByName["je"] = Command::Je;
-//    m_commandsByName["jne"] = Command::Jne;
-
-//    // function commands
-//    m_commandsByName["call"] = Command::Call;
-//    m_commandsByName["ret"] = Command::Ret;
-////    m_commandsByName[""] = Command::Label;
-
-//    m_commandsByName["end"] = Command::End;
 }
 
 // just writes commands in memory, we don't need to actualy run any command yet (no operation with stack)
@@ -303,13 +274,13 @@ void CPU::writeCommandToMemory(Command cmd, int arg1)
 // run commands from memory
 void CPU::runProgram()
 {
-    //DUMP_CPU("Start program..."); //и почему - то здесь программа останавливается в дебаггере, магия какая-то
-    size_type ip = 0;
+    DUMP_CPU("Start program...");
+
     int pass = 0;
     for (auto it = m_memory.begin(); it != m_memory.end(); ++it)
     {
-        if (pass++ == ITERATIONS_MAX) break; //FIXME: Если что, в программе явный косяк, у меня тесты выполняются только с этим ограничением, что с итераторами и лямбдами, что без них
-        m_commandsInfo.at(static_cast<Command> (m_memory[ip])).lambda(it);
+        if (pass++ == ITERATIONS_MAX) break;
+        m_commandsInfo.at(static_cast<Command> (*it)).lambda(it);
     }
 
     DUMP_CPU("...program finished.");
