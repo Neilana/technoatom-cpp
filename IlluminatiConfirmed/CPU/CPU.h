@@ -19,6 +19,7 @@
 #include "Vector.h"
 #include "Array.h"
 #include "Stack.h"
+#include "Logger.h"
 
 // standart usings
 using std::size_t;
@@ -77,6 +78,7 @@ namespace  IlluminatiConfirmed
     /// CPU class
     class CPU
     {
+        INIT_LOG(IlluminatiConfirmed::multiStream, "../CPU/dumps/", "CPU")
     public:
         typedef int value_type;         ///< type of memory cells, stack, registres
         typedef size_t size_type;       ///< type of indexes used in the memory
@@ -125,7 +127,7 @@ namespace  IlluminatiConfirmed
         string m_dumpFileName;        ///< name of the file where debug information is stored
 
         // private methods
-        void dump(const string &message) const;
+        void dump(const string &message);
         void initializeCommandsInfo();      ///< fill information about commands (names, arguments count)
     };
 
@@ -138,6 +140,6 @@ namespace  IlluminatiConfirmed
         ArgType argType;
         string name;
         std::function<void(Vector<CPU::value_type>::iterator&)> lambda;
-        bool operator!=(const CommandInfo& rhs) const { return (id != rhs.id); }
+        bool operator!=(const CommandInfo& rhs) const {  LOGGER("CommandInfo") << "Im here"; return (id != rhs.id); }
     };
 }

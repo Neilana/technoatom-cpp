@@ -139,7 +139,7 @@ Stack<T>::Stack(Stack::size_type capacity) : m_size(0), m_capacity(capacity),
     struct tm nowInfo = *localtime(&nowTime);
     char nowStr1 [40];
 
-    strftime(nowStr1, 40, "%F %T", &nowInfo);
+    strftime(nowStr1, 40, "%c", &nowInfo);
     string nowStr2 (nowStr1);
     dumpFileName = "dumps/"+ nowStr2;
 

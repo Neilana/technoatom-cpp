@@ -26,59 +26,44 @@ CPU::CPU() :
     m_stack(STACK_CAPACITY), m_registres(0), m_memory(MEMORY_CAPACITY), m_calls(), m_commandsInfo(),
     m_commandsByName(), m_labels(), m_dumpFileName("")
 {
-    // generate dump file name
-    time_t nowTime = time(0);
-    struct tm nowInfo = *localtime(&nowTime);
-    char nowStr1 [40] = "dump.txt";
-
-    //strftime(nowStr1, 40, "Now it's %I:%M%p", &nowInfo);
-    string nowStr2 (nowStr1);
-    m_dumpFileName = "../CPU/dumps/"+ nowStr2;
-
-    string message = "Creating CPU...";
-    DUMP_CPU(message);
+    DUMP_CPU("Creating CPU...");
 
     // initialize commands info
     initializeCommandsInfo();
 }
 
-void CPU::dump(const std::string &message) const
+void CPU::dump(const std::string &message)
 {
-    // open dump file and write main info about the CPU
-    std::ofstream dumpFile/*(m_dumpFileName, std::ios_base::app)*/;
-    dumpFile.open(m_dumpFileName, std::ios_base::app);
-    dumpFile << message << endl;
-    dumpFile << "CPU: " << endl;
-    dumpFile << "   (Stack size: " << m_stack.size() << ", stack capacity: " << m_stack.capacity() << ")\n";
-    dumpFile << "   (Registers count: " << m_registres.size() << ")\n";
-    dumpFile << "   (Memory size: " << m_memory.size() << ", memory capacity: " << m_memory.capacity() << ")\n";
+    logger << message << "\n";
+    logger << "CPU: " << "\n";
+    logger << "   (Stack size: " << m_stack.size() << ", stack capacity: " << m_stack.capacity() << ")\n";
+    logger << "   (Registers count: " << m_registres.size() << ")\n";
+    logger << "   (Memory size: " << m_memory.size() << ", memory capacity: " << m_memory.capacity() << ")\n";
 
     // registres
-    dumpFile << "Registres: \n" ;
+    logger << "Registres: \n" ;
     int i = 0;
     for (auto it = m_registres.begin(); it != m_registres.end(); ++it, i++)
-        dumpFile << "   x"<< i << " = " << *it << "\n";
+        logger << "   x"<< i << " = " << *it << "\n";
 
-    dumpFile << "\n";
+    logger << "\n";
 
     // write memory state into file
-    dumpFile << "Memory state:  ";
+    logger << "Memory state:  ";
     for (auto it : m_memory)
-        dumpFile << it << " ";
-    dumpFile << "\n";
+        logger << it << " ";
+    logger << "\n";
 
     // write stack state into file
     string stackElements = "";
     stackElements = m_stack.writeElementsToString();
-    dumpFile << "Stack state: \n" << stackElements << "\n";
+    logger << "Stack state: \n" << stackElements << "\n";
 
     // known labels
-    dumpFile << "Known labels: \n" ;
+    logger << "Known labels: \n" ;
     for (auto it = m_labels.begin(); it != m_labels.end(); ++it)
-        dumpFile << "   " << it->first << " (" << it->second << ")\n";
-    dumpFile << "\n";
-
-    dumpFile.close();
+        logger << "   " << it->first << " (" << it->second << ")\n";
+    logger << "\n";
 }
 
 void CPU::initializeCommandsInfo()
@@ -158,7 +143,6 @@ void CPU::initializeCommandsInfo()
         else
         {
             ++it;
-            ++it;
         }
     }};
     m_commandsInfo[Command::Jae] = CommandInfo{static_cast<value_type>(Command::Jae), 1, ArgType::Label, "jae", [this](Vector<value_type>::iterator& it) {
@@ -172,7 +156,6 @@ void CPU::initializeCommandsInfo()
             it =  m_memory.begin() + (*(++it));
         else
         {
-            ++it;
             ++it;
         }
     }};
@@ -188,7 +171,6 @@ void CPU::initializeCommandsInfo()
         else
         {
             ++it;
-            ++it;
         }
     }};
     m_commandsInfo[Command::Jbe] = CommandInfo{static_cast<value_type>(Command::Jbe), 1, ArgType::Label, "jbe", [this](Vector<value_type>::iterator& it) {
@@ -202,7 +184,6 @@ void CPU::initializeCommandsInfo()
             it =  m_memory.begin() + (*(++it));
         else
         {
-            ++it;
             ++it;
         }
     }};
@@ -218,7 +199,6 @@ void CPU::initializeCommandsInfo()
         else
         {
             ++it;
-            ++it;
         }
     }};
     m_commandsInfo[Command::Jne] = CommandInfo{static_cast<value_type>(Command::Jne), 1, ArgType::Label, "jne", [this](Vector<value_type>::iterator& it) {
@@ -233,13 +213,11 @@ void CPU::initializeCommandsInfo()
         else
         {
             ++it;
-            ++it;
         }
     }};
 
     // functions
     m_commandsInfo[Command::Call] = CommandInfo{static_cast<value_type>(Command::Call), 1, ArgType::Label, "call", [this](Vector<value_type>::iterator& it) {
-
         m_calls.push((it - m_memory.begin()) + 2);
         it =  m_memory.begin() + (*(++it));
     }};

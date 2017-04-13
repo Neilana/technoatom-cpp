@@ -21,4 +21,5 @@ INCLUDEPATH += ../Containers \
             ../Containers/Vector \
             ../Containers/Array \
             ../Containers/ContainerInterface \
-            ../../foreveralone/Stack
+            ../../foreveralone/Stack \
+            ../Logger
