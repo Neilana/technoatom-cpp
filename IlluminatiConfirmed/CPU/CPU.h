@@ -122,12 +122,13 @@ namespace  IlluminatiConfirmed
         //Vector<CommandInfo> m_commandsInfo;   ///< stores information about all CPU commands (names, arguments count)
         map<Command, CommandInfo> m_commandsInfo;     ///< stores information about all CPU commands (names, arguments count)
         map<string, Command> m_commandsByName;        ///< stores commands that can be accessed by its string name
-        map<string, size_type> m_labels;                    ///< stores info about m_labels and its IP
+        map<string, size_type> m_labels;              ///< stores info about m_labels and its IP
 
         string m_dumpFileName;        ///< name of the file where debug information is stored
 
         // private methods
-        void dump(const string &message);
+        //void dump(const string &message);
+        void dump(const string &message) const;
         void initializeCommandsInfo();      ///< fill information about commands (names, arguments count)
     };
 

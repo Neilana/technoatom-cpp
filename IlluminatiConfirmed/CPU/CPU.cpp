@@ -26,12 +26,26 @@ CPU::CPU() :
     m_stack(STACK_CAPACITY), m_registres(0), m_memory(MEMORY_CAPACITY), m_calls(), m_commandsInfo(),
     m_commandsByName(), m_labels(), m_dumpFileName("")
 {
-    DUMP_CPU("Creating CPU...");
+    //DUMP_CPU("Creating CPU...");
+
+    // убрать ???
+    // generate dump file name
+    time_t nowTime = time(0);
+    struct tm nowInfo = *localtime(&nowTime);
+    char nowStr1 [40];
+
+    strftime(nowStr1, 40, "%F %T", &nowInfo);
+    string nowStr2 (nowStr1);
+    m_dumpFileName = "../dumps/"+ nowStr2;
+
+    string message = "Creating CPU...";
+    DUMP_CPU(message);
+    // ???
 
     // initialize commands info
     initializeCommandsInfo();
 }
-
+/*
 void CPU::dump(const std::string &message)
 {
     logger << message << "\n";
@@ -64,23 +78,66 @@ void CPU::dump(const std::string &message)
     for (auto it = m_labels.begin(); it != m_labels.end(); ++it)
         logger << "   " << it->first << " (" << it->second << ")\n";
     logger << "\n";
+}*/
+
+
+void CPU::dump(const std::string &message) const
+{
+    // open dump file and write main info about the CPU
+    std::ofstream dumpFile(m_dumpFileName, std::ios_base::app);
+    dumpFile << message << endl;
+    dumpFile << "CPU: " << endl;
+    dumpFile << "   (Stack size: " << m_stack.size() << ", stack capacity: " << m_stack.capacity() << ")\n";
+    dumpFile << "   (Registers count: " << m_registres.size() << ")\n";
+    dumpFile << "   (Memory size: " << m_memory.size() << ", memory capacity: " << m_memory.capacity() << ")\n";
+
+    // registres
+    dumpFile << "Registres: \n" ;
+    int i = 0;
+    for (auto it = m_registres.begin(); it != m_registres.end(); ++it, i++)
+        dumpFile << "   x"<< i << " = " << *it << "\n";
+
+    dumpFile << "\n";
+
+    // write memory state into file
+    dumpFile << "Memory state:  ";
+    for (auto it : m_memory)
+        dumpFile << it << " ";
+    dumpFile << "\n";
+
+    // write stack state into file
+    string stackElements = "";
+    stackElements = m_stack.writeElementsToString();
+    dumpFile << "Stack state: \n" << stackElements << "\n";
+
+    // known labels
+    dumpFile << "Known labels: \n" ;
+    for (auto it = m_labels.begin(); it != m_labels.end(); ++it)
+        dumpFile << "   " << it->first << " (" << it->second << ")\n";
+    dumpFile << "\n";
+
+    dumpFile.close();
 }
 
 void CPU::initializeCommandsInfo()
 {
+
     // push/pop commands
     m_commandsInfo[Command::Push] = CommandInfo{static_cast<value_type>(Command::Push), 1, ArgType::Value, "push", ([this](Vector<value_type>::iterator& it) {
         //do nothing
     })};
     m_commandsInfo[Command::PushConst] = CommandInfo{static_cast<value_type>(Command::PushConst), 1, ArgType::Value, "pushConst", [this](Vector<value_type>::iterator& it) {
         m_stack.push(*(++it));
+        ++it;
     }};
     m_commandsInfo[Command::PushReg] = CommandInfo{static_cast<value_type>(Command::PushReg), 1, ArgType::Value, "pushReg", [this](Vector<value_type>::iterator& it) {
         size_type regNumber = *(++it);
         m_stack.push(m_registres[regNumber]);
+        ++it;
     }};
     m_commandsInfo[Command::Pop] = CommandInfo{static_cast<value_type>(Command::Pop), 0, ArgType::None, "pop", [this](Vector<value_type>::iterator& it) {
-    //do nothing
+        it = it + 2;
+        //do nothing
     }};
 
     // math commands
@@ -91,6 +148,8 @@ void CPU::initializeCommandsInfo()
         m_stack.pop();
 
         m_stack.push(buf1 + buf2);
+
+        ++it;
     }};
     m_commandsInfo[Command::Sub] = CommandInfo{static_cast<value_type>(Command::Sub), 0, ArgType::None, "sub", [this](Vector<value_type>::iterator& it) {
         value_type buf1 = m_stack.top();
@@ -226,12 +285,14 @@ void CPU::initializeCommandsInfo()
         m_calls.pop();
     }};
 
-    m_commandsInfo[Command::End] = CommandInfo{static_cast<value_type>(Command::End), 0, ArgType::None, "end", [this](Vector<value_type>::iterator& it) {
-        it = m_memory.end() - 1; //не придумал ничего лучше
+        m_commandsInfo[Command::End] = CommandInfo{static_cast<value_type>(Command::End), 0, ArgType::None, "end", [this](Vector<value_type>::iterator& it) {
+        //it = m_memory.end() - 1; //не придумал ничего лучше
+        it = m_memory.end();
     }};
 
     // names
-    std::for_each(m_commandsInfo.begin(), m_commandsInfo.end(), [this](std::pair<Command, CommandInfo> info){
+    std::for_each(m_commandsInfo.begin(), m_commandsInfo.end(), [this](std::pair<Command, CommandInfo> info)
+    {
         m_commandsByName[info.second.name] = info.first;
     });
 }
@@ -255,10 +316,13 @@ void CPU::runProgram()
     DUMP_CPU("Start program...");
 
     int pass = 0;
-    for (auto it = m_memory.begin(); it != m_memory.end(); ++it)
+    //for (auto it = m_memory.begin(); it != m_memory.end(); ++it)
+    //while (!end && pass < ITERATIONS_MAX)
+    for (auto it = m_memory.begin(); it != m_memory.end(); /* nothing */)
     {
-        if (pass++ == ITERATIONS_MAX) break;
+        if (pass++ == ITERATIONS_MAX || it == m_memory.end()) break;
         m_commandsInfo.at(static_cast<Command> (*it)).lambda(it);
+        std::cout << *it << " ";
     }
 
     DUMP_CPU("...program finished.");
