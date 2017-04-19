@@ -1,5 +1,5 @@
 TEMPLATE = app
-CONFIG += console c++11
+CONFIG += console c++14
 CONFIG -= app_bundle
 CONFIG -= qt
 
@@ -21,4 +21,5 @@ INCLUDEPATH += ../Containers \
             ../Containers/Vector \
             ../Containers/Array \
             ../Containers/ContainerInterface \
-            ../../foreveralone/Stack
+            ../../foreveralone/Stack \
+            ../Logger

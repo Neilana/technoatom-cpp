@@ -1,5 +1,6 @@
 #include "gtest/gtest.h"
 #include <iostream>
+#include "Logger.h"
 
 #include "CPU.h"
 
@@ -40,6 +41,8 @@ TEST(CPUTest, Check1)
     cpu3.runProgram();
 
     cpu3.saveMemoryToTextFile();
+
+    //IlluminatiConfirmed::ManagerLoggers::Instance().getLogger("cpu_check3") << cpu3; //даже так теперь можно
 
 
     //Command buf = static_cast<Command> (1);

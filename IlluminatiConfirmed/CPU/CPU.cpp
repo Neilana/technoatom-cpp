@@ -24,117 +24,253 @@ using MyNamespace::Stack;
 
 CPU::CPU() :
     m_stack(STACK_CAPACITY), m_registres(0), m_memory(MEMORY_CAPACITY), m_calls(), m_commandsInfo(),
-    m_commandsByName(), m_labels(), m_dumpFileName("")
+    m_commandsByName(), m_labels()
 {
-    // generate dump file name
-    time_t nowTime = time(0);
-    struct tm nowInfo = *localtime(&nowTime);
-    char nowStr1 [40];
-
-    strftime(nowStr1, 40, "%F %T", &nowInfo);
-    string nowStr2 (nowStr1);
-    m_dumpFileName = "../dumps/"+ nowStr2;
-
-    string message = "Creating CPU...";
-    DUMP_CPU(message);
+    DUMP_CPU("Creating CPU...");
 
     // initialize commands info
     initializeCommandsInfo();
 }
 
-void CPU::dump(const std::string &message) const
+std::ostream& CPU::dump(std::ostream &os) const
 {
     // open dump file and write main info about the CPU
-    std::ofstream dumpFile(m_dumpFileName, std::ios_base::app);
-    dumpFile << message << endl;
-    dumpFile << "CPU: " << endl;
-    dumpFile << "   (Stack size: " << m_stack.size() << ", stack capacity: " << m_stack.capacity() << ")\n";
-    dumpFile << "   (Registers count: " << m_registres.size() << ")\n";
-    dumpFile << "   (Memory size: " << m_memory.size() << ", memory capacity: " << m_memory.capacity() << ")\n";
+    os << "\nCPU: " << endl;
+    os << "   (Stack size: " << m_stack.size() << ", stack capacity: " << m_stack.capacity() << ")\n";
+    os << "   (Registers count: " << m_registres.size() << ")\n";
+    os << "   (Memory size: " << m_memory.size() << ", memory capacity: " << m_memory.capacity() << ")\n";
 
     // registres
-    dumpFile << "Registres: \n" ;
+    os << "Registres: \n" ;
     int i = 0;
     for (auto it = m_registres.begin(); it != m_registres.end(); ++it, i++)
-        dumpFile << "   x"<< i << " = " << *it << "\n";
+        os << "   x"<< i << " = " << *it << "\n";
 
-    dumpFile << "\n";
+    os << "\n";
 
     // write memory state into file
-    dumpFile << "Memory state:  ";
+    os << "Memory state:  ";
     for (auto it : m_memory)
-        dumpFile << it << " ";
-    dumpFile << "\n";
+        os << it << " ";
+    os << "\n";
 
     // write stack state into file
     string stackElements = "";
     stackElements = m_stack.writeElementsToString();
-    dumpFile << "Stack state: \n" << stackElements << "\n";
+    os << "Stack state: \n" << stackElements << "\n";
 
     // known labels
-    dumpFile << "Known labels: \n" ;
+    os << "Known labels: \n" ;
     for (auto it = m_labels.begin(); it != m_labels.end(); ++it)
-        dumpFile << "   " << it->first << " (" << it->second << ")\n";
-    dumpFile << "\n";
-
-    dumpFile.close();
+        os << "   " << it->first << " (" << it->second << ")\n";
+    os << "\n";
+    return os;
 }
 
 void CPU::initializeCommandsInfo()
 {
-    // push/pop commands
-    m_commandsInfo[Command::Push] = CommandInfo{static_cast<value_type>(Command::Push), 1, ArgType::Value, "push"};
-    m_commandsInfo[Command::PushConst] = CommandInfo{static_cast<value_type>(Command::PushConst), 1, ArgType::Value, "push"};
-    m_commandsInfo[Command::PushReg] = CommandInfo{static_cast<value_type>(Command::PushReg), 1, ArgType::Value, "push"};
-    m_commandsInfo[Command::Pop] = CommandInfo{static_cast<value_type>(Command::Pop), 0, ArgType::None, "pop"};
-
-    // math commands
-    m_commandsInfo[Command::Add] = CommandInfo{static_cast<value_type>(Command::Add), 0, ArgType::None, "add"};
-    m_commandsInfo[Command::Sub] = CommandInfo{static_cast<value_type>(Command::Sub), 0, ArgType::None, "sub"};
-    m_commandsInfo[Command::Div] = CommandInfo{static_cast<value_type>(Command::Div), 0, ArgType::None, "div"};
-    m_commandsInfo[Command::Mul] = CommandInfo{static_cast<value_type>(Command::Mul), 0, ArgType::None, "mul"};
-
-    // jump commands
-    m_commandsInfo[Command::Jmp] = CommandInfo{static_cast<value_type>(Command::Jmp), 1, ArgType::Label, "jmp"};        // Argument::None, Value, Label ???
-    m_commandsInfo[Command::Ja] = CommandInfo{static_cast<value_type>(Command::Ja), 1, ArgType::Label, "ja"};
-    m_commandsInfo[Command::Jae] = CommandInfo{static_cast<value_type>(Command::Jae), 1, ArgType::Label, "jae"};
-    m_commandsInfo[Command::Jb] = CommandInfo{static_cast<value_type>(Command::Jb), 1, ArgType::Label, "jb"};
-    m_commandsInfo[Command::Jbe] = CommandInfo{static_cast<value_type>(Command::Jbe), 1, ArgType::Label, "jbe"};
-    m_commandsInfo[Command::Je] = CommandInfo{static_cast<value_type>(Command::Je), 1, ArgType::Label, "je"};
-    m_commandsInfo[Command::Jne] = CommandInfo{static_cast<value_type>(Command::Jne), 1, ArgType::Label, "jne"};
-
-    // functions
-    m_commandsInfo[Command::Call] = CommandInfo{static_cast<value_type>(Command::Call), 1, ArgType::Label, "call"};
-    m_commandsInfo[Command::Ret] = CommandInfo{static_cast<value_type>(Command::Ret), 0, ArgType::None, "ret"};
-
-    m_commandsInfo[Command::End] = CommandInfo{static_cast<value_type>(Command::End), 0, ArgType::None, "end"};
+    initializeCommandsInfoPushPop();
+    initializeCommandsInfoMath();
+    initializeCommandsInfoJumps();
+    initializeCommandsInfoFunctions();
 
     // names
+    std::for_each(m_commandsInfo.begin(), m_commandsInfo.end(), [this](std::pair<Command, CommandInfo> info)
+    {
+        m_commandsByName[info.second.name] = info.first;
+    });
+}
+
+void CPU::initializeCommandsInfoPushPop()
+{
+    auto parsePop = [](std::ifstream &f){};
+    auto parsePush = [this](std::ifstream &loadFile)
+    {
+        string buf;
+        loadFile >> buf;
+        if (buf[0] == 'x') // arg = register
+        {
+            loadFile.seekg(-buf.length() + 1, std::ios_base::cur);
+            m_memory.push_back(static_cast<value_type>(Command::PushReg));
+
+            value_type bufRegN;
+            loadFile >> bufRegN;
+            m_memory.push_back(bufRegN);
+        }
+        else // push const
+        {
+            loadFile.seekg(-buf.length(), std::ios_base::cur);
+            m_memory.push_back(static_cast<value_type>(Command::PushConst));
+
+            value_type bufValue;
+            loadFile >> bufValue;
+            m_memory.push_back(bufValue);
+        }
+
+    };
     // push/pop commands
-    m_commandsByName["push"] = Command::Push;    // not obvious! (const or reg)
-    m_commandsByName["pop"] = Command::Pop;
+    m_commandsInfo[Command::Push] = CommandInfo{static_cast<value_type>(Command::Push), 1, "push", parsePush, ([this](Vector<value_type>::iterator& it) {
+        //do nothing
+    })};
+    m_commandsInfo[Command::PushConst] = CommandInfo{static_cast<value_type>(Command::PushConst), 1, "pushConst", parsePush, [this](Vector<value_type>::iterator& it) {
+        m_stack.push(*(++it));
+        ++it;
+    }};
+    m_commandsInfo[Command::PushReg] = CommandInfo{static_cast<value_type>(Command::PushReg), 1, "pushReg", parsePush, [this](Vector<value_type>::iterator& it) {
+        size_type regNumber = *(++it);
+        m_stack.push(m_registres[regNumber]);
+        ++it;
+    }};
+    m_commandsInfo[Command::Pop] = CommandInfo{static_cast<value_type>(Command::Pop), 0, "pop", parsePop, [this](Vector<value_type>::iterator& it) {
+        it = it + 2;
+        //do nothing
+    }};
+}
+
+void CPU::initializeCommandsInfoMath()
+{
+    auto parse = [](std::ifstream &f){};
 
     // math commands
-    m_commandsByName["add"] = Command::Add;
-    m_commandsByName["sub"] = Command::Sub;
-    m_commandsByName["div"] = Command::Div;
-    m_commandsByName["mul"] = Command::Mul;
+    m_commandsInfo[Command::Add] = CommandInfo{static_cast<value_type>(Command::Add), 0, "add", parse, [this](Vector<value_type>::iterator& it) {
+        value_type buf1 = m_stack.top();
+        m_stack.pop();
+        value_type buf2 = m_stack.top();
+        m_stack.pop();
+
+        m_stack.push(buf1 + buf2);
+
+        ++it;
+    }};
+    m_commandsInfo[Command::Sub] = CommandInfo{static_cast<value_type>(Command::Sub), 0, "sub", parse, [this](Vector<value_type>::iterator& it) {
+        value_type buf1 = m_stack.top();
+        m_stack.pop();
+        value_type buf2 = m_stack.top();
+        m_stack.pop();
+
+        m_stack.push(buf2 - buf1);
+
+        ++it;
+    }};
+    m_commandsInfo[Command::Div] = CommandInfo{static_cast<value_type>(Command::Div), 0, "div", parse, [this](Vector<value_type>::iterator& it) {
+        value_type buf1 = m_stack.top();
+        m_stack.pop();
+
+        value_type buf2 = m_stack.top();
+        m_stack.pop();
+
+        m_stack.push(buf2 / buf1);
+
+        ++it;
+    }};
+    m_commandsInfo[Command::Mul] = CommandInfo{static_cast<value_type>(Command::Mul), 0,"mul", parse, [this](Vector<value_type>::iterator& it) {
+        value_type buf1 = m_stack.top();
+        m_stack.pop();
+
+        value_type buf2 = m_stack.top();
+        m_stack.pop();
+
+        m_stack.push(buf1 * buf2);
+
+        ++it;
+    }};
+}
+
+void CPU::initializeCommandsInfoJumps()
+{
+   // parseLambda
+    auto parseJumps = [this](std::ifstream &loadFile)
+    {
+        string bufLabel;
+        loadFile >> bufLabel;
+
+        int bufIp = -1;                         // by default label not found
+        if (m_labels.count(bufLabel) > 0)       // if label was found
+            bufIp = m_labels[bufLabel];
+        m_memory.push_back(bufIp);
+    };
 
     // jump commands
-    m_commandsByName["jmp"] = Command::Jmp;
-    m_commandsByName["ja"] = Command::Ja;
-    m_commandsByName["jae"] = Command::Jae;
-    m_commandsByName["jb"] = Command::Jb;
-    m_commandsByName["jbe"] = Command::Jbe;
-    m_commandsByName["je"] = Command::Je;
-    m_commandsByName["jne"] = Command::Jne;
+    m_commandsInfo[Command::Jmp] = CommandInfo{static_cast<value_type>(Command::Jmp), 1, "jmp", parseJumps, [this](Vector<value_type>::iterator& it) {
+        it =  m_memory.begin() + (*(++it));
+    }};
+    m_commandsInfo[Command::Ja] = CommandInfo{static_cast<value_type>(Command::Ja), 1, "ja", parseJumps, [this](Vector<value_type>::iterator& it) {
+  
+  // runLambda
+  auto lambdaJamp = [this](Vector<value_type>::iterator& it, auto func) {
 
-    // function commands
-    m_commandsByName["call"] = Command::Call;
-    m_commandsByName["ret"] = Command::Ret;
-//    m_commandsByName[""] = Command::Label;
+        value_type second = m_stack.top();
+        m_stack.pop();
 
-    m_commandsByName["end"] = Command::End;
+        value_type first = m_stack.top();
+        m_stack.pop();
+
+        if (func(first, second))
+        {
+            it =  m_memory.begin() + (*(++it));
+        }
+        else
+        {
+            ++it;
+        }
+    };
+      
+    // jump commands
+    m_commandsInfo[Command::Jmp] = CommandInfo{static_cast<value_type>(Command::Jmp), 1, "jmp", parseJumps, [this](Vector<value_type>::iterator& it) {
+        it =  m_memory.begin() + (*(++it));
+    }};        // Argument::None, Value, Label ???
+    m_commandsInfo[Command::Ja] = CommandInfo{static_cast<value_type>(Command::Ja), 1, "ja", parseJumps, [this, lambdaJamp](Vector<value_type>::iterator& it) {
+        lambdaJamp(it, [](auto &&first, auto &&second)->bool { return first > second; });
+    }};
+
+    m_commandsInfo[Command::Jae] = CommandInfo{static_cast<value_type>(Command::Jae), 1, "jae", parseJumps, [this, lambdaJamp](Vector<value_type>::iterator& it) {
+        lambdaJamp(it, [](auto &&first, auto &&second)->bool { return first >= second; });
+    }};
+    m_commandsInfo[Command::Jb] = CommandInfo{static_cast<value_type>(Command::Jb), 1,  "jb", parseJumps, [this, lambdaJamp](Vector<value_type>::iterator& it) {
+        lambdaJamp(it, [](auto &&first, auto &&second)->bool { return first < second; });
+    }}; 
+    m_commandsInfo[Command::Jbe] = CommandInfo{static_cast<value_type>(Command::Jbe), 1, "jbe", parseJumps, [this, lambdaJamp](Vector<value_type>::iterator& it) {
+        lambdaJamp(it, [](auto &&first, auto &&second)->bool { return first <= second; });
+    }};
+    m_commandsInfo[Command::Je] = CommandInfo{static_cast<value_type>(Command::Je), 1,  "je", parseJumps, [this, lambdaJamp](Vector<value_type>::iterator& it) {
+        lambdaJamp(it, [](auto &&first, auto &&second)->bool { return first == second; });
+    }};
+    m_commandsInfo[Command::Jne] = CommandInfo{static_cast<value_type>(Command::Jne), 1,  "jne", parseJumps, [this, lambdaJamp](Vector<value_type>::iterator& it) {
+        lambdaJamp(it, [](auto &&first, auto &&second)->bool { return first != second; });
+
+    }};
+}
+
+void CPU::initializeCommandsInfoFunctions()
+{
+    // fnctions for parsing
+    auto parseJumps = [this](std::ifstream &loadFile)
+    {
+        string bufLabel;
+        loadFile >> bufLabel;
+
+        int bufIp = -1;                         // by default label not found
+        if (m_labels.count(bufLabel) > 0)       // if label was found
+            bufIp = m_labels[bufLabel];
+        m_memory.push_back(bufIp);
+    };
+
+    auto parse = [](std::ifstream &f){};
+
+    // functions
+    m_commandsInfo[Command::Call] = CommandInfo{static_cast<value_type>(Command::Call), 1, "call", parseJumps, [this](Vector<value_type>::iterator& it) {
+        m_calls.push((it - m_memory.begin()) + 2);
+        it =  m_memory.begin() + (*(++it));
+    }};
+
+m_commandsInfo[Command::Ret] = CommandInfo{static_cast<value_type>(Command::Ret), 0, "ret", parse, [this](Vector<value_type>::iterator& it) {
+        it = m_memory.begin() + m_calls.top();
+        m_calls.pop();
+    }};
+
+    m_commandsInfo[Command::End] = CommandInfo{static_cast<value_type>(Command::End), 0, "end", parse, [this](Vector<value_type>::iterator& it) {
+        it = m_memory.end();
+    }};
 }
 
 // just writes commands in memory, we don't need to actualy run any command yet (no operation with stack)
@@ -155,210 +291,14 @@ void CPU::runProgram()
 {
     DUMP_CPU("Start program...");
 
-    size_type ip = 0;
     int pass = 0;
-    bool end = false;
-    //while (ip < m_memory.size() && pass < ITERATIONS_MAX)
-    while (!end && pass < ITERATIONS_MAX)
+    //for (auto it = m_memory.begin(); it != m_memory.end(); ++it)
+    for (auto it = m_memory.begin(); it != m_memory.end(); /* nothing */)
     {
-        Command cmd = static_cast<Command> (m_memory[ip]);
-        ++pass;
-        //std::cout << pass << " ";
-        switch (cmd)
-        {
-            case Command::PushConst:
-            {
-                m_stack.push(m_memory[ip + 1]);
-                ip = ip + 2;
-            }
-            break;
-
-            case Command::PushReg:
-            {
-                // value tupe -> size type ???
-                size_type regNumber = m_memory[ip + 1];
-                m_stack.push(m_registres[regNumber]);
-                ip = ip + 2;
-            }
-            break;
-
-            case Command::Add:
-            {
-                value_type buf1 = m_stack.top();
-                m_stack.pop();
-                value_type buf2 = m_stack.top();
-                m_stack.pop();
-
-                m_stack.push(buf1 + buf2);
-
-                 ip = ip + 1;
-            }
-            break;
-
-            case Command::Sub:
-            {
-                value_type buf1 = m_stack.top();
-                m_stack.pop();
-                value_type buf2 = m_stack.top();
-                m_stack.pop();
-
-                m_stack.push(buf2 - buf1);
-
-                ip = ip + 1;
-            }
-            break;
-
-            case Command::Div:
-            {
-                value_type buf1 = m_stack.top();
-                m_stack.pop();
-
-                value_type buf2 = m_stack.top();
-                m_stack.pop();
-
-                m_stack.push(buf2 / buf1);
-
-                ip = ip + 1;
-            }
-            break;
-
-            case Command::Mul:
-            {
-                value_type buf1 = m_stack.top();
-                m_stack.pop();
-
-                value_type buf2 = m_stack.top();
-                m_stack.pop();
-
-                m_stack.push(buf1 * buf2);
-
-                 ip = ip + 1;
-            }
-            break;
-
-            case Command::Jmp:
-            {
-                ip = m_memory[ip + 1];
-            }
-            break;
-
-            case Command::Ja:
-            {
-                value_type second = m_stack.top();
-                m_stack.pop();
-
-                value_type first = m_stack.top();
-                m_stack.pop();
-
-                if (first > second)
-                    ip = m_memory[ip + 1];
-                else
-                    ip = ip + 2;
-            }
-            break;
-
-            case Command::Jae:
-            {
-                value_type second = m_stack.top();
-                m_stack.pop();
-
-                value_type first = m_stack.top();
-                m_stack.pop();
-
-                if (first >= second)
-                    ip = m_memory[ip + 1];
-                else
-                    ip = ip + 2;
-            }
-            break;
-
-            case Command::Jb:
-            {
-                value_type second = m_stack.top();
-                m_stack.pop();
-
-                value_type first = m_stack.top();
-                m_stack.pop();
-
-                if (first < second)
-                    ip = m_memory[ip + 1];
-                else
-                    ip = ip + 2;
-            }
-            break;
-
-            case Command::Jbe:
-            {
-                value_type second = m_stack.top();
-                m_stack.pop();
-
-                value_type first = m_stack.top();
-                m_stack.pop();
-
-                if (first <= second)
-                    ip = m_memory[ip + 1];
-                else
-                    ip = ip + 2;
-            }
-            break;
-
-            case Command::Je:
-            {
-                value_type second = m_stack.top();
-                m_stack.pop();
-
-                value_type first = m_stack.top();
-                m_stack.pop();
-
-                if (first == second)
-                    ip = m_memory[ip + 1];
-                else
-                    ip = ip + 2;
-            }
-            break;
-
-            case Command::Jne:
-            {
-                value_type second = m_stack.top();
-                m_stack.pop();
-
-                value_type first = m_stack.top();
-                m_stack.pop();
-
-                if (first != second)
-                    ip = m_memory[ip + 1];
-                else
-                    ip = ip + 2;
-            }
-            break;
-
-            case Command::Call:
-            {
-                m_calls.push(ip + 2);
-                ip = m_memory[ip + 1];
-            }
-            break;
-
-            case Command::Ret:
-            {
-                ip = m_calls.top();
-                m_calls.pop();
-            }
-            break;
-
-            case Command::End:
-            {
-                end = true;
-            }
-            break;
-
-            default:
-            break;
-        }
-
-        string cmdStr = m_commandsInfo[cmd].name;
-        DUMP_CPU(cmdStr);
+        if (pass++ == ITERATIONS_MAX) break;
+        m_commandsInfo.at(static_cast<Command> (*it)).runLambda(it);
     }
+
     DUMP_CPU("...program finished.");
 }
 
@@ -482,57 +422,17 @@ bool CPU::runAssemblerForFile(const string &fileName)
         {
             std::transform(buf.begin(), buf.end(), buf.begin(), ::tolower);  // buf to lower case
             std::size_t found = buf.find(":");
-            if (found != std::string::npos)    // if label
-                m_labels[buf] = m_memory.size();      // label is pointing to the current (next) command
+            if (found != std::string::npos)         // if label
+                m_labels[buf] = m_memory.size();    // label is pointing to the current (next) command
             else
             {
                 Command cmd = m_commandsByName[buf];
                 // if we have enough memory
                 if ((m_memory.size() + 1 + m_commandsInfo[cmd].argsCount) < m_memory.capacity())
                 {
-                   // if (m_commandsInfo[cmd].argsCount == 1)
-                    //    loadFile >> buf;
-
-                    if (cmd == Command::Push)
-                    {
-                        loadFile >> buf;
-                        if (buf[0] == 'x') // arg = register
-                        {
-                            loadFile.seekg(-buf.length() + 1, std::ios_base::cur);
-                            m_memory.push_back(static_cast<value_type>(Command::PushReg));
-
-                            value_type bufRegN;
-                            loadFile >> bufRegN;
-                            m_memory.push_back(bufRegN);
-                        }
-                        else // push const
-                        {
-                            loadFile.seekg(-buf.length(), std::ios_base::cur);
-                            m_memory.push_back(static_cast<value_type>(Command::PushConst));
-
-                            value_type bufValue;
-                            loadFile >> bufValue;
-                            m_memory.push_back(bufValue);
-                        }
-                    }
-
-                    else        // not push
-                    {
-                        //    Command cmd = m_commandsByName[buf];
+                    if (cmd != Command::Push)           // если не пуш, положить в память название команды (пуш кладется сам внутри парсЛямбда... не интуитивно :( )
                         m_memory.push_back(static_cast<value_type>(cmd));
-
-                        // if cmd == jmp or smth
-                        if (m_commandsInfo[cmd].argType == ArgType::Label)  // jmp, call, ja etc
-                        {
-                            string bufLabel;
-                            loadFile >> bufLabel;
-
-                            int bufIp = -1; // by default label not found
-                            if (m_labels.count(bufLabel) > 0)     // if label was found
-                                bufIp = m_labels[bufLabel];
-                            m_memory.push_back(bufIp);
-                        }
-                    }
+                    m_commandsInfo[cmd].parseArgsLambda(loadFile);
                 }
             }
         }

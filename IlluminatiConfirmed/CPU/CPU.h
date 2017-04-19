@@ -3,7 +3,7 @@
 //  macroses
 #define DEBUG_CPU_ON
 #if defined(DEBUG_CPU_ON)
-#define DUMP_CPU(ch) do { this->dump(string(__PRETTY_FUNCTION__) + string("\nMessage: ") + string(ch)); } while(0);
+#define DUMP_CPU(ch) do { logger <<__PRETTY_FUNCTION__<< *this <<"\nMessage: " << ch; } while(0);
 #else
 #define DUMP_CPU(ch)
 #endif
@@ -12,11 +12,14 @@
 #include <iostream>
 #include <string>
 #include <map>
+#include <functional>
+#include <algorithm>
 
 // custom headers
 #include "Vector.h"
 #include "Array.h"
 #include "Stack.h"
+#include "Logger.h"
 
 // standart usings
 using std::size_t;
@@ -28,7 +31,8 @@ using IlluminatiConfirmed::Vector;
 using MyNamespace::Stack;
 
 namespace  IlluminatiConfirmed
-{
+    {
+    class CPU;
     /// enum for CPU commands
     enum class Command
     {
@@ -61,29 +65,21 @@ namespace  IlluminatiConfirmed
         End             ///< end of program
     };
 
-    /// enum for arguments types
-    enum class ArgType
-    {
-        None,           ///< command has no arguments (e.g. add, div)
-        Value,          ///< argument is a value (register or constant) (e.g. push)
-        Label           ///< argument is a label to jump
-    };
+//    /// enum for arguments types
+//    enum class ArgType
+//    {
+//        None,           ///< command has no arguments (e.g. add, div)
+//        Value,          ///< argument is a value (register or constant) (e.g. push)
+//        Label           ///< argument is a label to jump
+//    };
 
-    /// structure for command
-    struct CommandInfo
-    {
-        int id;
-        //Command cmd;
-        unsigned char argsCount;
-        ArgType argType;
-        string name;
-        bool operator!=(const CommandInfo& rhs) const { return (id != rhs.id); }
-    };
+    struct CommandInfo;
 
     /// CPU class
     class CPU
     {
-    public:
+        INIT_LOG(IlluminatiConfirmed::multiStream, "../CPU/dumps/", "CPU")
+        public:
         typedef int value_type;         ///< type of memory cells, stack, registres
         typedef size_t size_type;       ///< type of indexes used in the memory
 
@@ -93,7 +89,6 @@ namespace  IlluminatiConfirmed
         void writeCommandToMemory(Command cmd, int arg1 = 0);
         void runProgram();
         int getCommandId(Command cmd) { return static_cast<value_type>(cmd); }
-
 
         // assembler
         bool runAssemblerForFile(const string &fileName = "../savings/example1.code");
@@ -106,6 +101,11 @@ namespace  IlluminatiConfirmed
         bool loadMemoryFromTextFile(const string &fileName = "../savings/save.memory.txt");
         bool saveMemoryToBinaryFile(const string &fileName = "../savings/save.memory.bin");
         bool loadMemoryFromBinaryFile(const string &fileName = "../savings/save.memory.bin");
+
+        friend std::ostream &operator<<(std::ostream &os, const CPU &m)
+        {
+            return m.dump(os);
+        }
 
     private:
         // constants
@@ -126,12 +126,30 @@ namespace  IlluminatiConfirmed
         //Vector<CommandInfo> m_commandsInfo;   ///< stores information about all CPU commands (names, arguments count)
         map<Command, CommandInfo> m_commandsInfo;     ///< stores information about all CPU commands (names, arguments count)
         map<string, Command> m_commandsByName;        ///< stores commands that can be accessed by its string name
-        map<string, size_type> m_labels;                    ///< stores info about m_labels and its IP
-
-        string m_dumpFileName;        ///< name of the file where debug information is stored
+        map<string, size_type> m_labels;              ///< stores info about m_labels and its IP
 
         // private methods
-        void dump(const string &message) const;
-        void initializeCommandsInfo();      ///< fill information about commands (names, arguments count)
+        //void dump(const string &message);
+        std::ostream &dump(std::ostream &os) const;
+
+        void initializeCommandsInfo();          ///< fill information about commands (names, arguments count)
+        void initializeCommandsInfoPushPop();   ///< fill info about push (const and rigister) and pop
+        void initializeCommandsInfoMath();      ///< fill info about add, sub, mul, div
+        void initializeCommandsInfoJumps();     ///< fill info about all jmps (ja, je etc)
+        void initializeCommandsInfoFunctions(); ///< fill info about call, ret, labels and end
     };
-}
+
+    /// structure for command
+    struct CommandInfo
+    {
+        int id;
+        //Command cmd;
+        unsigned char argsCount;
+       // ArgType argType;
+        string name;
+        std::function<void(std::ifstream&)> parseArgsLambda;
+        std::function<void(Vector<CPU::value_type>::iterator&)> runLambda;
+
+        bool operator!=(const CommandInfo& rhs) const {  LOGGER("CommandInfo") << "Im here"; return (id != rhs.id); }
+    };
+    }
