@@ -518,3 +518,14 @@ TEST (VectorTest, CheckInsert)
         ASSERT_EQ(it, (i++)*10);
 }
 
+TEST (VectorTest, sizeCapacity)
+{
+    Vector<int> v1(10);
+    auto v2(v1);
+    int exceptedCapacity = 10;
+    int exceptedSize = 0;
+
+    ASSERT_EQ(exceptedCapacity, v2.capacity());
+    ASSERT_EQ(exceptedSize, v2.size());
+}
+

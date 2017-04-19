@@ -3,7 +3,7 @@
 //  macroses
 #define DEBUG_CPU_ON
 #if defined(DEBUG_CPU_ON)
-#define DUMP_CPU(ch) do { logger <<__PRETTY_FUNCTION__<< *this <<"\nMessage: " << ch; } while(0);
+#define DUMP_CPU(ch) do { logger <<__PRETTY_FUNCTION__<< this <<"\nMessage: " << ch; } while(0);
 #else
 #define DUMP_CPU(ch)
 #endif
@@ -121,6 +121,11 @@ namespace  IlluminatiConfirmed
         friend std::ostream &operator<<(std::ostream &os, const CPU &m)
         {
             return m.dump(os);
+        }
+
+        friend std::ostream &operator<<(std::ostream &os, const CPU *m)
+        {
+            return m->dump(os);
         }
 
     private:
