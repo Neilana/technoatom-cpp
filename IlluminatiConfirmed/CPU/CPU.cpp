@@ -135,20 +135,45 @@ void CPU::initializeCommandsInfo()
 
 void CPU::initializeCommandsInfoPushPop()
 {
+    auto parsePop = [](std::ifstream &f){};
+    auto parsePush = [this](std::ifstream &loadFile)
+    {
+        string buf;
+        loadFile >> buf;
+        if (buf[0] == 'x') // arg = register
+        {
+            loadFile.seekg(-buf.length() + 1, std::ios_base::cur);
+            m_memory.push_back(static_cast<value_type>(Command::PushReg));
+
+            value_type bufRegN;
+            loadFile >> bufRegN;
+            m_memory.push_back(bufRegN);
+        }
+        else // push const
+        {
+            loadFile.seekg(-buf.length(), std::ios_base::cur);
+            m_memory.push_back(static_cast<value_type>(Command::PushConst));
+
+            value_type bufValue;
+            loadFile >> bufValue;
+            m_memory.push_back(bufValue);
+        }
+
+    };
     // push/pop commands
-    m_commandsInfo[Command::Push] = CommandInfo{static_cast<value_type>(Command::Push), 1, ArgType::Value, "push", ([this](Vector<value_type>::iterator& it) {
+    m_commandsInfo[Command::Push] = CommandInfo{static_cast<value_type>(Command::Push), 1, "push", parsePush, ([this](Vector<value_type>::iterator& it) {
         //do nothing
     })};
-    m_commandsInfo[Command::PushConst] = CommandInfo{static_cast<value_type>(Command::PushConst), 1, ArgType::Value, "pushConst", [this](Vector<value_type>::iterator& it) {
+    m_commandsInfo[Command::PushConst] = CommandInfo{static_cast<value_type>(Command::PushConst), 1, "pushConst", parsePush, [this](Vector<value_type>::iterator& it) {
         m_stack.push(*(++it));
         ++it;
     }};
-    m_commandsInfo[Command::PushReg] = CommandInfo{static_cast<value_type>(Command::PushReg), 1, ArgType::Value, "pushReg", [this](Vector<value_type>::iterator& it) {
+    m_commandsInfo[Command::PushReg] = CommandInfo{static_cast<value_type>(Command::PushReg), 1, "pushReg", parsePush, [this](Vector<value_type>::iterator& it) {
         size_type regNumber = *(++it);
         m_stack.push(m_registres[regNumber]);
         ++it;
     }};
-    m_commandsInfo[Command::Pop] = CommandInfo{static_cast<value_type>(Command::Pop), 0, ArgType::None, "pop", [this](Vector<value_type>::iterator& it) {
+    m_commandsInfo[Command::Pop] = CommandInfo{static_cast<value_type>(Command::Pop), 0, "pop", parsePop, [this](Vector<value_type>::iterator& it) {
         it = it + 2;
         //do nothing
     }};
@@ -156,8 +181,10 @@ void CPU::initializeCommandsInfoPushPop()
 
 void CPU::initializeCommandsInfoMath()
 {
+    auto parse = [](std::ifstream &f){};
+
     // math commands
-    m_commandsInfo[Command::Add] = CommandInfo{static_cast<value_type>(Command::Add), 0, ArgType::None, "add", [this](Vector<value_type>::iterator& it) {
+    m_commandsInfo[Command::Add] = CommandInfo{static_cast<value_type>(Command::Add), 0, "add", parse, [this](Vector<value_type>::iterator& it) {
         value_type buf1 = m_stack.top();
         m_stack.pop();
         value_type buf2 = m_stack.top();
@@ -167,7 +194,7 @@ void CPU::initializeCommandsInfoMath()
 
         ++it;
     }};
-    m_commandsInfo[Command::Sub] = CommandInfo{static_cast<value_type>(Command::Sub), 0, ArgType::None, "sub", [this](Vector<value_type>::iterator& it) {
+    m_commandsInfo[Command::Sub] = CommandInfo{static_cast<value_type>(Command::Sub), 0, "sub", parse, [this](Vector<value_type>::iterator& it) {
         value_type buf1 = m_stack.top();
         m_stack.pop();
         value_type buf2 = m_stack.top();
@@ -177,7 +204,7 @@ void CPU::initializeCommandsInfoMath()
 
         ++it;
     }};
-    m_commandsInfo[Command::Div] = CommandInfo{static_cast<value_type>(Command::Div), 0, ArgType::None, "div", [this](Vector<value_type>::iterator& it) {
+    m_commandsInfo[Command::Div] = CommandInfo{static_cast<value_type>(Command::Div), 0, "div", parse, [this](Vector<value_type>::iterator& it) {
         value_type buf1 = m_stack.top();
         m_stack.pop();
 
@@ -188,7 +215,7 @@ void CPU::initializeCommandsInfoMath()
 
         ++it;
     }};
-    m_commandsInfo[Command::Mul] = CommandInfo{static_cast<value_type>(Command::Mul), 0, ArgType::None, "mul", [this](Vector<value_type>::iterator& it) {
+    m_commandsInfo[Command::Mul] = CommandInfo{static_cast<value_type>(Command::Mul), 0,"mul", parse, [this](Vector<value_type>::iterator& it) {
         value_type buf1 = m_stack.top();
         m_stack.pop();
 
@@ -203,11 +230,23 @@ void CPU::initializeCommandsInfoMath()
 
 void CPU::initializeCommandsInfoJumps()
 {
+    // fnctions for parsing
+    auto parseJumps = [this](std::ifstream &loadFile)
+    {
+        string bufLabel;
+        loadFile >> bufLabel;
+
+        int bufIp = -1;                         // by default label not found
+        if (m_labels.count(bufLabel) > 0)       // if label was found
+            bufIp = m_labels[bufLabel];
+        m_memory.push_back(bufIp);
+    };
+
     // jump commands
-    m_commandsInfo[Command::Jmp] = CommandInfo{static_cast<value_type>(Command::Jmp), 1, ArgType::Label, "jmp", [this](Vector<value_type>::iterator& it) {
+    m_commandsInfo[Command::Jmp] = CommandInfo{static_cast<value_type>(Command::Jmp), 1, "jmp", parseJumps, [this](Vector<value_type>::iterator& it) {
         it =  m_memory.begin() + (*(++it));
-    }};        // Argument::None, Value, Label ???
-    m_commandsInfo[Command::Ja] = CommandInfo{static_cast<value_type>(Command::Ja), 1, ArgType::Label, "ja", [this](Vector<value_type>::iterator& it) {
+    }};
+    m_commandsInfo[Command::Ja] = CommandInfo{static_cast<value_type>(Command::Ja), 1, "ja", parseJumps, [this](Vector<value_type>::iterator& it) {
         value_type second = m_stack.top();
         m_stack.pop();
 
@@ -223,7 +262,7 @@ void CPU::initializeCommandsInfoJumps()
             ++it;
         }
     }};
-    m_commandsInfo[Command::Jae] = CommandInfo{static_cast<value_type>(Command::Jae), 1, ArgType::Label, "jae", [this](Vector<value_type>::iterator& it) {
+    m_commandsInfo[Command::Jae] = CommandInfo{static_cast<value_type>(Command::Jae), 1, "jae",  parseJumps, [this](Vector<value_type>::iterator& it) {
         value_type second = m_stack.top();
         m_stack.pop();
 
@@ -237,7 +276,7 @@ void CPU::initializeCommandsInfoJumps()
             ++it;
         }
     }};
-    m_commandsInfo[Command::Jb] = CommandInfo{static_cast<value_type>(Command::Jb), 1, ArgType::Label, "jb", [this](Vector<value_type>::iterator& it) {
+    m_commandsInfo[Command::Jb] = CommandInfo{static_cast<value_type>(Command::Jb), 1, "jb",  parseJumps, [this](Vector<value_type>::iterator& it) {
         value_type second = m_stack.top();
         m_stack.pop();
 
@@ -251,7 +290,7 @@ void CPU::initializeCommandsInfoJumps()
             ++it;
         }
     }};
-    m_commandsInfo[Command::Jbe] = CommandInfo{static_cast<value_type>(Command::Jbe), 1, ArgType::Label, "jbe", [this](Vector<value_type>::iterator& it) {
+    m_commandsInfo[Command::Jbe] = CommandInfo{static_cast<value_type>(Command::Jbe), 1, "jbe",  parseJumps, [this](Vector<value_type>::iterator& it) {
         value_type second = m_stack.top();
         m_stack.pop();
 
@@ -265,7 +304,7 @@ void CPU::initializeCommandsInfoJumps()
             ++it;
         }
     }};
-    m_commandsInfo[Command::Je] = CommandInfo{static_cast<value_type>(Command::Je), 1, ArgType::Label, "je", [this](Vector<value_type>::iterator& it) {
+    m_commandsInfo[Command::Je] = CommandInfo{static_cast<value_type>(Command::Je), 1, "je",  parseJumps, [this](Vector<value_type>::iterator& it) {
         value_type second = m_stack.top();
         m_stack.pop();
 
@@ -279,7 +318,7 @@ void CPU::initializeCommandsInfoJumps()
             ++it;
         }
     }};
-    m_commandsInfo[Command::Jne] = CommandInfo{static_cast<value_type>(Command::Jne), 1, ArgType::Label, "jne", [this](Vector<value_type>::iterator& it) {
+    m_commandsInfo[Command::Jne] = CommandInfo{static_cast<value_type>(Command::Jne), 1, "jne",  parseJumps, [this](Vector<value_type>::iterator& it) {
         value_type second = m_stack.top();
         m_stack.pop();
 
@@ -297,21 +336,32 @@ void CPU::initializeCommandsInfoJumps()
 
 void CPU::initializeCommandsInfoFunctions()
 {
+    // fnctions for parsing
+    auto parseJumps = [this](std::ifstream &loadFile)
+    {
+        string bufLabel;
+        loadFile >> bufLabel;
+
+        int bufIp = -1;                         // by default label not found
+        if (m_labels.count(bufLabel) > 0)       // if label was found
+            bufIp = m_labels[bufLabel];
+        m_memory.push_back(bufIp);
+    };
+
+    auto parse = [](std::ifstream &f){};
+
     // functions
-    m_commandsInfo[Command::Call] = CommandInfo{static_cast<value_type>(Command::Call), 1, ArgType::Label, "call", [this](Vector<value_type>::iterator& it) {
+    m_commandsInfo[Command::Call] = CommandInfo{static_cast<value_type>(Command::Call), 1, "call", parseJumps, [this](Vector<value_type>::iterator& it) {
         m_calls.push((it - m_memory.begin()) + 2);
         it =  m_memory.begin() + (*(++it));
     }};
 
-m_commandsInfo[Command::Ret] = CommandInfo{static_cast<value_type>(Command::Ret), 0, ArgType::None, "ret", [this](Vector<value_type>::iterator& it) {
+m_commandsInfo[Command::Ret] = CommandInfo{static_cast<value_type>(Command::Ret), 0, "ret", parse, [this](Vector<value_type>::iterator& it) {
         it = m_memory.begin() + m_calls.top();
         m_calls.pop();
     }};
 
-
-//    m_commandsInfo[Command::End] = CommandInfo{static_cast<value_type>(Command::End), 0, ArgType::None, "end", runEnd};
-        m_commandsInfo[Command::End] = CommandInfo{static_cast<value_type>(Command::End), 0, ArgType::None, "end", [this](Vector<value_type>::iterator& it) {
-        //it = m_memory.end() - 1; //не придумал ничего лучше
+    m_commandsInfo[Command::End] = CommandInfo{static_cast<value_type>(Command::End), 0, "end", parse, [this](Vector<value_type>::iterator& it) {
         it = m_memory.end();
     }};
 }
@@ -338,7 +388,7 @@ void CPU::runProgram()
     //for (auto it = m_memory.begin(); it != m_memory.end(); ++it)
     for (auto it = m_memory.begin(); it != m_memory.end(); /* nothing */)
     {
-        if (pass++ == ITERATIONS_MAX || it == m_memory.end()) break;
+        if (pass++ == ITERATIONS_MAX) break;
         m_commandsInfo.at(static_cast<Command> (*it)).runLambda(it);
     }
 
@@ -465,57 +515,17 @@ bool CPU::runAssemblerForFile(const string &fileName)
         {
             std::transform(buf.begin(), buf.end(), buf.begin(), ::tolower);  // buf to lower case
             std::size_t found = buf.find(":");
-            if (found != std::string::npos)    // if label
-                m_labels[buf] = m_memory.size();      // label is pointing to the current (next) command
+            if (found != std::string::npos)         // if label
+                m_labels[buf] = m_memory.size();    // label is pointing to the current (next) command
             else
             {
                 Command cmd = m_commandsByName[buf];
                 // if we have enough memory
                 if ((m_memory.size() + 1 + m_commandsInfo[cmd].argsCount) < m_memory.capacity())
                 {
-                   // if (m_commandsInfo[cmd].argsCount == 1)
-                    //    loadFile >> buf;
-
-                    if (cmd == Command::Push)
-                    {
-                        loadFile >> buf;
-                        if (buf[0] == 'x') // arg = register
-                        {
-                            loadFile.seekg(-buf.length() + 1, std::ios_base::cur);
-                            m_memory.push_back(static_cast<value_type>(Command::PushReg));
-
-                            value_type bufRegN;
-                            loadFile >> bufRegN;
-                            m_memory.push_back(bufRegN);
-                        }
-                        else // push const
-                        {
-                            loadFile.seekg(-buf.length(), std::ios_base::cur);
-                            m_memory.push_back(static_cast<value_type>(Command::PushConst));
-
-                            value_type bufValue;
-                            loadFile >> bufValue;
-                            m_memory.push_back(bufValue);
-                        }
-                    }
-
-                    else        // not push
-                    {
-                        //    Command cmd = m_commandsByName[buf];
+                    if (cmd != Command::Push)           // если не пуш, положить в память название команды (пуш кладется сам внутри парсЛямбда... не интуитивно :( )
                         m_memory.push_back(static_cast<value_type>(cmd));
-
-                        // if cmd == jmp or smth
-                        if (m_commandsInfo[cmd].argType == ArgType::Label)  // jmp, call, ja etc
-                        {
-                            string bufLabel;
-                            loadFile >> bufLabel;
-
-                            int bufIp = -1; // by default label not found
-                            if (m_labels.count(bufLabel) > 0)     // if label was found
-                                bufIp = m_labels[bufLabel];
-                            m_memory.push_back(bufIp);
-                        }
-                    }
+                    m_commandsInfo[cmd].parseArgsLambda(loadFile);
                 }
             }
         }
