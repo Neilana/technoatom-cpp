@@ -121,7 +121,20 @@ void CPU::dump(const std::string &message) const
 
 void CPU::initializeCommandsInfo()
 {
+    initializeCommandsInfoPushPop();
+    initializeCommandsInfoMath();
+    initializeCommandsInfoJumps();
+    initializeCommandsInfoFunctions();
 
+    // names
+    std::for_each(m_commandsInfo.begin(), m_commandsInfo.end(), [this](std::pair<Command, CommandInfo> info)
+    {
+        m_commandsByName[info.second.name] = info.first;
+    });
+}
+
+void CPU::initializeCommandsInfoPushPop()
+{
     // push/pop commands
     m_commandsInfo[Command::Push] = CommandInfo{static_cast<value_type>(Command::Push), 1, ArgType::Value, "push", ([this](Vector<value_type>::iterator& it) {
         //do nothing
@@ -139,7 +152,10 @@ void CPU::initializeCommandsInfo()
         it = it + 2;
         //do nothing
     }};
+}
 
+void CPU::initializeCommandsInfoMath()
+{
     // math commands
     m_commandsInfo[Command::Add] = CommandInfo{static_cast<value_type>(Command::Add), 0, ArgType::None, "add", [this](Vector<value_type>::iterator& it) {
         value_type buf1 = m_stack.top();
@@ -181,9 +197,12 @@ void CPU::initializeCommandsInfo()
 
         m_stack.push(buf1 * buf2);
 
-         ++it;
+        ++it;
     }};
+}
 
+void CPU::initializeCommandsInfoJumps()
+{
     // jump commands
     m_commandsInfo[Command::Jmp] = CommandInfo{static_cast<value_type>(Command::Jmp), 1, ArgType::Label, "jmp", [this](Vector<value_type>::iterator& it) {
         it =  m_memory.begin() + (*(++it));
@@ -274,27 +293,27 @@ void CPU::initializeCommandsInfo()
             ++it;
         }
     }};
+}
 
+void CPU::initializeCommandsInfoFunctions()
+{
     // functions
     m_commandsInfo[Command::Call] = CommandInfo{static_cast<value_type>(Command::Call), 1, ArgType::Label, "call", [this](Vector<value_type>::iterator& it) {
         m_calls.push((it - m_memory.begin()) + 2);
         it =  m_memory.begin() + (*(++it));
     }};
-    m_commandsInfo[Command::Ret] = CommandInfo{static_cast<value_type>(Command::Ret), 0, ArgType::None, "ret", [this](Vector<value_type>::iterator& it) {
+
+m_commandsInfo[Command::Ret] = CommandInfo{static_cast<value_type>(Command::Ret), 0, ArgType::None, "ret", [this](Vector<value_type>::iterator& it) {
         it = m_memory.begin() + m_calls.top();
         m_calls.pop();
     }};
 
+
+//    m_commandsInfo[Command::End] = CommandInfo{static_cast<value_type>(Command::End), 0, ArgType::None, "end", runEnd};
         m_commandsInfo[Command::End] = CommandInfo{static_cast<value_type>(Command::End), 0, ArgType::None, "end", [this](Vector<value_type>::iterator& it) {
         //it = m_memory.end() - 1; //не придумал ничего лучше
         it = m_memory.end();
     }};
-
-    // names
-    std::for_each(m_commandsInfo.begin(), m_commandsInfo.end(), [this](std::pair<Command, CommandInfo> info)
-    {
-        m_commandsByName[info.second.name] = info.first;
-    });
 }
 
 // just writes commands in memory, we don't need to actualy run any command yet (no operation with stack)
@@ -317,12 +336,10 @@ void CPU::runProgram()
 
     int pass = 0;
     //for (auto it = m_memory.begin(); it != m_memory.end(); ++it)
-    //while (!end && pass < ITERATIONS_MAX)
     for (auto it = m_memory.begin(); it != m_memory.end(); /* nothing */)
     {
         if (pass++ == ITERATIONS_MAX || it == m_memory.end()) break;
-        m_commandsInfo.at(static_cast<Command> (*it)).lambda(it);
-        std::cout << *it << " ";
+        m_commandsInfo.at(static_cast<Command> (*it)).runLambda(it);
     }
 
     DUMP_CPU("...program finished.");

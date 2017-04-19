@@ -129,7 +129,12 @@ namespace  IlluminatiConfirmed
         // private methods
         //void dump(const string &message);
         void dump(const string &message) const;
-        void initializeCommandsInfo();      ///< fill information about commands (names, arguments count)
+
+        void initializeCommandsInfo();          ///< fill information about commands (names, arguments count)
+        void initializeCommandsInfoPushPop();   ///< fill info about push (const and rigister) and pop
+        void initializeCommandsInfoMath();      ///< fill info about add, sub, mul, div
+        void initializeCommandsInfoJumps();     ///< fill info about all jmps (ja, je etc)
+        void initializeCommandsInfoFunctions(); ///< fill info about call, ret, labels and end
     };
 
     /// structure for command
@@ -140,7 +145,8 @@ namespace  IlluminatiConfirmed
         unsigned char argsCount;
         ArgType argType;
         string name;
-        std::function<void(Vector<CPU::value_type>::iterator&)> lambda;
+        std::function<void(Vector<CPU::value_type>::iterator&)> runLambda;
+      //  std::function<void(Vector<CPU::value_type>::iterator&)> parseLambda;
         bool operator!=(const CommandInfo& rhs) const {  LOGGER("CommandInfo") << "Im here"; return (id != rhs.id); }
     };
 }
