@@ -3,7 +3,7 @@
 //  macroses
 #define DEBUG_CPU_ON
 #if defined(DEBUG_CPU_ON)
-#define DUMP_CPU(ch) do { this->dump(string(__PRETTY_FUNCTION__) + string("\nMessage: ") + string(ch)); } while(0);
+#define DUMP_CPU(ch) do { logger <<__PRETTY_FUNCTION__<< *this <<"\nMessage: " << ch; } while(0);
 #else
 #define DUMP_CPU(ch)
 #endif
@@ -31,7 +31,7 @@ using IlluminatiConfirmed::Vector;
 using MyNamespace::Stack;
 
 namespace  IlluminatiConfirmed
-{
+    {
     class CPU;
     /// enum for CPU commands
     enum class Command
@@ -79,7 +79,7 @@ namespace  IlluminatiConfirmed
     class CPU
     {
         INIT_LOG(IlluminatiConfirmed::multiStream, "../CPU/dumps/", "CPU")
-    public:
+        public:
         typedef int value_type;         ///< type of memory cells, stack, registres
         typedef size_t size_type;       ///< type of indexes used in the memory
 
@@ -89,7 +89,6 @@ namespace  IlluminatiConfirmed
         void writeCommandToMemory(Command cmd, int arg1 = 0);
         void runProgram();
         int getCommandId(Command cmd) { return static_cast<value_type>(cmd); }
-
 
         // assembler
         bool runAssemblerForFile(const string &fileName = "../savings/example1.code");
@@ -102,6 +101,11 @@ namespace  IlluminatiConfirmed
         bool loadMemoryFromTextFile(const string &fileName = "../savings/save.memory.txt");
         bool saveMemoryToBinaryFile(const string &fileName = "../savings/save.memory.bin");
         bool loadMemoryFromBinaryFile(const string &fileName = "../savings/save.memory.bin");
+
+        friend std::ostream &operator<<(std::ostream &os, const CPU &m)
+        {
+            return m.dump(os);
+        }
 
     private:
         // constants
@@ -124,11 +128,9 @@ namespace  IlluminatiConfirmed
         map<string, Command> m_commandsByName;        ///< stores commands that can be accessed by its string name
         map<string, size_type> m_labels;              ///< stores info about m_labels and its IP
 
-        string m_dumpFileName;        ///< name of the file where debug information is stored
-
         // private methods
         //void dump(const string &message);
-        void dump(const string &message) const;
+        std::ostream &dump(std::ostream &os) const;
 
         void initializeCommandsInfo();          ///< fill information about commands (names, arguments count)
         void initializeCommandsInfoPushPop();   ///< fill info about push (const and rigister) and pop
@@ -146,7 +148,7 @@ namespace  IlluminatiConfirmed
         ArgType argType;
         string name;
         std::function<void(Vector<CPU::value_type>::iterator&)> runLambda;
-      //  std::function<void(Vector<CPU::value_type>::iterator&)> parseLambda;
+        //  std::function<void(Vector<CPU::value_type>::iterator&)> parseLambda;
         bool operator!=(const CommandInfo& rhs) const {  LOGGER("CommandInfo") << "Im here"; return (id != rhs.id); }
     };
-}
+    }
