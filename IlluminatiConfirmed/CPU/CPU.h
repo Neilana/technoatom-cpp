@@ -65,13 +65,13 @@ namespace  IlluminatiConfirmed
         End             ///< end of program
     };
 
-    /// enum for arguments types
-    enum class ArgType
-    {
-        None,           ///< command has no arguments (e.g. add, div)
-        Value,          ///< argument is a value (register or constant) (e.g. push)
-        Label           ///< argument is a label to jump
-    };
+//    /// enum for arguments types
+//    enum class ArgType
+//    {
+//        None,           ///< command has no arguments (e.g. add, div)
+//        Value,          ///< argument is a value (register or constant) (e.g. push)
+//        Label           ///< argument is a label to jump
+//    };
 
     struct CommandInfo;
 
@@ -145,10 +145,11 @@ namespace  IlluminatiConfirmed
         int id;
         //Command cmd;
         unsigned char argsCount;
-        ArgType argType;
+       // ArgType argType;
         string name;
+        std::function<void(std::ifstream&)> parseArgsLambda;
         std::function<void(Vector<CPU::value_type>::iterator&)> runLambda;
-        //  std::function<void(Vector<CPU::value_type>::iterator&)> parseLambda;
+
         bool operator!=(const CommandInfo& rhs) const {  LOGGER("CommandInfo") << "Im here"; return (id != rhs.id); }
     };
     }
