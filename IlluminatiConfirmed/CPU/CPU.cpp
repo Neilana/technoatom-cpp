@@ -189,12 +189,6 @@ void CPU::initializeCommandsInfoJumps()
             bufIp = m_labels[bufLabel];
         m_memory.push_back(bufIp);
     };
-
-    // jump commands
-    m_commandsInfo[Command::Jmp] = CommandInfo{static_cast<value_type>(Command::Jmp), 1, "jmp", parseJumps, [this](Vector<value_type>::iterator& it) {
-        it =  m_memory.begin() + (*(++it));
-    }};
-    m_commandsInfo[Command::Ja] = CommandInfo{static_cast<value_type>(Command::Ja), 1, "ja", parseJumps, [this](Vector<value_type>::iterator& it) {
   
   // runLambda
   auto lambdaJamp = [this](Vector<value_type>::iterator& it, auto func) {
