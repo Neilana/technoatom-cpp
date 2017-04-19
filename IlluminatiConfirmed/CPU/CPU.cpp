@@ -83,7 +83,7 @@ void CPU::initializeCommandsInfo()
 
 void CPU::initializeCommandsInfoPushPop()
 {
-    auto parsePop = [](std::ifstream &f){};
+    auto parsePop = [](std::ifstream &f){ (void)f; };
     auto parsePush = [this](std::ifstream &loadFile)
     {
         string buf;
@@ -110,7 +110,7 @@ void CPU::initializeCommandsInfoPushPop()
     };
     // push/pop commands
     m_commandsInfo[Command::Push] = CommandInfo{static_cast<value_type>(Command::Push), 1, "push", parsePush, ([this](Vector<value_type>::iterator& it) {
-        //do nothing
+        (void)it;//do nothing
     })};
     m_commandsInfo[Command::PushConst] = CommandInfo{static_cast<value_type>(Command::PushConst), 1, "pushConst", parsePush, [this](Vector<value_type>::iterator& it) {
         m_stack.push(*(++it));
@@ -129,7 +129,7 @@ void CPU::initializeCommandsInfoPushPop()
 
 void CPU::initializeCommandsInfoMath()
 {
-    auto parse = [](std::ifstream &f){};
+    auto parse = [](std::ifstream &f){ (void)f; };
 
     // math commands
     m_commandsInfo[Command::Add] = CommandInfo{static_cast<value_type>(Command::Add), 0, "add", parse, [this](Vector<value_type>::iterator& it) {
@@ -192,7 +192,6 @@ void CPU::initializeCommandsInfoJumps()
   
   // runLambda
   auto lambdaJamp = [this](Vector<value_type>::iterator& it, auto func) {
-
         value_type second = m_stack.top();
         m_stack.pop();
 
@@ -216,7 +215,6 @@ void CPU::initializeCommandsInfoJumps()
     m_commandsInfo[Command::Ja] = CommandInfo{static_cast<value_type>(Command::Ja), 1, "ja", parseJumps, [this, lambdaJamp](Vector<value_type>::iterator& it) {
         lambdaJamp(it, [](auto &&first, auto &&second)->bool { return first > second; });
     }};
-
     m_commandsInfo[Command::Jae] = CommandInfo{static_cast<value_type>(Command::Jae), 1, "jae", parseJumps, [this, lambdaJamp](Vector<value_type>::iterator& it) {
         lambdaJamp(it, [](auto &&first, auto &&second)->bool { return first >= second; });
     }};
@@ -231,7 +229,6 @@ void CPU::initializeCommandsInfoJumps()
     }};
     m_commandsInfo[Command::Jne] = CommandInfo{static_cast<value_type>(Command::Jne), 1,  "jne", parseJumps, [this, lambdaJamp](Vector<value_type>::iterator& it) {
         lambdaJamp(it, [](auto &&first, auto &&second)->bool { return first != second; });
-
     }};
 }
 
@@ -249,7 +246,7 @@ void CPU::initializeCommandsInfoFunctions()
         m_memory.push_back(bufIp);
     };
 
-    auto parse = [](std::ifstream &f){};
+    auto parse = [](std::ifstream &f){ (void)f; };
 
     // functions
     m_commandsInfo[Command::Call] = CommandInfo{static_cast<value_type>(Command::Call), 1, "call", parseJumps, [this](Vector<value_type>::iterator& it) {

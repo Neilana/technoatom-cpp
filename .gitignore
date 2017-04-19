@@ -70,3 +70,11 @@ foreveralone/Stack/docs
 IlluminatiConfirmed/Containers/docs
 IlluminatiConfirmed/CPU/dumps
 *.log
+
+*.L13924
+
+*.bin
+
+*.X13924
+
+IlluminatiConfirmed/CPU/savings/save\.memory\.txt

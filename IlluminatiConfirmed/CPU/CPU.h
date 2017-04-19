@@ -78,7 +78,12 @@ namespace  IlluminatiConfirmed
     /// CPU class
     class CPU
     {
+        #ifdef __linux__
+        INIT_LOG(IlluminatiConfirmed::multiStream, "../dumps/", "CPU")
+        #else
         INIT_LOG(IlluminatiConfirmed::multiStream, "../CPU/dumps/", "CPU")
+        #endif
+
         public:
         typedef int value_type;         ///< type of memory cells, stack, registres
         typedef size_t size_type;       ///< type of indexes used in the memory
@@ -91,16 +96,27 @@ namespace  IlluminatiConfirmed
         int getCommandId(Command cmd) { return static_cast<value_type>(cmd); }
 
         // assembler
+        #ifdef __linux__
         bool runAssemblerForFile(const string &fileName = "../savings/example1.code");
+        #else
+        bool runAssemblerForFile(const string &fileName = "../CPU/savings/example1.code");
+        #endif
         //void readAssemblerCodeFromFile(const string &fileName = "../savings/example1.code");
 
         //disassembler
 
         // memory file operations
+        #ifdef __linux__
         bool saveMemoryToTextFile(const string &fileName = "../savings/save.memory.txt");
         bool loadMemoryFromTextFile(const string &fileName = "../savings/save.memory.txt");
         bool saveMemoryToBinaryFile(const string &fileName = "../savings/save.memory.bin");
         bool loadMemoryFromBinaryFile(const string &fileName = "../savings/save.memory.bin");
+        #else
+        bool saveMemoryToTextFile(const string &fileName = "../CPU/savings/save.memory.txt");
+        bool loadMemoryFromTextFile(const string &fileName = "../CPU/savings/save.memory.txt");
+        bool saveMemoryToBinaryFile(const string &fileName = "../CPU/savings/save.memory.bin");
+        bool loadMemoryFromBinaryFile(const string &fileName = "../CPU/savings/save.memory.bin");
+        #endif
 
         friend std::ostream &operator<<(std::ostream &os, const CPU &m)
         {
