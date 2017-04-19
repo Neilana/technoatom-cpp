@@ -45,6 +45,7 @@ namespace IlluminatiConfirmed
         {
             file = std::shared_ptr<std::ofstream>(new std::ofstream, [](std::ofstream *ptr){ ptr->close(); delete ptr; });
             file->open(name,std::ofstream::out | std::ofstream::app);
+            if (!file->is_open()) std::cout << "\nError: log file "<<name<< " hasn't created\n"; //а куда еще выводить)
         }
 
         /*!
