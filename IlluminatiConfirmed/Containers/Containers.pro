@@ -5,7 +5,10 @@ CONFIG -= qt
 
 SOURCES += main.cpp \
     Array/Array.t.cpp \
-    Vector/Vector.t.cpp
+    Vector/Vector.t.cpp \
+    BitPointer.t.cpp \
+    Vector/Vector.cpp \
+    ContainerInterface/ContainerInterface.cpp
     
 # Google Test
 unix|win32: LIBS += -L$$PWD/../../../googletest-master/googletest/lib/ -lgtest
@@ -15,7 +18,8 @@ DEPENDPATH += $$PWD/../../../googletest-master/googletest/include
 
 INCLUDEPATH += Vector \
             Array \
-            ContainerInterface
+            ContainerInterface \
+            ..\Exceptions
 
 HEADERS += \
     ContainerInterface.hpp \
@@ -25,5 +29,6 @@ HEADERS += \
     ContainerInterface/ContainerInterface.hpp \
     Vector/Vector.h \
     Vector/Vector.hpp \
-    Iterator.h
+    Iterator.h \
+    BitPointer.h
 

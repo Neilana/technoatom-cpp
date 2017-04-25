@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Exception.h"
+
 using IlluminatiConfirmed::ContainerInterface;
 
 template <class Tp>
@@ -22,7 +24,7 @@ template <class Tp>
 Tp& ContainerInterface<Tp>::at(size_t index)
 {
     DUMP("in mb out");
-    ASSERT_OK((index < m_size));
+    //ASSERT_OK((index < m_size));
     if (index < m_size)
     {
         return m_dataPtr[index];
@@ -30,7 +32,8 @@ Tp& ContainerInterface<Tp>::at(size_t index)
     else
     {
         ASSERT_OK(!"Out of range");
-        throw std::out_of_range("ERRROOOORRRRR");
+        throw EXCEPTION("out of range", nullptr);
+        //throw std::out_of_range("ERRROOOORRRRR");
     }
 }
 

@@ -102,7 +102,7 @@ namespace IlluminatiConfirmed
          * \param l List
          */
         Array(const std::initializer_list<bool>& initList);
-         ~Array() {};
+         ~Array() {}
 
         /*!
          * \brief operator = Assigns rhs to this array
