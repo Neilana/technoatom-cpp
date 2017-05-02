@@ -1,39 +1,16 @@
 #pragma once
-
-//  macroses
-#define DEBUG_CPU_ON
-#if defined(DEBUG_CPU_ON)
-#define DUMP_CPU(ch) do { logger <<__PRETTY_FUNCTION__<< this <<"\nMessage: " << ch; } while(0);
-#else
-#define DUMP_CPU(ch)
-#endif
-
-// standart headers
 #include <iostream>
 #include <string>
 #include <map>
 #include <functional>
 #include <algorithm>
-
-// custom headers
-#include "Vector.h"
-#include "Array.h"
-#include "Stack.h"
-#include "Logger.h"
-
-// standart usings
-using std::size_t;
-using std::string;
-using std::map;
-
-// custom usings
-using IlluminatiConfirmed::Vector;
-using MyNamespace::Stack;
+#include <stack>
+#include <fstream>
+#include "../Exceptions/Exception.h"
+#include <array>
 
 namespace  IlluminatiConfirmed
-    {
-    class CPU;
-    /// enum for CPU commands
+{
     enum class Command
     {
         // push/pop commands
@@ -65,112 +42,86 @@ namespace  IlluminatiConfirmed
         End             ///< end of program
     };
 
-//    /// enum for arguments types
-//    enum class ArgType
-//    {
-//        None,           ///< command has no arguments (e.g. add, div)
-//        Value,          ///< argument is a value (register or constant) (e.g. push)
-//        Label           ///< argument is a label to jump
-//    };
-
-    struct CommandInfo;
-
-    /// CPU class
-    class CPU
-    {
-        #ifdef __linux__
-        INIT_LOG(IlluminatiConfirmed::multiStream, "../dumps/", "CPU")
-        #else
-        INIT_LOG(IlluminatiConfirmed::multiStream, "../CPU/dumps/", "CPU")
-        #endif
-
-        public:
-        typedef int value_type;         ///< type of memory cells, stack, registres
-        typedef size_t size_type;       ///< type of indexes used in the memory
-
-        CPU();                                              ///< constructor
-
-        // operations for commands
-        void writeCommandToMemory(Command cmd, int arg1 = 0);
-        void runProgram();
-        int getCommandId(Command cmd) { return static_cast<value_type>(cmd); }
-
-        // assembler
-        #ifdef __linux__
-        bool runAssemblerForFile(const string &fileName = "../savings/example1.code");
-        #else
-        bool runAssemblerForFile(const string &fileName = "../CPU/savings/example1.code");
-        #endif
-        //void readAssemblerCodeFromFile(const string &fileName = "../savings/example1.code");
-
-        //disassembler
-
-        // memory file operations
-        #ifdef __linux__
-        bool saveMemoryToTextFile(const string &fileName = "../savings/save.memory.txt");
-        bool loadMemoryFromTextFile(const string &fileName = "../savings/save.memory.txt");
-        bool saveMemoryToBinaryFile(const string &fileName = "../savings/save.memory.bin");
-        bool loadMemoryFromBinaryFile(const string &fileName = "../savings/save.memory.bin");
-        #else
-        bool saveMemoryToTextFile(const string &fileName = "../CPU/savings/save.memory.txt");
-        bool loadMemoryFromTextFile(const string &fileName = "../CPU/savings/save.memory.txt");
-        bool saveMemoryToBinaryFile(const string &fileName = "../CPU/savings/save.memory.bin");
-        bool loadMemoryFromBinaryFile(const string &fileName = "../CPU/savings/save.memory.bin");
-        #endif
-
-        friend std::ostream &operator<<(std::ostream &os, const CPU &m)
-        {
-            return m.dump(os);
-        }
-
-        friend std::ostream &operator<<(std::ostream &os, const CPU *m)
-        {
-            return m->dump(os);
-        }
-
-    private:
-        // constants
-        static const size_type STACK_CAPACITY = 20;            ///< maximum number of commands stored int the CPU's stack
-        static const size_type REGISTERS_COUNT = 6;            ///< number of availible registers
-        static const size_type MEMORY_CAPACITY = 100;          ///< maximum number of memory "cells" (one cell = one number (command or command's argument) )
-
-        // не уверена, что эта штука должна находится внутри класса
-        static const int ITERATIONS_MAX = 2000;                ///< maximum number of iterations (in order to prevent endless cycles)
-
-        // private atributes
-        Stack<value_type> m_stack;
-        Array<value_type, REGISTERS_COUNT> m_registres;
-        Vector<value_type> m_memory;                               ///< stores commands to perform
-
-        Stack<int> m_calls;                                 ///< to remember IP's where functions where called
-
-        //Vector<CommandInfo> m_commandsInfo;   ///< stores information about all CPU commands (names, arguments count)
-        map<Command, CommandInfo> m_commandsInfo;     ///< stores information about all CPU commands (names, arguments count)
-        map<string, Command> m_commandsByName;        ///< stores commands that can be accessed by its string name
-        map<string, size_type> m_labels;              ///< stores info about m_labels and its IP
-
-        // private methods
-        //void dump(const string &message);
-        std::ostream &dump(std::ostream &os) const;
-
-        void initializeCommandsInfo();          ///< fill information about commands (names, arguments count)
-        void initializeCommandsInfoPushPop();   ///< fill info about push (const and rigister) and pop
-        void initializeCommandsInfoMath();      ///< fill info about add, sub, mul, div
-        void initializeCommandsInfoJumps();     ///< fill info about all jmps (ja, je etc)
-        void initializeCommandsInfoFunctions(); ///< fill info about call, ret, labels and end
-    };
-
-    /// structure for command
     struct CommandInfo
     {
         int id;
-        //Command cmd;
         unsigned char argsCount;
-       // ArgType argType;
-        string name;
-        std::function<void(std::ifstream&)> parseArgsLambda;
-        std::function<void(Vector<CPU::value_type>::iterator&)> runLambda;
-
-        bool operator!=(const CommandInfo& rhs) const {  LOGGER("CommandInfo") << "Im here"; return (id != rhs.id); }
+        std::string name;
     };
-    }
+
+    class CPU
+    {
+    public:
+        /*!
+         * \brief CPU Throw IlluminatiConfirmed::Exception if not all the commands are defined
+         */
+        CPU() : m_memory(MEMORY_CAPACITY), m_registres({0, 0, 0, 0, 0 ,0})
+        {
+            if (info.size() != m_commandsInfoCPU.size())
+                throw EXCEPTION("Not all the commands are defined in the cpu", nullptr);
+        }
+
+        typedef int value_type;                           ///< type of memory cells, stack, registres
+        typedef size_t size_type;                         ///< type of indexes used in the memory
+        static const size_type MEMORY_CAPACITY = 100;     ///< maximum number of memory "cells" (one cell = one number (command or command's argument) )
+        static const size_type REGISTERS_COUNT = 6;       ///< number of availible registers
+        static const int ITERATIONS_MAX = 2000;           ///< maximum number of iterations (in order to prevent endless cycles)
+        //static const std::pair<Command, CommandInfo> infoPair[];
+        static const std::map<Command, CommandInfo> info;
+
+        struct CommandInfoCPU
+        {
+            std::function<void(std::vector<value_type>::iterator &)> run;
+        };
+
+        /*!
+         * \brief loadMemoryFromTextFile
+         * \param fileName Opens file with this name for reading, IlluminatiConfirmed::Exception if cannot open file
+         */
+        void loadMemoryFromTextFile(const std::string &fileName);
+
+        /*!
+         * \brief setMemory Allows to directly change the memory.
+         * \param memory
+         */
+        inline void setMemory(const std::vector<value_type> &memory) { m_memory = memory; }
+
+        /*!
+         * \brief getMemory Gets memory
+         * \return Memory
+         */
+        inline const std::vector<value_type>& getMemory() { return m_memory; }
+
+        /*!
+         * \brief run Run the program
+         */
+        void run();
+
+        /*!
+         * \brief setRegisters Sets registers
+         * \param reg
+         */
+        void setRegisters(const std::array<value_type, REGISTERS_COUNT> &reg);
+
+        /*!
+         * \brief getRegisters Gets registers
+         * \return
+         */
+        inline const std::array<value_type, REGISTERS_COUNT>& getRegisters() { return m_registres; }
+
+    private:
+        /*!
+         * \brief makeInfo Creates info map for cpu
+         * \return
+         */
+        std::map<Command, CPU::CommandInfoCPU> makeInfo();
+
+        std::vector<value_type> m_memory;
+        std::stack<int> m_calls;
+        std::array<value_type, REGISTERS_COUNT> m_registres;
+        std::stack<value_type> m_stack;
+        const std::map<Command, CommandInfoCPU> m_commandsInfoCPU = makeInfo();
+    };
+}
+
+

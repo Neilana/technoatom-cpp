@@ -1,51 +1,53 @@
-#include "gtest/gtest.h"
-#include <iostream>
-#include "Logger.h"
+//#include "gtest/gtest.h"
 
-#include "CPU.h"
+//#include "cpu.h"
 
-using IlluminatiConfirmed::CPU;
-using IlluminatiConfirmed::Command;
+//using namespace IlluminatiConfirmed;
 
-TEST(CPUTest, Check1)
-{
-//    CPU cpu1;
+//TEST (cpu, set_getMemory)
+//{
+//    //given
+//    CPU cpu;
+//    std::vector<CPU::value_type> excpected = { 1, 200, 1, 100, 18 };
 
-//    // заполняем память командами (типа напрямую записываем в процессор)
-//    // уже не нужно, надо будет удалить
-//    cpu1.writeCommandToMemory(Command::PushConst, 10);
-//    cpu1.writeCommandToMemory(Command::PushConst, 3);
-//    cpu1.writeCommandToMemory(Command::Add);
-//    cpu1.writeCommandToMemory(Command::PushConst, 20);
-//    cpu1.writeCommandToMemory(Command::Sub);
-//    cpu1.writeCommandToMemory(Command::End);
+//    //when
+//    cpu.setMemory(excpected);
+//    std::vector<CPU::value_type> actual = cpu.getMemory();
 
-//    // имитируем запуск программы
-//    cpu1.runProgram();
+//    //then
+//    ASSERT_EQ(excpected, actual);
+//}
 
-//    cpu1.saveMemoryToTextFile();
-//    cpu1.saveMemoryToBinaryFile();
+//TEST (cpu, set_getRegister)
+//{
+//    //given
+//    CPU cpu;
+//    std::array<CPU::value_type, 6> excpected = { 1, 200, 1, 100, 18, 0};
 
-//    CPU cpu2;
-//    //cpu2.loadMemoryFromTextFile();
-//    cpu2.loadMemoryFromBinaryFile();        // проверяем ручками дампы - всё океюшки, память cpu1 == cpu2
+//    //when
+//    cpu.setRegisters(excpected);
+//    std::array<CPU::value_type, CPU::REGISTERS_COUNT>  actual = cpu.getRegisters();
 
-    // проверяем чтение из файла самой проги
-    CPU cpu3;
+//    //then
+//    ASSERT_EQ(excpected, actual);
+//}
 
-    // два прохода - чтобы покрыть все метки
-    cpu3.runAssemblerForFile("../savings/example3.code");
-    cpu3.runAssemblerForFile("../savings/example3.code");
-//    cpu3.runAssemblerForFile();
+//TEST (cpu, run)
+//{
+//    //given
 
-    cpu3.runProgram();
+//    std::vector<CPU::value_type> memory = { CPU::info.at(Command::PushConst).id, 100, CPU::info.at(Command::PushConst).id, 200,
+//                                            CPU::info.at(Command::Add).id, CPU::info.at(Command::Pop).id, 1, CPU::info.at(Command::End).id};
+//    CPU cpu;
+//    cpu.setMemory(memory);
+//    std::array<CPU::value_type, CPU::REGISTERS_COUNT> registers = {0, 0, 0, 0, 0, 0};
+//    cpu.setRegisters(registers);
+//    cpu.run();
 
-    cpu3.saveMemoryToTextFile();
+//    //when
+//    std::array<CPU::value_type, CPU::REGISTERS_COUNT> excpected = {0, 100 + 200, 0, 0, 0, 0};
+//    std::array<CPU::value_type, CPU::REGISTERS_COUNT>  actual = cpu.getRegisters();
 
-    //IlluminatiConfirmed::ManagerLoggers::Instance().getLogger("cpu_check3") << cpu3; //даже так теперь можно
-
-
-    //Command buf = static_cast<Command> (1);
-//    cpu1.saveFromMemoryToFile();
-   // cpu1.dump();
-}
+//    //then
+//    ASSERT_EQ(excpected, actual);
+//}
