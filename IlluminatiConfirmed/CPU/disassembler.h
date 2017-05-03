@@ -76,8 +76,8 @@ namespace  IlluminatiConfirmed
 
         std::vector<CPU::value_type> m_memory;
         int argCount;
-        std::map<int, int> m_labels;
-        std::list<std::string> m_stringList;
+        std::map<int, bool> m_labels;
+        std::list<std::pair<std::string, int>> m_stringList;
 
         const std::map<Command, CommandInfoDissassembler> m_commandsInfoDisassembler = makeInfo();
     };

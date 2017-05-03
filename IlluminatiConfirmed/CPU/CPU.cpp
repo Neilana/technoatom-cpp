@@ -122,6 +122,11 @@ std::map<Command, CPU::CommandInfoCPU> CPU::makeInfo()
     return info;
 }
 
+void CPU::setStack(const std::stack<value_type> &stack)
+{
+    m_stack = stack;
+}
+
 void CPU::loadMemoryFromTextFile(const std::string &fileName)
 {
     //DUMP_CPU("Loading memory from text file...");
@@ -143,7 +148,6 @@ void CPU::run()
 {
     //DUMP_CPU("Start program...");
     int pass = 0;
-    //for (auto it = m_memory.begin(); it != m_memory.end(); ++it)
     for (auto it = m_memory.begin(); it != m_memory.end(); /* nothing */)
     {
         if (pass++ == ITERATIONS_MAX)

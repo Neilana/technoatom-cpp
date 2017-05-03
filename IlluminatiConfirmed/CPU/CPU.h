@@ -109,6 +109,12 @@ namespace  IlluminatiConfirmed
          */
         inline const std::array<value_type, REGISTERS_COUNT>& getRegisters() { return m_registres; }
 
+        /*!
+         * \brief setStack Sets the stack
+         * \param stack
+         */
+        void setStack(const std::stack<value_type> &stack);
+
     private:
         /*!
          * \brief makeInfo Creates info map for cpu

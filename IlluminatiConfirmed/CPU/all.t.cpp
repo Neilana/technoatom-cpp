@@ -52,7 +52,7 @@ TEST(all, fib)
 {
     try
     {
-        //given/when
+        //given
         Assembler asem;
         asem.runAssemblerForFile("../CPU/savings/fib_.code");
         asem.saveMemoryToTextFile("../CPU/savings/fib_.asm");
@@ -60,15 +60,17 @@ TEST(all, fib)
         Dissasembler disasem;
         disasem.runDisassemblerForTxtFile("../CPU/savings/fib_.asm", "../CPU/savings/dis_fib_.code");
 
-        //Assembler asem2;
-        //asem2.runAssemblerForFile("../CPU/savings/dis_fib_.code");
-        //asem2.saveMemoryToTextFile("../CPU/savings/dis_fib_.asm");
+        Assembler asem2;
+        asem2.runAssemblerForFile("../CPU/savings/dis_fib_.code");
+        asem2.saveMemoryToTextFile("../CPU/savings/dis_fib_.asm");
 
         CPU cpu;
-        cpu.loadMemoryFromTextFile("../CPU/savings/fib_.asm");
-        cpu.setRegisters({6, 0, 0, 0, 0, 0});
+        cpu.loadMemoryFromTextFile("../CPU/savings/dis_fib_.asm");
+        cpu.setRegisters({20, 0, 0, 0, 0, 0});
         cpu.run();
-        int expected = 8;
+
+        //when
+        int expected = 6765;
         int actual = cpu.getRegisters().at(4);
 
         //then

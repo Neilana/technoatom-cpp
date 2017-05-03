@@ -17,62 +17,79 @@ std::map<Command, Assembler::CommandInfoAssembler> Assembler::makeInfo()
     };
 
     std::map<Command, Assembler::CommandInfoAssembler> info = {
-        {Command::Push, {[](auto &&itBuf){
-                            (void)itBuf;
-                        }}},
+        {Command::Push, {[this](auto &&itBuf){
+                             m_commandsInfoAssembler.at(((*(itBuf + 1)).at(0) == 'x')?(Command::PushReg):(Command::PushConst)).parse(itBuf);
+                         }}},
         {Command::PushConst, {[this](auto &itBuf) {
+                                  m_memory.push_back((CPU::info.at(Command::PushConst).id));
                                   m_memory.push_back(std::stoi((*(++itBuf))));
                               }}},
         {Command::PushReg, {[this](auto &itBuf) {
+                                m_memory.push_back((CPU::info.at(Command::PushReg).id));
                                 auto temp = *++itBuf;
                                 temp.erase(temp.begin());
                                 m_memory.push_back(std::stoi((temp)));
                             }}},
         {Command::Pop, {[this](auto &&itBuf){
+                            m_memory.push_back((CPU::info.at(Command::Pop).id));
                             std::string temp(*++itBuf);
                             temp.erase(0, 1);
                             m_memory.push_back(std::stoi(temp));
                         }}},
-        {Command::Add, {[](auto &&itBuf){
+        {Command::Add, {[this](auto &&itBuf){
+                            (void)itBuf;
+                            m_memory.push_back((CPU::info.at(Command::Add).id));
+                        }}},
+        {Command::Sub, {[this](auto &&itBuf){
+                            (void)itBuf;
+                            m_memory.push_back((CPU::info.at(Command::Sub).id));
+                        }}},
+        {Command::Div, {[this](auto &&itBuf){
+                            (void)itBuf;
+                            m_memory.push_back((CPU::info.at(Command::Div).id));
+                        }}},
+        {Command::Mul, {[this](auto &&itBuf){
+                            (void)itBuf;
+                            m_memory.push_back((CPU::info.at(Command::Mul).id));
+                        }}},
+        {Command::Jmp, {[this, lambdaLabel](auto &&itBuf){
+                            m_memory.push_back((CPU::info.at(Command::Jmp).id));
+                            lambdaLabel(itBuf);
+                        }}},
+        {Command::Ja, {[this, lambdaLabel](auto &&itBuf){
+                           m_memory.push_back((CPU::info.at(Command::Ja).id));
+                           lambdaLabel(itBuf);
+                       }}},
+        {Command::Jae, {[this, lambdaLabel](auto &&itBuf){
+                            m_memory.push_back((CPU::info.at(Command::Jae).id));
+                            lambdaLabel(itBuf);
+                        }}},
+        {Command::Jb, {[this, lambdaLabel](auto &&itBuf){
+                           m_memory.push_back((CPU::info.at(Command::Jb).id));
+                           lambdaLabel(itBuf);
+                       }}},
+        {Command::Jbe, {[this, lambdaLabel](auto &&itBuf){
+                            m_memory.push_back((CPU::info.at(Command::Jbe).id));
+                            lambdaLabel(itBuf);
+                        }}},
+        {Command::Je, {[this, lambdaLabel](auto &&itBuf){
+                           m_memory.push_back((CPU::info.at(Command::Je).id));
+                           lambdaLabel(itBuf);
+                       }}},
+        {Command::Jne, {[this, lambdaLabel](auto &&itBuf){
+                            m_memory.push_back((CPU::info.at(Command::Jne).id));
+                            lambdaLabel(itBuf);
+                        }}},
+        {Command::Call, {[this, lambdaLabel](auto &&itBuf){
+                             m_memory.push_back((CPU::info.at(Command::Call).id));
+                             lambdaLabel(itBuf);
+                         }}},
+        {Command::Ret, {[this](auto &&itBuf){
+                            m_memory.push_back((CPU::info.at(Command::Ret).id));
                             (void)itBuf;
                         }}},
-        {Command::Sub, {[](auto &&itBuf){
-                            (void)itBuf;
-                        }}},
-        {Command::Div, {[](auto &&itBuf){
-                            (void)itBuf;
-                        }}},
-        {Command::Mul, {[](auto &&itBuf){
-                            (void)itBuf;
-                        }}},
-        {Command::Jmp, {[lambdaLabel](auto &&itBuf){
-                            lambdaLabel(itBuf);
-                        }}},
-        {Command::Ja, {[lambdaLabel](auto &&itBuf){
-                            lambdaLabel(itBuf);
-                        }}},
-        {Command::Jae, {[lambdaLabel](auto &&itBuf){
-                            lambdaLabel(itBuf);
-                        }}},
-        {Command::Jb, {[lambdaLabel](auto &&itBuf){
-                            lambdaLabel(itBuf);
-                        }}},
-        {Command::Jbe, {[lambdaLabel](auto &&itBuf){
-                            lambdaLabel(itBuf);
-                        }}},
-        {Command::Je, {[lambdaLabel](auto &&itBuf){
-                            lambdaLabel(itBuf);
-                        }}},
-        {Command::Jne, {[lambdaLabel](auto &&itBuf){
-                            lambdaLabel(itBuf);
-                        }}},
-        {Command::Call, {[lambdaLabel](auto &&itBuf){
-                            lambdaLabel(itBuf);
-                        }}},
-        {Command::Ret, {[lambdaLabel](auto &&itBuf){
-                            (void)itBuf;
-                        }}},
-        {Command::End, {[](auto &&itBuf){
+        {Command::End, {[this](auto &&itBuf){
+                            m_memory.push_back((CPU::info.at(Command::End).id));
                             (void)itBuf;
                         }}},
         {Command::Label, {[this](auto &&itBuf){
@@ -104,38 +121,27 @@ void Assembler::runAssemblerForFile(const std::string &input)
 
 void Assembler::oneAsmPass(std::vector<std::string> &buffer)
 {
+    static auto tokens = []() -> auto {
+            std::map<std::string, Command> tokens;
+            for(auto && it : CPU::info)
+    {
+            tokens.insert({ it.second.name, it.first });
+}
+            return tokens;
+}();
     m_memory.clear();
     for (auto itBuf = buffer.begin(); itBuf != buffer.end(); ++itBuf)
     {
-        Command cmd = [](auto &itBuf)-> Command {
-                for(auto it = CPU::info.begin(); it != CPU::info.end(); ++it)
+        Command cmd = ((*itBuf).back() == ':')?(Command::Label):(tokens.at(*itBuf));
+        //throw EXCEPTION((std::string("Unknown cmd: ") + (*itBuf)), nullptr);
+        // if we have enough memory
+        if ((m_memory.size() + 1 + CPU::info.at(cmd).argsCount) < m_memory.capacity())
         {
-            if ((*it).second.name == *itBuf)
-            {
-                if ((*it).first == Command::Push)
-                {
-                    if ((*(itBuf + 1)).at(0) == 'x')
-                        return Command::PushReg;
-                    else
-                        return Command::PushConst;
-                } else
-                    return (*it).first;
-                break;
-            }
-        }
-        if ((*itBuf).back() == ':')
-            return Command::Label;
-        else
-            throw EXCEPTION((std::string("Unknown cmd: ") + (*itBuf)), nullptr);
-    }(itBuf);
-    // if we have enough memory
-    if ((m_memory.size() + 1 + CPU::info.at(cmd).argsCount) < m_memory.capacity())
-    {
-        if (cmd != Command::Label) //The only command that doesn't need to be typed
-            m_memory.push_back((CPU::info.at(cmd).id));
-        m_commandsInfoAssembler.at(cmd).parse(itBuf);
-    } else EXCEPTION("Memory is over", nullptr);
-}
+            //if (cmd != Command::Label) //The only command that doesn't need to be typed
+            //    m_memory.push_back((CPU::info.at(cmd).id));
+            m_commandsInfoAssembler.at(cmd).parse(itBuf);
+        } else EXCEPTION("Memory is over", nullptr);
+    }
 }
 
 void Assembler::saveMemoryToTextFile(const string &fileName)

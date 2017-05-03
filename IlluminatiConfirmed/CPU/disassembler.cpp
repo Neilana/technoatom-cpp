@@ -5,8 +5,8 @@ using namespace IlluminatiConfirmed;
 std::map<Command, Dissasembler::CommandInfoDissassembler> Dissasembler::makeInfo()
 {
     auto lambdaLabel = [this](auto &&itBuf) {
-        m_labels.insert({*++itBuf, argCount});
-        m_stringList.back() += std::string(" m") + std::to_string(*(itBuf)) + std::string(":");
+        m_labels.insert({*++itBuf, true});
+        m_stringList.back().first += std::string(" m") + std::to_string(*(itBuf)) + std::string(":");
     };
 
     std::map<Command, Dissasembler::CommandInfoDissassembler> info = {
@@ -14,15 +14,15 @@ std::map<Command, Dissasembler::CommandInfoDissassembler> Dissasembler::makeInfo
                             (void)itBuf;
                         }}},
         {Command::PushConst, {[this](auto &itBuf) {
-                                  m_stringList.back() += std::string(" ") + std::to_string(*(++itBuf));
+                                  m_stringList.back().first += std::string(" ") + std::to_string(*(++itBuf));
                                   //m_stringList.push_back(std::to_string(*(++itBuf)));
                               }}},
         {Command::PushReg, {[this](auto &itBuf) {
-                                m_stringList.back() += std::string(" x") + std::to_string(*(++itBuf));
+                                m_stringList.back().first += std::string(" x") + std::to_string(*(++itBuf));
                                 //m_stringList.push_back(std::string("x") + std::to_string(*(++itBuf)));
                             }}},
         {Command::Pop, {[this](auto &&itBuf) {
-                            m_stringList.back() += std::string(" x") + std::to_string(*(++itBuf));
+                            m_stringList.back().first += std::string(" x") + std::to_string(*(++itBuf));
                         }}},
         {Command::Add, {[](auto &&itBuf) {
                             (void)itBuf;
@@ -105,20 +105,26 @@ void Dissasembler::runDisassemblerForMemory(const std::vector<CPU::value_type> &
     {
         Command cmd = static_cast<Command>(*it);
         argCount += 1;//CPU::info.at(cmd).argsCount;
-        m_stringList.push_back(CPU::info.at(cmd).name);
+        m_stringList.push_back({ CPU::info.at(cmd).name, CPU::info.at(cmd).argsCount });
         m_commandsInfoDisassembler.at(cmd).parse(it);
     }
 
     auto itList = m_stringList.begin();
-    int iterCount = 0;
+    int argCount = 0;
 
-    std::for_each(m_labels.begin(), m_labels.end(), [this, &itList, &iterCount](auto &it) {
-            while(iterCount != it.first)
+    std::for_each(m_labels.begin(), m_labels.end(), [this, &itList, &argCount](auto &it) {
+        for(;;)
+        {
+            if (argCount == it.first)
             {
-                ++iterCount;
+                m_stringList.insert(itList, { std::string("m") + std::to_string(it.first) + std::string(":"), CPU::info.at(Command::Label).argsCount });
+                break;
+            } else if (itList != m_stringList.end())
+            {
+                argCount += 1 + (*itList).second;
                 ++itList;
-            }
-            m_stringList.insert(itList, std::string("m") + std::to_string(it.first) + std::string(":"));
+            } else throw EXCEPTION(std::string("Not found label #") + std::to_string(it.first), nullptr);
+        }
     });
     saveStringListToFile(output);
 }
@@ -131,6 +137,6 @@ void Dissasembler::saveStringListToFile(const std::string &output)
         throw EXCEPTION("File for reading has not opened", nullptr);
 
     std::for_each( m_stringList.begin(), m_stringList.end(),[&fileOutput](const auto & buf) {
-        fileOutput << buf << std::endl;
+        fileOutput << buf.first << std::endl;
     });
 }
