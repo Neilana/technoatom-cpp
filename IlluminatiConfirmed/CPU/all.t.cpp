@@ -54,28 +54,29 @@ TEST(all, fib)
     {
         //given/when
         Assembler asem;
-        asem.runAssemblerForFile("fib_.code");
-        asem.saveMemoryToTextFile("fib_.asm");
+        asem.runAssemblerForFile("../CPU/savings/fib_.code");
+        asem.saveMemoryToTextFile("../CPU/savings/fib_.asm");
 
         Dissasembler disasem;
-        disasem.runDisassemblerForTxtFile("fib_.asm", "dis_fib_.code");
+        disasem.runDisassemblerForTxtFile("../CPU/savings/fib_.asm", "../CPU/savings/dis_fib_.code");
 
-        Assembler asem2;
-        asem2.runAssemblerForFile("dis_fib_.code");
-        asem2.saveMemoryToTextFile("dis_fib_.asm");
+        //Assembler asem2;
+        //asem2.runAssemblerForFile("../CPU/savings/dis_fib_.code");
+        //asem2.saveMemoryToTextFile("../CPU/savings/dis_fib_.asm");
 
         CPU cpu;
-        cpu.loadMemoryFromTextFile("dis_fib_.asm");
-        cpu.setRegisters({3, 0, 0, 0, 0, 0});
+        cpu.loadMemoryFromTextFile("../CPU/savings/fib_.asm");
+        cpu.setRegisters({6, 0, 0, 0, 0, 0});
         cpu.run();
-        std::array<CPU::value_type, CPU::REGISTERS_COUNT> expected = {777, 0, 0, 0, 0, 0};
-        std::array<CPU::value_type, CPU::REGISTERS_COUNT> actual = cpu.getRegisters();
+        int expected = 8;
+        int actual = cpu.getRegisters().at(4);
 
         //then
         ASSERT_EQ( actual, expected);
     }catch (Exception &e)
     {
         std::cout << e.what();
+        ASSERT_FALSE(1);
     }
 }
 

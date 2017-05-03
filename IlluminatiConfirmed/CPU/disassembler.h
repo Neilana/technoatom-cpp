@@ -24,7 +24,7 @@ namespace  IlluminatiConfirmed
         /*!
          * \brief Dissasembler Throw IlluminatiConfirmed::Exception if not all the commands are defined
          */
-        Dissasembler() : m_memory(CPU::MEMORY_CAPACITY)
+        Dissasembler() : m_memory(CPU::MEMORY_CAPACITY), argCount(0)
         {
             if (CPU::info.size() != m_commandsInfoDisassembler.size())
                 throw EXCEPTION("Not all the commands are defined in the disassembler", nullptr);
@@ -75,8 +75,10 @@ namespace  IlluminatiConfirmed
         std::map<Command, CommandInfoDissassembler> makeInfo();
 
         std::vector<CPU::value_type> m_memory;
-        std::map<int, bool> m_labels;
+        int argCount;
+        std::map<int, int> m_labels;
         std::list<std::string> m_stringList;
+
         const std::map<Command, CommandInfoDissassembler> m_commandsInfoDisassembler = makeInfo();
     };
 }

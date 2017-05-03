@@ -39,7 +39,6 @@ TEST(assembler, writeFile)
     as.runAssemblerForFile("test_writeFile_create.code");
     as.saveMemoryToTextFile("writeFile_write.code");
     std::ifstream checkFile("writeFile_write.code");
-    ASSERT_FALSE( 0 );
     ASSERT_TRUE(checkFile.is_open());
     std::string actual;
     actual.assign((std::istreambuf_iterator<char>(checkFile.rdbuf())), std::istreambuf_iterator<char>());
@@ -84,3 +83,4 @@ TEST(assembler, labels)
     //then
     ASSERT_EQ(expected, actual);
 }
+

@@ -5,7 +5,7 @@ using namespace IlluminatiConfirmed;
 std::map<Command, Dissasembler::CommandInfoDissassembler> Dissasembler::makeInfo()
 {
     auto lambdaLabel = [this](auto &&itBuf) {
-        m_labels.insert({*++itBuf, true});
+        m_labels.insert({*++itBuf, argCount});
         m_stringList.back() += std::string(" m") + std::to_string(*(itBuf)) + std::string(":");
     };
 
@@ -99,11 +99,12 @@ void Dissasembler::runDisassemblerForMemory(const std::vector<CPU::value_type> &
         m_memory = memory;
     m_stringList.clear();
     m_labels.clear();
+    argCount = 0;
 
     for(auto it = m_memory.begin(); it != m_memory.end(); ++it)
     {
-        std::cout << *it << std::endl;
         Command cmd = static_cast<Command>(*it);
+        argCount += 1;//CPU::info.at(cmd).argsCount;
         m_stringList.push_back(CPU::info.at(cmd).name);
         m_commandsInfoDisassembler.at(cmd).parse(it);
     }
@@ -111,16 +112,13 @@ void Dissasembler::runDisassemblerForMemory(const std::vector<CPU::value_type> &
     auto itList = m_stringList.begin();
     int iterCount = 0;
 
-    std::for_each(m_labels.begin(), m_labels.end(), [this, &itList, &iterCount](auto &it){
-        if (it.second == true)
-        {
+    std::for_each(m_labels.begin(), m_labels.end(), [this, &itList, &iterCount](auto &it) {
             while(iterCount != it.first)
             {
                 ++iterCount;
                 ++itList;
             }
             m_stringList.insert(itList, std::string("m") + std::to_string(it.first) + std::string(":"));
-        }
     });
     saveStringListToFile(output);
 }

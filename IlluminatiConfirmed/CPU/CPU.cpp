@@ -6,19 +6,19 @@ const std::map<Command, CommandInfo> CPU::info = {
     {Command::Push, {static_cast<CPU::value_type>(Command::Push), 1, "push"}},
     {Command::PushReg, {static_cast<CPU::value_type>(Command::PushReg), 1, "pushReg"}},
     {Command::PushConst, {static_cast<CPU::value_type>(Command::PushConst), 1, "pushConst"}},
-    {Command::Pop, {static_cast<CPU::value_type>(Command::Pop), 0, "pop"}},
+    {Command::Pop, {static_cast<CPU::value_type>(Command::Pop), 1, "pop"}},
     {Command::Add, {static_cast<CPU::value_type>(Command::Add), 0, "add"}},
     {Command::Sub, {static_cast<CPU::value_type>(Command::Sub), 0, "sub"}},
     {Command::Div, {static_cast<CPU::value_type>(Command::Div), 0, "div"}},
     {Command::Mul, {static_cast<CPU::value_type>(Command::Mul), 0, "mul"}},
-    {Command::Jmp, {static_cast<CPU::value_type>(Command::Jmp), 0, "jmp"}},
-    {Command::Ja, {static_cast<CPU::value_type>(Command::Ja), 0, "ja"}},
-    {Command::Jae, {static_cast<CPU::value_type>(Command::Jae), 0, "jae"}},
-    {Command::Jb, {static_cast<CPU::value_type>(Command::Jb), 0, "jb"}},
-    {Command::Jbe, {static_cast<CPU::value_type>(Command::Jbe), 0, "jbe"}},
-    {Command::Je, {static_cast<CPU::value_type>(Command::Je), 0, "je"}},
-    {Command::Jne, {static_cast<CPU::value_type>(Command::Jne), 0, "jne"}},
-    {Command::Call, {static_cast<CPU::value_type>(Command::Call), 0, "call"}},
+    {Command::Jmp, {static_cast<CPU::value_type>(Command::Jmp), 1, "jmp"}},
+    {Command::Ja, {static_cast<CPU::value_type>(Command::Ja), 1, "ja"}},
+    {Command::Jae, {static_cast<CPU::value_type>(Command::Jae), 1, "jae"}},
+    {Command::Jb, {static_cast<CPU::value_type>(Command::Jb), 1, "jb"}},
+    {Command::Jbe, {static_cast<CPU::value_type>(Command::Jbe), 1, "jbe"}},
+    {Command::Je, {static_cast<CPU::value_type>(Command::Je), 1, "je"}},
+    {Command::Jne, {static_cast<CPU::value_type>(Command::Jne), 1, "jne"}},
+    {Command::Call, {static_cast<CPU::value_type>(Command::Call), 1, "call"}},
     {Command::Ret, {static_cast<CPU::value_type>(Command::Ret), 0, "ret"}},
     {Command::End, {static_cast<CPU::value_type>(Command::End), 0, "end"}},
     {Command::Label, {static_cast<CPU::value_type>(Command::Label), 0, "label"}}
@@ -27,7 +27,7 @@ const std::map<Command, CommandInfo> CPU::info = {
 std::map<Command, CPU::CommandInfoCPU> CPU::makeInfo()
 {
     auto lambdaJamp = [this](auto&& it, auto func) {
-        if (m_stack.size() <= 2) throw EXCEPTION("Stack is empty", nullptr);
+        if (m_stack.size() < 2) throw EXCEPTION("Stack is empty", nullptr);
         value_type second = m_stack.top();
         m_stack.pop();
         value_type first = m_stack.top();
@@ -39,6 +39,7 @@ std::map<Command, CPU::CommandInfoCPU> CPU::makeInfo()
         }
         else
         {
+            ++it;
             ++it;
         }
     };
@@ -83,7 +84,7 @@ std::map<Command, CPU::CommandInfoCPU> CPU::makeInfo()
                             lambdaMath(it, ([](auto && buf1, auto &&buf2) -> auto { return buf1 * buf2; }));
                         }}},
         {Command::Jmp, {[this](auto &&it){
-                            it = m_memory.begin() + *it;
+                            it = m_memory.begin() + *++it;
                         }}},
         {Command::Ja, {[this, lambdaJamp](auto &&it){
                            lambdaJamp(it, [](auto &&first, auto &&second)->bool { return first > second; });
@@ -112,7 +113,7 @@ std::map<Command, CPU::CommandInfoCPU> CPU::makeInfo()
                             m_calls.pop();
                         }}},
         {Command::End, {[](auto &&itBuf){
-                            (void)itBuf;
+                            ++itBuf;
                         }}},
         {Command::Label, {[](auto &&itBuf){
                               (void)itBuf;
@@ -145,12 +146,9 @@ void CPU::run()
     //for (auto it = m_memory.begin(); it != m_memory.end(); ++it)
     for (auto it = m_memory.begin(); it != m_memory.end(); /* nothing */)
     {
-        if (pass++ == ITERATIONS_MAX) break;
-
-
+        if (pass++ == ITERATIONS_MAX)
+            break;
         m_commandsInfoCPU.at(static_cast<Command>(*it)).run(it);
-
-
     }
     //DUMP_CPU("...program finished.");
 }
