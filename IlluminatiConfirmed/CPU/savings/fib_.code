@@ -1,0 +1,29 @@
+push 1
+pop x1 
+push 0
+pop x2 
+push 1
+pop x3 
+m2:
+push x3
+push x0
+ja m1:
+
+push x1
+push x2
+add
+pop x4
+push x2
+pop x1
+push x4
+pop x2
+
+push 1
+push x3
+add
+pop x3
+jmp m2:
+
+m1:
+
+end

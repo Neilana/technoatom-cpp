@@ -1,0 +1,27 @@
+push 100
+push 200
+add
+push 8
+sub
+m1:
+push 1
+push 2
+
+jmp m2:
+pop
+
+m2:
+add
+
+call m3:
+
+push 10
+add
+
+end
+
+m3:
+	push 24
+	push 8
+	div
+	ret

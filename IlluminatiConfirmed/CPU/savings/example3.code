@@ -1,0 +1,10 @@
+push 10
+push 1
+add
+push x0
+push 10
+
+mul
+
+end
+

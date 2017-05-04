@@ -1,0 +1,25 @@
+pushConst 1
+pop x1
+pushConst 0
+pop x2
+pushConst 1
+pop x3
+pushReg x3
+pushReg x0
+ja m42:
+pushReg x1
+pushReg x2
+add
+m12:
+pop x4
+pushReg x2
+pop x1
+pushReg x4
+pop x2
+m42:
+pushConst 1
+pushReg x3
+add
+pop x3
+jmp m12:
+end

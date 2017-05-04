@@ -21,7 +21,8 @@ Vector<Tp>::Vector(size_t capacity) :
     {
         m_data = new Tp[capacity];
         m_capacity = capacity;
-        this->m_size = capacity;
+        //this->m_size = capacity;
+        this->m_size = 0;
         this->m_dataPtr = m_data;
 
     } catch (exception& e)
@@ -55,7 +56,7 @@ Vector<Tp>::Vector(size_t capacity, const Tp& def) :
 
 template<class Tp>
 Vector<Tp>::Vector(const Vector<Tp> &other) :
-    ContainerInterface<Tp>(nullptr, other.m_capacity),
+    ContainerInterface<Tp>(nullptr, other.m_size),
     m_data(nullptr),
     m_capacity(other.m_capacity)
 {
