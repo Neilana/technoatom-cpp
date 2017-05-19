@@ -5,18 +5,23 @@ CONFIG -= qt
 DEFINES += TIXML_USE_STL
 
 SOURCES += main.cpp \
-    level.cpp \
-    /home/neilana/Downloads/tunyxml/tinyxml2-4.0.1/tinyxml2.cpp
+    Level.cpp \
+    tinyxml2.cpp
 
 HEADERS += \
-    level.h \
-    /home/neilana/Downloads/tunyxml/tinyxml2-4.0.1/tinyxml2.h
+    Level.h \
+    tinyxml2.h
 
 #LIBS += -lopengl32
 #LIBS += -L$$PWD/../../../tinyxml2/Build/ -llibtinyxml2.dll
 LIBS += -L$$PWD/../../../../SFML-2.4.2/Build/Libs
 
+CONFIG(release, debug|release): LIBS += -lsfml-audio -lsfml-graphics -lsfml-network -lsfml-window -lsfml-system
 #CONFIG(debug, debug|release): LIBS += -lsfml-audio-d -lsfml-graphics-d -lsfml-main-d -lsfml-network-d -lsfml-window-d -lsfml-system-d
+#CONFIG(debug, debug|release): LIBS += -lsfml-audio-d -lsfml-graphics-d -lsfml-network-d -lsfml-window-d -lsfml-system-d
+
+INCLUDEPATH += "/usr/include/SFML"
+DEPENDPATH +=  "/usr/include/SFML"
 
 INCLUDEPATH += $$PWD/../../../../SFML-2.4.2/include
 INCLUDEPATH += $$PWD/../../../tinyxml2
