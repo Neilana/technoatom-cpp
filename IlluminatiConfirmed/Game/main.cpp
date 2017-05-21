@@ -1,5 +1,5 @@
 #include <SFML/Graphics.hpp>
-#include "Box2D.h"
+#include "Box2D/Box2D.h"
 
 #include <exception>
 #include <iostream>

@@ -2,7 +2,6 @@
 
 #include <iostream>
 #include "../Logger/Logger.h"
-#include "libs/tinyxml/tinyxml2.h"
 
 //int Object::GetPropertyInt(const std::string &name) {
 //    return std::stoi(m_properties.at(name));

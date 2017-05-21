@@ -8,48 +8,19 @@ SOURCES += main.cpp \
     Level.cpp \
     Character.cpp \
     Game.cpp \
-    libs/tinyxml/tinyxml2.cpp
-    libs/tinyxml/tinyxml2.cpp
 
 HEADERS += \
     Level.h \
-    tinyxml2.h \
-    Level.h \
     Character.h \
     constants.h \
-    libs/tinyxml/tinyxml2.h \
-    libs/Box2D/Box2D.h \
     Game.h
-	
-	
-#LIBS += -lopengl32
-#LIBS += -L$$PWD/../../../tinyxml2/Build/ -llibtinyxml2.dll
-LIBS += -L$$PWD/../../../../SFML-2.4.2/Build/Libs
 
-LIBS += -lsfml-audio -lsfml-graphics -lsfml-network -lsfml-window -lsfml-system
-#CONFIG(debug, debug|release): LIBS += -lsfml-audio-d -lsfml-graphics-d -lsfml-main-d -lsfml-network-d -lsfml-window-d -lsfml-system-d
-#CONFIG(debug, debug|release): LIBS += -lsfml-audio-d -lsfml-graphics-d -lsfml-network-d -lsfml-window-d -lsfml-system-d
+LIBS += -L$$PWD/../../Libs/Box2D/Build/ -lBox2D
+INCLUDEPATH += $$PWD/../../Libs/Box2D/
 
-INCLUDEPATH += "/usr/include/SFML"
-DEPENDPATH +=  "/usr/include/SFML"
+LIBS += -L$$PWD/../../Libs/SFML/Build -lsfml-audio -lsfml-graphics -lsfml-main -lsfml-network -lsfml-window -lsfml-system
+INCLUDEPATH += $$PWD/../../Libs/SFML/include
 
-INCLUDEPATH += $$PWD/../../../../SFML-2.4.2/include
-INCLUDEPATH += $$PWD/../../../tinyxml2
+LIBS += -L$$PWD/../../Libs/tinyxml2/Build/ -llibtinyxml2.dll
+INCLUDEPATH += $$PWD/../../Libs/tinyxml2/
 
-
-# Box2D
-INCLUDEPATH += $$PWD/libs/
-INCLUDEPATH += $$PWD/libs/Box2D/
-
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/libs/Box2D/Build/release/ -lBox2D
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/libs/Box2D/Build/debug/ -lBox2D
-else:unix:!macx: LIBS += -L$$PWD/libs/Box2D/Build/ -lBox2D
-
-INCLUDEPATH += $$PWD/libs/Box2D/Build
-DEPENDPATH += $$PWD/libs/Box2D/Build
-
-win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/libs/Box2D/Build/release/libBox2D.a
-else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/libs/Box2D/Build/debug/libBox2D.a
-else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/libs/Box2D/Build/release/Box2D.lib
-else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/libs/Box2D/Build/debug/Box2D.lib
-else:unix:!macx: PRE_TARGETDEPS += $$PWD/libs/Box2D/Build/libBox2D.a

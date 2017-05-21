@@ -1,7 +1,7 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
-#include "libs/tinyxml/tinyxml2.h"
+#include "tinyxml2.h"
 
 #include <map>
 #include <string>

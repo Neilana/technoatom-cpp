@@ -69,6 +69,7 @@ CMakeLists.txt.user*
 foreveralone/Stack/docs
 IlluminatiConfirmed/Containers/docs
 IlluminatiConfirmed/CPU/dumps
+Libs
 *.log
 
 *.L13924
