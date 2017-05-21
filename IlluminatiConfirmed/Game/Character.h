@@ -11,6 +11,8 @@ class Character
 private:
     float x, y, vx, vy, speed;
     float currentFrame;
+    int frames;
+
     sf::Texture texture;
     sf::Sprite sprite;
 
@@ -23,7 +25,7 @@ private:
 
 public:
     //Character();
-    Character(const std::string& file, int width, int height);
+    Character(const std::string& file, int frames, int width, int height);
     void move(Direction dir, float deltaTime);
     void draw(sf::RenderWindow &window);
 };

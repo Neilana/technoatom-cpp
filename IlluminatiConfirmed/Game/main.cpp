@@ -14,11 +14,14 @@ using namespace sf;
 int main() {
     try {
         Level level;
-        level.loadMapFromFile("../Game/Map/map25x25_2.tmx");
+        level.loadMapFromFile("../Game/Map/map25x25_1.tmx");
         sf::RenderWindow window;
         window.create(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Level.h test");
 
-        Character hero1("../Game/Sprites/demon.png", 64, 64);
+        // ПОЛЕ ДЛЯ ЭКСПЕРИМЕНТОВВВВВ!!!!!!!!!!!!!11111111111111111111
+        Character hero1("../Game/Sprites/demon.png", 4, 64, 64);
+        //Character hero1("../Game/Sprites/panda.png", 3, 32, 32);
+        //Character hero1("../Game/Sprites/spider.png", 5, 64, 64);
 
         Clock clock;
 
@@ -45,7 +48,7 @@ int main() {
             }
             if (Keyboard::isKeyPressed(Keyboard::Up))
             {
-                hero1.move(Direction::Up, time);
+                hero1.move(Direction::Up, time);\
             }
             if (Keyboard::isKeyPressed(Keyboard::Down))
             {

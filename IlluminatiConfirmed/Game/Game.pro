@@ -8,18 +8,15 @@ SOURCES += main.cpp \
     Level.cpp \
     tinyxml2.cpp \
     Character.cpp \
-    GameEngine.cpp
+   # GameEngine.cpp
 
 HEADERS += \
     Level.h \
     tinyxml2.h \
     Level.h \
     Character.h \
-    GameEngine.h \
+   # GameEngine.h \
     constants.h
-
-#LIBS += C:/Users/NeilanaNotPC/Downloads/SFML-2.4.2/build-SFML-2.4.2-Desktop_Qt_5_8_0_MSVC2015_64bit-Release/lib
-#INCLUDEPATH += C:/Users/NeilanaNotPC/Downloads/SFML-2.4.2/SFML-2.4.2/include
 	
 	
 #LIBS += -lopengl32

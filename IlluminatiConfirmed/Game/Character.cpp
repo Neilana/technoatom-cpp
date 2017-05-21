@@ -5,7 +5,7 @@
 
 using namespace sf;
 
-Character::Character(const std::string& file, int width, int height)
+Character::Character(const std::string& file, int f, int width, int height)
 {
     x = 0;
     y = 0;
@@ -13,17 +13,18 @@ Character::Character(const std::string& file, int width, int height)
     vy = 0;
     speed = 0.1;
     currentFrame = 0;
+    frames = f;
 
-    texture.loadFromFile("../Game/Sprites/demon.png");
+    texture.loadFromFile(file);
 
     tileWidth = width;
     tileHeight = height;
 
     sprite.setTexture(texture);
-    sprite.setTextureRect(sf::Rect<int>(0,0,64,64));
+    sprite.setTextureRect(sf::Rect<int>(0,0,width,height));
     sprite.setPosition(x, y);
 
-    for (int column = 0; column < 4; column++)
+    for (int column = 0; column < frames; column++)
     {
         int row = 0;
         frontRects.push_back(Rect<int>(column * tileWidth, tileHeight * row++, tileWidth, tileHeight));
@@ -37,13 +38,13 @@ Character::Character(const std::string& file, int width, int height)
 void Character::move(Direction dir, float deltaTime)
 {
     currentFrame += 0.005 * deltaTime;
-    if (currentFrame > 4) currentFrame -= 4;
- //   float oldSpeed = speed;
+    if (currentFrame > frames) currentFrame -= frames;
+    //   float oldSpeed = speed;
 
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift))
     {
-   //     oldSpeed = speed;
-       // speed *= 1.5;
+        //     oldSpeed = speed;
+        // speed *= 1.5;
         deltaTime *= 1.6;
     }
 
@@ -87,7 +88,7 @@ void Character::move(Direction dir, float deltaTime)
     if ((y + vy * deltaTime > 0) && (y + vy * deltaTime < WINDOW_HEIGHT - tileHeight))
         y += vy * deltaTime;
 
-//    speed = oldSpeed;
+    //    speed = oldSpeed;
     sprite.setPosition(x, y);
 }
 
