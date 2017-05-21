@@ -2,7 +2,7 @@
 
 #include <iostream>
 #include "../Logger/Logger.h"
-#include "tinyxml2.h"
+#include "libs/tinyxml/tinyxml2.h"
 
 
 //int Object::GetPropertyInt(const std::string &name) {
@@ -37,7 +37,7 @@ void Level::loadMapInfoFromFile(tinyxml2::XMLDocument &levelFile)
     tinyxml2::XMLElement *image;
     image = tilesetElement->FirstChildElement("image");
 
-    std::string imagePath = "../Game/Map/";
+    std::string imagePath = "../Game/maps/";
     imagePath += image->Attribute("source");
 
     // Пытаемся загрузить тайлсет
@@ -67,7 +67,7 @@ void Level::loadLayersFromFile(tinyxml2::XMLDocument &levelFile)
     for (int y = 0; y < rows; y++)
         for (int x = 0; x < columns; x++) {
             m_subRects.push_back(sf::Rect<int>(x * m_tileWidth, y * m_tileHeight,
-                                             m_tileWidth, m_tileHeight));
+                                               m_tileWidth, m_tileHeight));
         }
 
     // Работа со слоями
@@ -198,7 +198,7 @@ void Level::loadObjectsFromFile(tinyxml2::XMLDocument &levelFile)
                 if (objectElement->Attribute("gid") != NULL)
                 {
                     sprite.setTextureRect(m_subRects.at(std::stoi(objectElement->Attribute("gid")) - m_firstTileId));
-                 }
+                }
 
                 // "Переменные" объекта
                 tinyxml2::XMLElement *properties;
@@ -278,7 +278,7 @@ void Level::Draw(sf::RenderWindow &window) {
         for (auto &&tile : layer.m_tiles) window.draw(tile);
 
     //for (auto &&it : m_objects)
-  //      window.draw(it.m_sprite)
-              ;  //,               window.display();
+    //      window.draw(it.m_sprite)
+    ;  //,               window.display();
 }
 

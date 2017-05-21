@@ -6,9 +6,9 @@ DEFINES += TIXML_USE_STL
 
 SOURCES += main.cpp \
     Level.cpp \
-    tinyxml2.cpp \
     Character.cpp \
    # GameEngine.cpp
+    libs/tinyxml/tinyxml2.cpp
 
 HEADERS += \
     Level.h \
@@ -16,7 +16,9 @@ HEADERS += \
     Level.h \
     Character.h \
    # GameEngine.h \
-    constants.h
+    constants.h \
+    libs/tinyxml/tinyxml2.h \
+    libs/Box2D/Box2D.h
 	
 	
 #LIBS += -lopengl32
@@ -33,3 +35,17 @@ DEPENDPATH +=  "/usr/include/SFML"
 INCLUDEPATH += $$PWD/../../../../SFML-2.4.2/include
 INCLUDEPATH += $$PWD/../../../tinyxml2
 
+
+# Box2D
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/libs/Box2D/Build/release/ -lBox2D
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/libs/Box2D/Build/debug/ -lBox2D
+else:unix:!macx: LIBS += -L$$PWD/libs/Box2D/Build/ -lBox2D
+
+INCLUDEPATH += $$PWD/libs/Box2D/Build
+DEPENDPATH += $$PWD/libs/Box2D/Build
+
+win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/libs/Box2D/Build/release/libBox2D.a
+else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/libs/Box2D/Build/debug/libBox2D.a
+else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/libs/Box2D/Build/release/Box2D.lib
+else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/libs/Box2D/Build/debug/Box2D.lib
+else:unix:!macx: PRE_TARGETDEPS += $$PWD/libs/Box2D/Build/libBox2D.a

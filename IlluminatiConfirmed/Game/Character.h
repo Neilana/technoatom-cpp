@@ -28,4 +28,5 @@ public:
     Character(const std::string& file, int frames, int width, int height);
     void move(Direction dir, float deltaTime);
     void draw(sf::RenderWindow &window);
+    void setCoordinates(int newX, int newY) { x = newX; y = newY; sprite.setPosition(x,y);}
 };

@@ -10,18 +10,29 @@
 #include "constants.h"
 
 using namespace sf;
+using namespace std;
 
 int main() {
     try {
         Level level;
-        level.loadMapFromFile("../Game/Map/map25x25_1.tmx");
+        level.loadMapFromFile("../Game/maps/map25x25_1.tmx");
         sf::RenderWindow window;
         window.create(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Level.h test");
 
+        vector<Character> heroes;
+        int currentHero = 0;
+
         // ПОЛЕ ДЛЯ ЭКСПЕРИМЕНТОВВВВВ!!!!!!!!!!!!!11111111111111111111
-        Character hero1("../Game/Sprites/demon.png", 4, 64, 64);
-        //Character hero1("../Game/Sprites/panda.png", 3, 32, 32);
-        //Character hero1("../Game/Sprites/spider.png", 5, 64, 64);
+        Character hero1("../Game/sprites/demon.png", 4, 64, 64);
+        heroes.push_back(hero1);
+
+        Character hero2("../Game/sprites/panda.png", 3, 32, 32);
+        hero2.setCoordinates(100,100);
+        heroes.push_back(hero2);
+
+        Character hero3("../Game/sprites/spider.png", 10, 64, 64);
+        hero3.setCoordinates(300,300);
+        heroes.push_back(hero3);
 
         Clock clock;
 
@@ -36,29 +47,43 @@ int main() {
 
             while (window.pollEvent(event)) {
                 if (event.type == sf::Event::Closed) window.close();
+
+                if (event.type == sf::Event::KeyPressed)
+                {
+                    if (event.key.code == sf::Keyboard::Tab)
+                    {
+                        currentHero++, currentHero %= heroes.size();
+                    }
+                }
             }
+
+            //if (Keyboard::isKeyPressed(Keyboard::Tab))
+              //  currentHero++, currentHero %= heroes.size();
 
             if (Keyboard::isKeyPressed(Keyboard::Left))
             {
-                hero1.move(Direction::Left, time);
+                heroes[currentHero].move(Direction::Left, time);
             }
             if (Keyboard::isKeyPressed(Keyboard::Right))
             {
-                hero1.move(Direction::Right, time);
+                heroes[currentHero].move(Direction::Right, time);
             }
             if (Keyboard::isKeyPressed(Keyboard::Up))
             {
-                hero1.move(Direction::Up, time);\
+                heroes[currentHero].move(Direction::Up, time);\
             }
             if (Keyboard::isKeyPressed(Keyboard::Down))
             {
-                hero1.move(Direction::Down, time);
+                heroes[currentHero].move(Direction::Down, time);
             }
 
             window.clear();
 
             level.Draw(window);
-            hero1.draw(window);
+
+            for (auto it = heroes.begin(); it != heroes.end(); it++)
+                it->draw(window);
+                //hero1.draw(window);
 
             window.display();
         }
