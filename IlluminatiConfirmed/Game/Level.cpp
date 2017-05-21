@@ -4,17 +4,18 @@
 #include "../Logger/Logger.h"
 #include "tinyxml2.h"
 
-int Object::GetPropertyInt(const std::string &name) {
-    return std::stoi(m_properties.at(name));
-}
 
-float Object::GetPropertyFloat(const std::string &name) {
-    return std::stof(m_properties.at(name));
-}
+//int Object::GetPropertyInt(const std::string &name) {
+//    return std::stoi(m_properties.at(name));
+//}
 
-const std::string &Object::GetPropertyString(const std::string &name) {
-    return m_properties.at(name);
-}
+//float Object::GetPropertyFloat(const std::string &name) {
+//    return std::stof(m_properties.at(name));
+//}
+
+//const std::string &Object::GetPropertyString(const std::string &name) {
+//    return m_properties.at(name);
+//}
 
 void Level::loadMapInfoFromFile(tinyxml2::XMLDocument &levelFile)
 {
@@ -175,6 +176,7 @@ void Level::loadObjectsFromFile(tinyxml2::XMLDocument &levelFile)
                 sf::Sprite sprite;
                 sprite.setTexture(m_tilesetImage);
                 sprite.setTextureRect(sf::Rect<int>(0, 0, 0, 0));
+
                 sprite.setPosition(x, y);
 
                 if (objectElement->Attribute("width") != NULL) {
@@ -192,6 +194,11 @@ void Level::loadObjectsFromFile(tinyxml2::XMLDocument &levelFile)
                     sprite.setTextureRect(m_subRects.at(
                                               std::stoi(objectElement->Attribute("gid")) - m_firstTileId));
                 }
+
+                if (objectElement->Attribute("gid") != NULL)
+                {
+                    sprite.setTextureRect(m_subRects.at(std::stoi(objectElement->Attribute("gid")) - m_firstTileId));
+                 }
 
                 // "Переменные" объекта
                 tinyxml2::XMLElement *properties;
@@ -212,10 +219,12 @@ void Level::loadObjectsFromFile(tinyxml2::XMLDocument &levelFile)
                         }
                     }
                 }
+
                 // Экземпляр объекта
                 Object object = {std::move(objectName), std::move(objectType),
                                  sf::Rect<int>(x, y, width, height), std::move(sprite),
                                  propertiesMap};
+
                 // Пихаем объект в вектор
                 m_objects.push_back(std::move(object));
 
@@ -267,4 +276,9 @@ void Level::Draw(sf::RenderWindow &window) {
     // Рисуем все тайлы (объекты НЕ рисуем!)
     for (auto &&layer : m_layers)
         for (auto &&tile : layer.m_tiles) window.draw(tile);
+
+    //for (auto &&it : m_objects)
+  //      window.draw(it.m_sprite)
+              ;  //,               window.display();
 }
+
