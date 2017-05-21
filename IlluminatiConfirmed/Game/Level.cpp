@@ -4,7 +4,6 @@
 #include "../Logger/Logger.h"
 #include "libs/tinyxml/tinyxml2.h"
 
-
 //int Object::GetPropertyInt(const std::string &name) {
 //    return std::stoi(m_properties.at(name));
 //}
@@ -37,7 +36,7 @@ void Level::loadMapInfoFromFile(tinyxml2::XMLDocument &levelFile)
     tinyxml2::XMLElement *image;
     image = tilesetElement->FirstChildElement("image");
 
-    std::string imagePath = "../Game/maps/";
+    std::string imagePath = "../maps/";
     imagePath += image->Attribute("source");
 
     // Пытаемся загрузить тайлсет
@@ -260,11 +259,19 @@ Object Level::GetObject(const std::string &name) {
     throw EXCEPTION("Unknown object", nullptr);
 }
 
-std::vector<Object> Level::GetObjects(const std::string &name) {
+std::vector<Object> Level::GetObjectsByName(const std::string &name) {
     // Все объекты с заданным именем
     std::vector<Object> vec;
     for (auto &&it : m_objects)
         if (it.m_name == name) vec.push_back(it);
+    return vec;
+}
+
+std::vector<Object> Level::GetObjectsByType(const std::string &type) {
+    // Все объекты с заданным именем
+    std::vector<Object> vec;
+    for (auto &&it : m_objects)
+        if (it.m_type == type) vec.push_back(it);
     return vec;
 }
 
@@ -276,9 +283,5 @@ void Level::Draw(sf::RenderWindow &window) {
     // Рисуем все тайлы (объекты НЕ рисуем!)
     for (auto &&layer : m_layers)
         for (auto &&tile : layer.m_tiles) window.draw(tile);
-
-    //for (auto &&it : m_objects)
-    //      window.draw(it.m_sprite)
-    ;  //,               window.display();
 }
 

@@ -1891,18 +1891,18 @@
   </data>
  </layer>
  <objectgroup name="Wall">
-  <object id="24" x="2" y="4" width="794" height="24"/>
-  <object id="25" x="772" y="32" width="24" height="764"/>
-  <object id="26" x="2" y="766" width="770" height="30"/>
-  <object id="27" x="0" y="28" width="32" height="736"/>
+  <object id="24" type="Wall" x="2" y="4" width="794" height="24"/>
+  <object id="25" type="Wall" x="772" y="32" width="24" height="764"/>
+  <object id="26" type="Wall" x="2" y="766" width="770" height="30"/>
+  <object id="27" type="Wall" x="0" y="28" width="32" height="736"/>
  </objectgroup>
  <objectgroup name="Builds">
-  <object id="30" x="448" y="98" width="112" height="92"/>
-  <object id="33" x="594" y="566" width="118" height="132"/>
-  <object id="34" x="238" y="388" width="158" height="120"/>
-  <object id="35" x="168" y="624" width="66" height="72"/>
-  <object id="36" x="76" y="42" width="116" height="146"/>
-  <object id="48" x="608" y="288" width="108" height="114"/>
+  <object id="30" type="Building" x="448" y="98" width="112" height="92"/>
+  <object id="33" type="Building" x="594" y="566" width="118" height="132"/>
+  <object id="34" type="Building" x="238" y="388" width="158" height="120"/>
+  <object id="35" type="Building" x="168" y="624" width="66" height="72"/>
+  <object id="36" type="Building" x="76" y="42" width="116" height="146"/>
+  <object id="48" type="Building" x="608" y="288" width="108" height="114"/>
  </objectgroup>
  <objectgroup name="Respowns">
   <object id="40" x="126" y="160" width="34" height="30"/>

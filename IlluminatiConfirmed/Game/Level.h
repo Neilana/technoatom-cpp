@@ -54,7 +54,9 @@ public:
     void loadObjectsFromFile(tinyxml2::XMLDocument &levelFile);
 
     Object GetObject(const std::string &name);
-    std::vector<Object> GetObjects(const std::string &name);
+    std::vector<Object> GetObjectsByName(const std::string &name);
+    std::vector<Object> GetObjectsByType(const std::string &name);
+
     void Draw(sf::RenderWindow &window);
     sf::Vector2i GetTileSize();
 

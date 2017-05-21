@@ -7,7 +7,8 @@ DEFINES += TIXML_USE_STL
 SOURCES += main.cpp \
     Level.cpp \
     Character.cpp \
-   # GameEngine.cpp
+    Game.cpp \
+    libs/tinyxml/tinyxml2.cpp
     libs/tinyxml/tinyxml2.cpp
 
 HEADERS += \
@@ -15,10 +16,10 @@ HEADERS += \
     tinyxml2.h \
     Level.h \
     Character.h \
-   # GameEngine.h \
     constants.h \
     libs/tinyxml/tinyxml2.h \
-    libs/Box2D/Box2D.h
+    libs/Box2D/Box2D.h \
+    Game.h
 	
 	
 #LIBS += -lopengl32
@@ -37,6 +38,9 @@ INCLUDEPATH += $$PWD/../../../tinyxml2
 
 
 # Box2D
+INCLUDEPATH += $$PWD/libs/
+INCLUDEPATH += $$PWD/libs/Box2D/
+
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/libs/Box2D/Build/release/ -lBox2D
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/libs/Box2D/Build/debug/ -lBox2D
 else:unix:!macx: LIBS += -L$$PWD/libs/Box2D/Build/ -lBox2D

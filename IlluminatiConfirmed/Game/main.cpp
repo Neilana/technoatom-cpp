@@ -1,4 +1,5 @@
 #include <SFML/Graphics.hpp>
+#include "Box2D.h"
 
 #include <exception>
 #include <iostream>
@@ -7,6 +8,7 @@
 #include "../Exceptions/Exception.h"
 #include "Level.h"
 #include "Character.h"
+#include "Game.h"
 #include "constants.h"
 
 using namespace sf;
@@ -14,25 +16,23 @@ using namespace std;
 
 int main() {
     try {
-        Level level;
-        level.loadMapFromFile("../Game/maps/map25x25_1.tmx");
         sf::RenderWindow window;
         window.create(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Level.h test");
 
-        vector<Character> heroes;
-        int currentHero = 0;
+        Game game;
+        game.initNewGame("../maps/map25x25_1.tmx");
 
-        // ПОЛЕ ДЛЯ ЭКСПЕРИМЕНТОВВВВВ!!!!!!!!!!!!!11111111111111111111
-        Character hero1("../Game/sprites/demon.png", 4, 64, 64);
-        heroes.push_back(hero1);
+        Character *currentHero = game.selectNextHero();
 
-        Character hero2("../Game/sprites/panda.png", 3, 32, 32);
-        hero2.setCoordinates(100,100);
-        heroes.push_back(hero2);
+        //        b2AABB worldAABB;
+        //        worldAABB.lowerBound.Set(-100.0f, -100.0f);
+        //        worldAABB.upperBound.Set(100.0f, 100.0f);
 
-        Character hero3("../Game/sprites/spider.png", 10, 64, 64);
-        hero3.setCoordinates(300,300);
-        heroes.push_back(hero3);
+        //        b2Vec2 gravity(0, -9.8); //normal earth gravity, 9.8 m/s/s straight down!
+        //        bool doSleep = true;
+
+        //        b2World world(gravity);
+
 
         Clock clock;
 
@@ -46,51 +46,46 @@ int main() {
             sf::Event event;
 
             while (window.pollEvent(event)) {
-                if (event.type == sf::Event::Closed) window.close();
+                if (event.type == sf::Event::Closed)
+                    window.close();
 
                 if (event.type == sf::Event::KeyPressed)
                 {
                     if (event.key.code == sf::Keyboard::Tab)
                     {
-                        currentHero++, currentHero %= heroes.size();
+                        currentHero = game.selectNextHero();
                     }
                 }
             }
 
-            //if (Keyboard::isKeyPressed(Keyboard::Tab))
-              //  currentHero++, currentHero %= heroes.size();
-
             if (Keyboard::isKeyPressed(Keyboard::Left))
             {
-                heroes[currentHero].move(Direction::Left, time);
+                currentHero->move(Direction::Left, time);
             }
             if (Keyboard::isKeyPressed(Keyboard::Right))
             {
-                heroes[currentHero].move(Direction::Right, time);
+                currentHero->move(Direction::Right, time);
             }
             if (Keyboard::isKeyPressed(Keyboard::Up))
             {
-                heroes[currentHero].move(Direction::Up, time);\
+                currentHero->move(Direction::Up, time);\
             }
             if (Keyboard::isKeyPressed(Keyboard::Down))
             {
-                heroes[currentHero].move(Direction::Down, time);
+                currentHero->move(Direction::Down, time);\
             }
 
             window.clear();
-
-            level.Draw(window);
-
-            for (auto it = heroes.begin(); it != heroes.end(); it++)
-                it->draw(window);
-                //hero1.draw(window);
+            game.updatePhysics();
+            game.draw(window);
 
             window.display();
         }
-
-    } catch (IlluminatiConfirmed::Exception &e2) {
+    } catch (IlluminatiConfirmed::Exception &e2)
+    {
         std::cout << e2.what();
-    } catch (IlluminatiConfirmed::Exception &e) {
+    } catch (IlluminatiConfirmed::Exception &e)
+    {
         std::cout << e.what();
     }
 
