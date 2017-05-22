@@ -16,10 +16,11 @@ HEADERS += \
     constants.h \
     Game.h \
     ../../Libs/tinyxml2/tinyxml2.h
+    ../../Libs/Box2D/Box2D.h
 
 LIBS += -L$$PWD/../../Libs/Box2D/Build/ -lBox2D
 INCLUDEPATH += $$PWD/../../Libs/Box2D/
-INCLUDEPATH += $$PWD/../../Libs/
+#INCLUDEPATH += $$PWD/../../Libs/
 
 LIBS += -L$$PWD/../../Libs/SFML/Build -lsfml-audio -lsfml-graphics -lsfml-network -lsfml-window -lsfml-system
 INCLUDEPATH += $$PWD/../../Libs/SFML/include
