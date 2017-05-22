@@ -1,5 +1,5 @@
 #include <SFML/Graphics.hpp>
-#include "Box2D/Box2D.h"
+#include "Box2D.h"
 
 #include <exception>
 #include <iostream>
@@ -20,7 +20,7 @@ int main() {
     window.create(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Level.h test");
 
     Game game;
-    game.initNewGame("../maps/map25x25_1.tmx");
+    game.initNewGame("../Game/maps/map25x25_1.tmx");
 
     Character *currentHero = game.selectNextHero();
 

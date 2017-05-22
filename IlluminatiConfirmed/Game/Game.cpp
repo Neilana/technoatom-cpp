@@ -10,14 +10,14 @@ void Game::initNewGame(const std::string &mapFile) {
 }
 
 void Game::initCharacters() {
-  Character *hero1 = new Character("../sprites/demon.png", 4, 64, 64);
+  Character *hero1 = new Character("../Game/sprites/demon.png", 4, 64, 64);
   m_heroes.push_back(*hero1);
 
-  Character *hero2 = new Character("../sprites/panda.png", 3, 32, 32);
+  Character *hero2 = new Character("../Game/sprites/panda.png", 3, 32, 32);
   hero2->setCoordinates(100, 100);
   m_heroes.push_back(*hero2);
 
-  Character *hero3 = new Character("../sprites/spider.png", 10, 64, 64);
+  Character *hero3 = new Character("../Game/sprites/spider.png", 10, 64, 64);
   hero3->setCoordinates(300, 300);
   m_heroes.push_back(*hero3);
 }
