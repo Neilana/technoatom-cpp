@@ -1,7 +1,8 @@
 #pragma once
 
-#include "Box2D.h"
+#include "Box2D/Box2D.h"
 
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -13,26 +14,28 @@ class Game {
  private:
   Level m_level;
   int m_currentHeroId;
+  b2World *m_world;
 
   // physics Box2D
   std::vector<Object> walls;  // level?
-  b2World *world;
+  std::unique_ptr<b2World> world;
   b2Body *playerBody;
 
  public:
-  std::vector<Character> m_heroes;
+  std::vector<std::shared_ptr<Character>> m_heroes;
 
-  Game();
+  Game(b2World *world);
   void initNewGame(const std::string &mapFile);
   void initCharacters();
   void initPhysics();
+  // void LoadMap(std::vector<Object> &&vec, sf::Vector2i tileSize);
 
   void draw(sf::RenderWindow &window);
 
-  Character *selectNextHero() {
+  std::shared_ptr<Character> selectNextHero() {
     m_currentHeroId++;
     m_currentHeroId %= m_heroes.size();
-    return &m_heroes[m_currentHeroId];
+    return m_heroes[m_currentHeroId];
   }
   // void moveActiveHero(Direction dir, float time) {
   // m_heroes[m_currentHero].move(dir); }

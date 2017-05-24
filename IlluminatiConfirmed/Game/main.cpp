@@ -1,5 +1,5 @@
 #include <SFML/Graphics.hpp>
-#include "Box2D.h"
+#include "Box2D/Box2D.h"
 
 #include <exception>
 #include <iostream>
@@ -9,7 +9,7 @@
 #include "Character.h"
 #include "Game.h"
 #include "Level.h"
-#include "constants.h"
+//#include "constants.h"
 
 using namespace sf;
 using namespace std;
@@ -19,23 +19,16 @@ int main() {
     sf::RenderWindow window;
     window.create(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Level.h test");
 
-    Game game;
+    b2World world(b2Vec2(0.0f, 0.0f));
+    world.Dump();
+
+    Game game(&world);
     game.initNewGame("../Game/maps/map25x25_1.tmx");
 
-    Character *currentHero = game.selectNextHero();
-
-    //        b2AABB worldAABB;
-    //        worldAABB.lowerBound.Set(-100.0f, -100.0f);
-    //        worldAABB.upperBound.Set(100.0f, 100.0f);
-
-    //        b2Vec2 gravity(0, -9.8); //normal earth gravity, 9.8 m/s/s
-    //        straight down!
-    //        bool doSleep = true;
-
-    //        b2World world(gravity);
+    auto currentHero = game.selectNextHero();
 
     Clock clock;
-
+    world.Dump();
     while (window.isOpen()) {
       float time = clock.getElapsedTime().asMicroseconds();
       clock.restart();
@@ -65,7 +58,9 @@ int main() {
       if (Keyboard::isKeyPressed(Keyboard::Down)) {
         currentHero->move(Direction::Down, time);
       }
+      world.Step(1 / 60.f, 8, 3);
 
+      for (auto &&it : game.m_heroes) it->updatePhysics();
       window.clear();
       game.updatePhysics();
       game.draw(window);
