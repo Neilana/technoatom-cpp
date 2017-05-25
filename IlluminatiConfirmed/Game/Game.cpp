@@ -49,7 +49,8 @@ void Game::initPhysics() {
 
     b2Body *body = m_world->CreateBody(&bodyDef);
     b2PolygonShape shape;
-    auto size = SfVector2toB2Vec2( sf::Vector2i(walls[i].m_rect.width / 2, walls[i].m_rect.height / 2) );
+    auto size = SfVector2toB2Vec2(
+        sf::Vector2i(walls[i].m_rect.width / 2, walls[i].m_rect.height / 2));
     shape.SetAsBox(size.x, size.y);
     b2FixtureDef fixture;
     fixture.shape = &shape;

@@ -8,7 +8,8 @@ SOURCES += main.cpp \
     Level.cpp \
     Character.cpp \
     Game.cpp \
-    ../../Libs/tinyxml2/tinyxml2.cpp
+    ../../Libs/tinyxml2/tinyxml2.cpp \
+    "../../Libs/Box2D-SFML2-Debug-Draw/Box2D-SFML Debug Draw/SFMLDebugDraw.cpp"
 
 HEADERS += \
     Level.h \

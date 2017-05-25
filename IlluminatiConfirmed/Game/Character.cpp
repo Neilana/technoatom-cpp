@@ -3,9 +3,9 @@
 //#include <SFML/Graphics.hpp>
 //#include <string>
 
-//using namespace sf;
+// using namespace sf;
 
-//Character::Character(const std::string& file, int f, int width, int height) {
+// Character::Character(const std::string& file, int f, int width, int height) {
 //  x = 0;
 //  y = 0;
 //  vx = 0;
@@ -36,7 +36,7 @@
 //  }
 //}
 
-//void Character::move(Direction dir, float deltaTime) {
+// void Character::move(Direction dir, float deltaTime) {
 //  currentFrame += 0.005 * deltaTime;
 //  if (currentFrame > frames) currentFrame -= frames;
 //  //   float oldSpeed = speed;
@@ -84,4 +84,4 @@
 //  sprite.setPosition(x, y);
 //}
 
-//void Character::draw(sf::RenderWindow& window) { window.draw(sprite); }
+// void Character::draw(sf::RenderWindow& window) { window.draw(sprite); }

@@ -24,7 +24,8 @@ int main() {
     world.Dump();
     SFMLDebugDraw debugDraw(window);
     world.SetDebugDraw(&debugDraw);
-    debugDraw.SetFlags(b2Draw::e_shapeBit + b2Draw::e_aabbBit + b2Draw::e_centerOfMassBit + b2Draw::e_pairBit);
+    debugDraw.SetFlags(b2Draw::e_shapeBit + b2Draw::e_aabbBit +
+                       b2Draw::e_centerOfMassBit + b2Draw::e_pairBit);
 
     Game game(&world);
     game.initNewGame("../Game/maps/map25x25_1.tmx");

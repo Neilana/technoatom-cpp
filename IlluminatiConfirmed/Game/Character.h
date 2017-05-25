@@ -57,7 +57,7 @@ class Character {
 
     sprite.setTexture(texture);
     sprite.setTextureRect(sf::Rect<int>(0, 0, width, height));
-    sprite.setPosition(B2Vec2toSfVector2<float>( m_body->GetPosition() ));
+    sprite.setPosition(B2Vec2toSfVector2<float>(m_body->GetPosition()));
     sprite.setOrigin(16.f, 16.f);
     sprite.setScale(1.5f, 1.5f);
 
@@ -172,9 +172,9 @@ class Character {
   }
 
   void updatePhysics() {
-    //sprite.setPosition(FromBox2DtoPixel(m_body->GetPosition().x),
+    // sprite.setPosition(FromBox2DtoPixel(m_body->GetPosition().x),
     //                   FromBox2DtoPixel(m_body->GetPosition().y));
-    sprite.setPosition(B2Vec2toSfVector2<float>( m_body->GetPosition() ));
+    sprite.setPosition(B2Vec2toSfVector2<float>(m_body->GetPosition()));
     sprite.setRotation(m_body->GetAngle() * 180 / 3.14159265);
   }
 
