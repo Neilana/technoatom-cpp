@@ -39,7 +39,7 @@ class Character {
     circle_shape.m_radius = 2.f;
     b2FixtureDef fixture;
     fixture.shape = &circle_shape;
-    fixture.density = 1.0f;
+    fixture.density = 0.1f;
     fixture.friction = 0.3f;
     fixture.restitution = 0.1f;
 
@@ -74,7 +74,7 @@ class Character {
     }
   }
 
-  void move(Direction key, float deltaTime) {
+  void move(Direction key) {
     switch (key) {
       case Direction::Right: {  //в процессе выбора физики движения)
         //        float force = m_body->GetMass() *
@@ -171,7 +171,12 @@ class Character {
     //}
   }
 
-  void updatePhysics() {
+  void updatePhysics(const sf::RenderWindow& window) {
+    m_body->SetTransform(
+        m_body->GetPosition(),
+        RadBetweenVectors(m_body->GetPosition(),
+                          SfVector2toB2Vec2(sf::Mouse::getPosition(window))));
+
     // sprite.setPosition(FromBox2DtoPixel(m_body->GetPosition().x),
     //                   FromBox2DtoPixel(m_body->GetPosition().y));
     sprite.setPosition(B2Vec2toSfVector2<float>(m_body->GetPosition()));

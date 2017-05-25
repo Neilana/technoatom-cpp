@@ -79,3 +79,6 @@ Libs
 *.X13924
 
 IlluminatiConfirmed/CPU/savings/save\.memory\.txt
+
+IlluminatiConfirmed/Game/constants.h~
+*.h~
