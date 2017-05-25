@@ -8,8 +8,7 @@ SOURCES += main.cpp \
     Level.cpp \
     Character.cpp \
     Game.cpp \
-    ../../Libs/tinyxml2/tinyxml2.cpp \
-    constants.cpp
+    ../../Libs/tinyxml2/tinyxml2.cpp
 
 HEADERS += \
     Level.h \
@@ -30,3 +29,5 @@ INCLUDEPATH += $$PWD/../../Libs/SFML/include
 win32:LIBS += -L$$PWD/../../Libs/tinyxml2/Build/ -llibtinyxml2.dll
 INCLUDEPATH += $$PWD/../../Libs/tinyxml2/
 
+#repo: https://github.com/MrPlow442/Box2D-SFML2-Debug-Draw/
+INCLUDEPATH += "$$PWD/../../Libs/Box2D-SFML2-Debug-Draw/Box2D-SFML Debug Draw/"

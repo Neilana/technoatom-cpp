@@ -9,6 +9,7 @@
 #include "Character.h"
 #include "Game.h"
 #include "Level.h"
+#include "SFMLDebugDraw.h"
 //#include "constants.h"
 
 using namespace sf;
@@ -21,6 +22,9 @@ int main() {
 
     b2World world(b2Vec2(0.0f, 0.0f));
     world.Dump();
+    SFMLDebugDraw debugDraw(window);
+    world.SetDebugDraw(&debugDraw);
+    debugDraw.SetFlags(b2Draw::e_shapeBit + b2Draw::e_aabbBit + b2Draw::e_centerOfMassBit + b2Draw::e_pairBit);
 
     Game game(&world);
     game.initNewGame("../Game/maps/map25x25_1.tmx");
@@ -64,6 +68,7 @@ int main() {
       window.clear();
       game.updatePhysics();
       game.draw(window);
+      world.DrawDebugData();
 
       window.display();
     }

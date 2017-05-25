@@ -16,12 +16,12 @@ void Game::initCharacters() {
 
   std::shared_ptr<Character> hero2 = std::make_shared<Character>(
       "../Game/sprites/panda.png", m_world, 3, 32, 32);
-  hero2->setCoordinates(100, 100);
+  hero2->setCoordinates(sf::Vector2u(100, 100));
   m_heroes.push_back(std::move(hero2));
 
   std::shared_ptr<Character> hero3 = std::make_shared<Character>(
       "../Game/sprites/spider.png", m_world, 10, 64, 64);
-  hero3->setCoordinates(300, 300);
+  hero3->setCoordinates(sf::Vector2u(300, 300));
   m_heroes.push_back(std::move(hero3));
 }
 
@@ -41,17 +41,16 @@ void Game::initPhysics() {
   for (int i = 0; i < walls.size(); i++) {
     b2BodyDef bodyDef;
     bodyDef.type = b2_staticBody;
-    bodyDef.position.Set(
-        FromPixeltoBox2D(walls[i].m_rect.left +
-                         tileSize.x / 2 *
-                             (walls[i].m_rect.width / tileSize.x - 1)),
-        FromPixeltoBox2D(walls[i].m_rect.top +
-                         tileSize.y / 2 *
-                             (walls[i].m_rect.height / tileSize.y - 1)));
+    bodyDef.position = SfVector2toB2Vec2(sf::Vector2i(
+        walls[i].m_rect.left +
+            tileSize.x / 2 * (walls[i].m_rect.width / tileSize.x - 1),
+        walls[i].m_rect.top +
+            tileSize.y / 2 * (walls[i].m_rect.height / tileSize.y - 1)));
+
     b2Body *body = m_world->CreateBody(&bodyDef);
     b2PolygonShape shape;
-    shape.SetAsBox(FromPixeltoBox2D(walls[i].m_rect.width / 2),
-                   FromPixeltoBox2D(walls[i].m_rect.height / 2));
+    auto size = SfVector2toB2Vec2( sf::Vector2i(walls[i].m_rect.width / 2, walls[i].m_rect.height / 2) );
+    shape.SetAsBox(size.x, size.y);
     b2FixtureDef fixture;
     fixture.shape = &shape;
     fixture.restitution = 0.1f;
@@ -60,5 +59,4 @@ void Game::initPhysics() {
   }
 }
 
-void Game::updatePhysics() {
-}
+void Game::updatePhysics() {}

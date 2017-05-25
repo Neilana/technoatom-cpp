@@ -57,8 +57,7 @@ class Character {
 
     sprite.setTexture(texture);
     sprite.setTextureRect(sf::Rect<int>(0, 0, width, height));
-    sprite.setPosition(FromBox2DtoPixel(m_body->GetPosition().x),
-                       FromBox2DtoPixel(m_body->GetPosition().y));
+    sprite.setPosition(B2Vec2toSfVector2<float>( m_body->GetPosition() ));
     sprite.setOrigin(16.f, 16.f);
     sprite.setScale(1.5f, 1.5f);
 
@@ -173,18 +172,18 @@ class Character {
   }
 
   void updatePhysics() {
-    sprite.setPosition(FromBox2DtoPixel(m_body->GetPosition().x),
-                       FromBox2DtoPixel(m_body->GetPosition().y));
+    //sprite.setPosition(FromBox2DtoPixel(m_body->GetPosition().x),
+    //                   FromBox2DtoPixel(m_body->GetPosition().y));
+    sprite.setPosition(B2Vec2toSfVector2<float>( m_body->GetPosition() ));
     sprite.setRotation(m_body->GetAngle() * 180 / 3.14159265);
   }
 
   void draw(sf::RenderWindow& window) {
     { window.draw(sprite); }
   }
-
-  void setCoordinates(int newX, int newY) {
-    m_body->SetTransform(b2Vec2(FromPixeltoBox2D(newX), FromPixeltoBox2D(newY)),
-                         m_body->GetAngle());
-    sprite.setPosition(newX, newY);
+  template <typename T>
+  void setCoordinates(sf::Vector2<T> vec) {
+    m_body->SetTransform(SfVector2toB2Vec2(vec), m_body->GetAngle());
+    sprite.setPosition(static_cast<sf::Vector2f>(vec));
   }
 };
