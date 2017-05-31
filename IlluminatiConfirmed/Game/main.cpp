@@ -1,5 +1,5 @@
+#include "Box2D.h"
 #include <SFML/Graphics.hpp>
-#include "Box2D/Box2D.h"
 
 #include <exception>
 #include <iostream>
@@ -31,7 +31,7 @@ int main() {
     sf::Text fpsCounter;
     sf::Font mainFont;
     if (!mainFont.loadFromFile(
-            "../Game/res/Franchise-Bold-hinted.ttf"))  // Set path to your font
+            "../Game/res/Franchise-Bold-hinted.ttf")) // Set path to your font
       throw EXCEPTION("I can't open file with font.", nullptr);
     fpsCounter.setFont(mainFont);
     fpsCounter.setColor(sf::Color::White);
@@ -52,7 +52,8 @@ int main() {
       sf::Mouse::getPosition();
 
       while (window.pollEvent(event)) {
-        if (event.type == sf::Event::Closed) window.close();
+        if (event.type == sf::Event::Closed)
+          window.close();
 
         if (event.type == sf::Event::KeyPressed) {
           if (event.key.code == sf::Keyboard::Tab) {
@@ -75,7 +76,8 @@ int main() {
       }
       world.Step(1 / 60.f, 8, 3);
 
-      for (auto &&it : game.m_heroes) it->updatePhysics(window);
+      for (auto &&it : game.m_heroes)
+        it->updatePhysics(window);
       window.clear();
       game.updatePhysics();
       game.draw(window);

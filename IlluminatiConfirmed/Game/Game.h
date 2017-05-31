@@ -11,17 +11,19 @@
 #include "constants.h"
 
 class Game {
- private:
+private:
   Level m_level;
   int m_currentHeroId;
   b2World *m_world;
 
   // physics Box2D
-  std::vector<Object> walls;  // level?
+  //std::vector<Object> walls; // level?
   std::unique_ptr<b2World> world;
   b2Body *playerBody;
 
- public:
+  void buildBarriers(std::vector<Object> &walls);
+
+public:
   std::vector<std::shared_ptr<Character>> m_heroes;
 
   Game(b2World *world);
