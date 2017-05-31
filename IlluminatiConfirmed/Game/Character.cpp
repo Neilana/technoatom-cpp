@@ -1,9 +1,9 @@
-//#include "Character.h"
+#include "Character.h"
 
-//#include <SFML/Graphics.hpp>
-//#include <string>
+#include <SFML/Graphics.hpp>
+#include <string>
 
-// using namespace sf;
+ using namespace sf;
 
 // Character::Character(const std::string& file, int f, int width, int height) {
 //  x = 0;
@@ -83,5 +83,89 @@
 //  //    speed = oldSpeed;
 //  sprite.setPosition(x, y);
 //}
+
+// void move(Direction key) {
+// BEGIN
+//    switch (key) {
+//    case Direction::Right: { //в процессе выбора физики движения)
+//      //        float force = m_body->GetMass() *
+//      //                      (m_max_speed - m_body->GetLinearVelocity().x) /
+//      //                      (1 / 60.0);  // f = mv/t
+//      //        m_body->ApplyForce(b2Vec2(force, 0), m_body->GetWorldCenter(),
+//      //        true);
+//      b2Vec2 f = m_body->GetWorldVector(b2Vec2(m_max_force, 0.f));
+//      b2Vec2 p = m_body->GetWorldPoint(b2Vec2(2.f, 0.f));
+//      m_body->ApplyForce(f, p, true);
+//      m_body->ApplyForce(f, p, true);
+
+//      // m_body->ApplyTorque(-5.f, true);
+//      break;
+//    }
+//    case Direction::Left: {
+//      //        float force = m_body->GetMass() *
+//      //                      (m_max_speed - m_body->GetLinearVelocity().x) /
+//      //                      (1 / 60.0);  // f = mv/t
+//      //        m_body->ApplyForce(b2Vec2(-force, 0),
+//      //        m_body->GetWorldCenter(), true);
+//      b2Vec2 f = m_body->GetWorldVector(b2Vec2(-m_max_force, 0.f));
+//      b2Vec2 p = m_body->GetWorldPoint(b2Vec2(2.f, 0.f));
+//      m_body->ApplyForce(f, p, true);
+//      // m_body->ApplyTorque(+5.f, true);
+//      break;
+//    }
+//    case Direction::Up: {
+//      //        float force = m_body->GetMass() *
+//      //                      (m_max_speed - m_body->GetLinearVelocity().x) /
+//      //                      (1 / 60.0);  // f = mv/t
+//      //        m_body->ApplyForce(b2Vec2(0, force), m_body->GetWorldCenter(),
+//      //        true);
+//      b2Vec2 f = m_body->GetWorldVector(b2Vec2(0.0f, -m_max_force));
+//      b2Vec2 p = m_body->GetWorldPoint(b2Vec2(0.0f, 2.f));
+//      m_body->ApplyForce(f, p, true);
+//      break;
+//    }
+//    case Direction::Down: {
+//      //        float force = m_body->GetMass() *
+//      //                      (m_max_speed - m_body->GetLinearVelocity().x) /
+//      //                      (1 / 60.0);  // f = mv/t
+//      //        m_body->ApplyForce(b2Vec2(0, -force),
+//      //        m_body->GetWorldCenter(), true);
+//      b2Vec2 f = m_body->GetWorldVector(b2Vec2(0.0f, m_max_force));
+//      b2Vec2 p = m_body->GetWorldPoint(b2Vec2(0.0f, 2.f));
+//      m_body->ApplyForce(f, p, true);
+//      break;
+//    }
+//    }
+
+// END
+
+void Character::move(Direction key, float deltaTime) {
+  currentFrame += 0.005 * deltaTime;
+  if (currentFrame > m_frames)
+    currentFrame -= m_frames;
+  switch (key) {
+  case Direction::Right: { //в процессе выбора физики движения)
+    m_body->SetLinearVelocity(b2Vec2(10.0f, 0.0f));
+    sprite.setTextureRect(rightRects[int(currentFrame)]);
+    break;
+  }
+  case Direction::Left: { //в процессе выбора физики движения)
+    m_body->SetLinearVelocity(b2Vec2(-10.0f, 0.0f));
+    sprite.setTextureRect(leftRects[int(currentFrame)]);
+    break;
+  }
+  case Direction::Up: { //в процессе выбора физики движения)
+    m_body->SetLinearVelocity(b2Vec2(0.0f, -10.0f));
+    sprite.setTextureRect(backRects[int(currentFrame)]);
+    break;
+  }
+
+  case Direction::Down: { //в процессе выбора физики движения)
+    m_body->SetLinearVelocity(b2Vec2(0.0f, 10.0f));
+    sprite.setTextureRect(frontRects[int(currentFrame)]);
+    break;
+  }
+  }
+}
 
 // void Character::draw(sf::RenderWindow& window) { window.draw(sprite); }

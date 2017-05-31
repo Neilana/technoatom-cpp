@@ -36,7 +36,7 @@ void Game::draw(sf::RenderWindow &window) {
 }
 
 void Game::initPhysics() {
-  sf::Vector2i tileSize = m_level.GetTileSize();
+  //sf::Vector2i tileSize = m_level.GetTileSize();
 
   // загружаем в Box2D стены
   std::vector<Object> walls = m_level.GetObjectsByType("Wall");
@@ -52,7 +52,7 @@ void Game::updatePhysics() {}
 void Game::buildBarriers(std::vector<Object> &walls) {
   // загружаем в Box2D стены
  //std::vector<Object> walls = m_level.GetObjectsByType("Wall");
-  for (int i = 0; i < walls.size(); i++) {
+  for (size_t i = 0; i < walls.size(); i++) {
     // b2BodyDef bodyDef;
     // bodyDef.type = b2_staticBody;
     //    bodyDef.position = SfVector2toB2Vec2(sf::Vector2i(

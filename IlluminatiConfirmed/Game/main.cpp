@@ -63,16 +63,16 @@ int main() {
       }
 
       if (Keyboard::isKeyPressed(Keyboard::Left)) {
-        currentHero->move(Direction::Left);
+        currentHero->move(Direction::Left, time);
       }
       if (Keyboard::isKeyPressed(Keyboard::Right)) {
-        currentHero->move(Direction::Right);
+        currentHero->move(Direction::Right, time);
       }
       if (Keyboard::isKeyPressed(Keyboard::Up)) {
-        currentHero->move(Direction::Up);
+        currentHero->move(Direction::Up, time);
       }
       if (Keyboard::isKeyPressed(Keyboard::Down)) {
-        currentHero->move(Direction::Down);
+        currentHero->move(Direction::Down, time);
       }
       world.Step(1 / 60.f, 8, 3);
 
