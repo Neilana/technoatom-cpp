@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Box2D/Box2D.h"
+#include "Bullet.h"
 #include "SFML/Graphics.hpp"
 #include "constants.h"
 #include <vector>
@@ -13,6 +14,8 @@ private:
   sf::Texture texture;
   sf::Sprite sprite;
 
+  std::string m_spriteBullets;
+
   std::vector<sf::Rect<int>> frontRects;
   std::vector<sf::Rect<int>> backRects;
   std::vector<sf::Rect<int>> leftRects;
@@ -21,17 +24,21 @@ private:
   float m_max_speed = 10.f;
   float m_max_force = 13.f; //нет времени думать какая разница :D
 
+  Direction m_direction;
+
 public:
   int tileWidth, tileHeight;
   b2Body *m_body;
   // Character();
   void move(Direction key, float deltaTime);
-  //void move(Direction key);
-
-
+  // void move(Direction key);
+  std::shared_ptr<Bullet> attack(b2World *world);
+  sf::Vector2f getSFMLPosition() { return sprite.getPosition(); }
 
   Character(const std::string &file, b2World *world, int frames, int width,
-            int height) : m_frames(frames) {
+            int height, const std::string &bulletsFile)
+      : m_frames(frames), m_direction(Direction::Down),
+        m_spriteBullets(bulletsFile) {
     b2BodyDef body_def;
 
     body_def.type = b2_dynamicBody;
@@ -47,9 +54,9 @@ public:
     fixture.shape = &circle_shape;
 
     // ??? что-то из этого помгло им перестать летать
-    fixture.density = 100.1f;
-    fixture.friction = 100.3f;
-    fixture.restitution = 0.1f;
+    fixture.density = 0.0;
+    fixture.friction = 0.0;
+    fixture.restitution = 0.0;
 
     m_body->CreateFixture(&fixture);
     m_body->SetLinearDamping(100.3f);
@@ -83,18 +90,16 @@ public:
     }
   }
 
-
-
   void updatePhysics(const sf::RenderWindow &window) {
-//    m_body->SetTransform(
-//        m_body->GetPosition(),
-//        RadBetweenVectors(m_body->GetPosition(),
-//                          SfVector2toB2Vec2(sf::Mouse::getPosition(window))));
+    //    m_body->SetTransform(
+    //        m_body->GetPosition(),
+    //        RadBetweenVectors(m_body->GetPosition(),
+    //                          SfVector2toB2Vec2(sf::Mouse::getPosition(window))));
 
     // sprite.setPosition(FromBox2DtoPixel(m_body->GetPosition().x),
     //                   FromBox2DtoPixel(m_body->GetPosition().y));
     sprite.setPosition(B2Vec2toSfVector2<float>(m_body->GetPosition()));
-    //sprite.setRotation(m_body->GetAngle() * 180 / 3.14159265);
+    // sprite.setRotation(m_body->GetAngle() * 180 / 3.14159265);
   }
 
   void draw(sf::RenderWindow &window) {

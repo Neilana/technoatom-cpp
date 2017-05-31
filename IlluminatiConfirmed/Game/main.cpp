@@ -59,6 +59,11 @@ int main() {
           if (event.key.code == sf::Keyboard::Tab) {
             currentHero = game.selectNextHero();
           }
+          // если написать ниже - будет трэш, будет оооч много создаваться сразу
+          if (event.key.code == sf::Keyboard::Space) {
+            game.sendBullet(currentHero.get());
+            // currentHero->attack();
+          }
         }
       }
 
@@ -74,12 +79,11 @@ int main() {
       if (Keyboard::isKeyPressed(Keyboard::Down)) {
         currentHero->move(Direction::Down, time);
       }
+
       world.Step(1 / 60.f, 8, 3);
 
-      for (auto &&it : game.m_heroes)
-        it->updatePhysics(window);
       window.clear();
-      game.updatePhysics();
+      game.updatePhysics(window);
       game.draw(window);
       world.DrawDebugData();
 

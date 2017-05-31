@@ -2,10 +2,12 @@
 
 #include "Box2D/Box2D.h"
 
+#include <list>
 #include <memory>
 #include <string>
 #include <vector>
 
+#include "Bullet.h"
 #include "Character.h"
 #include "Level.h"
 #include "constants.h"
@@ -17,8 +19,11 @@ private:
   b2World *m_world;
 
   // physics Box2D
-  //std::vector<Object> walls; // level?
+  // std::vector<Object> walls; // level?
   std::unique_ptr<b2World> world;
+  // std::list<Bullet*> bullets;
+  std::list<std::shared_ptr<Bullet>> bullets;
+
   b2Body *playerBody;
 
   void buildBarriers(std::vector<Object> &walls);
@@ -43,5 +48,7 @@ public:
   // m_heroes[m_currentHero].move(dir); }
 
   // void update(time, key);
-  void updatePhysics();
+  void updatePhysics(sf::RenderWindow &window);
+
+  void sendBullet(Character *hero);
 };

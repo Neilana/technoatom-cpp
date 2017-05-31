@@ -10,18 +10,21 @@ void Game::initNewGame(const std::string &mapFile) {
 }
 
 void Game::initCharacters() {
-  std::shared_ptr<Character> hero1 = std::make_shared<Character>(
-      "../Game/sprites/demon.png", m_world, 4, 64, 64);
+  std::shared_ptr<Character> hero1 =
+      std::make_shared<Character>("../Game/sprites/demon.png", m_world, 4, 64,
+                                  64, "../Game/sprites/bullets/bullet1.png");
   hero1->setCoordinates(sf::Vector2u(500, 500));
   m_heroes.push_back(std::move(hero1));
 
-  std::shared_ptr<Character> hero2 = std::make_shared<Character>(
-      "../Game/sprites/panda.png", m_world, 3, 32, 32);
+  std::shared_ptr<Character> hero2 =
+      std::make_shared<Character>("../Game/sprites/panda.png", m_world, 3, 32,
+                                  32, "../Game/sprites/bullets/bullet2.png");
   hero2->setCoordinates(sf::Vector2u(100, 100));
   m_heroes.push_back(std::move(hero2));
 
-  std::shared_ptr<Character> hero3 = std::make_shared<Character>(
-      "../Game/sprites/spider.png", m_world, 10, 64, 64);
+  std::shared_ptr<Character> hero3 =
+      std::make_shared<Character>("../Game/sprites/spider.png", m_world, 10, 64,
+                                  64, "../Game/sprites/bullets/bullet3.png");
   hero3->setCoordinates(sf::Vector2u(300, 300));
   m_heroes.push_back(std::move(hero3));
 }
@@ -33,10 +36,14 @@ void Game::draw(sf::RenderWindow &window) {
   // рисуем всех персонажей
   for (auto &&it : m_heroes)
     it->draw(window);
+
+  // рисуем пули
+  for (auto &&it : bullets)
+    it->draw(window);
 }
 
 void Game::initPhysics() {
-  //sf::Vector2i tileSize = m_level.GetTileSize();
+  // sf::Vector2i tileSize = m_level.GetTileSize();
 
   // загружаем в Box2D стены
   std::vector<Object> walls = m_level.GetObjectsByType("Wall");
@@ -47,11 +54,19 @@ void Game::initPhysics() {
   buildBarriers(walls);
 }
 
-void Game::updatePhysics() {}
+void Game::updatePhysics(sf::RenderWindow &window) {
+  for (auto &&it : m_heroes)
+    it->updatePhysics(window);
+
+  for (auto &&it : bullets)
+    it->updatePhysics(window);
+
+  bullets.remove_if([](auto &i) { return i->hasStopped(); });
+}
 
 void Game::buildBarriers(std::vector<Object> &walls) {
   // загружаем в Box2D стены
- //std::vector<Object> walls = m_level.GetObjectsByType("Wall");
+  // std::vector<Object> walls = m_level.GetObjectsByType("Wall");
   for (size_t i = 0; i < walls.size(); i++) {
     // b2BodyDef bodyDef;
     // bodyDef.type = b2_staticBody;
@@ -102,5 +117,9 @@ void Game::buildBarriers(std::vector<Object> &walls) {
 
     staticBody->CreateFixture(&myFixtureDef);
   }
+}
 
+void Game::sendBullet(Character *hero) {
+  std::shared_ptr<Bullet> bullet = hero->attack(m_world);
+  bullets.push_back(bullet);
 }

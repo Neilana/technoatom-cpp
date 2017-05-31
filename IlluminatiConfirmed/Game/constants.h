@@ -10,13 +10,11 @@ const float SCALE = 32.0;
 
 enum class Direction { Up, Down, Left, Right };
 
-template <typename T>
-b2Vec2 SfVector2toB2Vec2(const sf::Vector2<T> &vector) {
+template <typename T> b2Vec2 SfVector2toB2Vec2(const sf::Vector2<T> &vector) {
   return b2Vec2(vector.x / SCALE, vector.y / SCALE);
 }
 
-template <typename T>
-sf::Vector2<T> B2Vec2toSfVector2(const b2Vec2 &vector) {
+template <typename T> sf::Vector2<T> B2Vec2toSfVector2(const b2Vec2 &vector) {
   return sf::Vector2<T>(vector.x * SCALE, vector.y * SCALE);
 }
 
