@@ -1,5 +1,7 @@
 #include "Bullet.h"
 
+using IlluminatiConfirmed::Bullet;
+
 Bullet::Bullet(b2World *world, sf::Vector2f const pos, Direction direction,
                float damage, const std::string &spriteFile)
     : m_damage(damage) {

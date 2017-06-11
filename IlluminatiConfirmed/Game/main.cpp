@@ -1,5 +1,5 @@
-#include "Box2D.h"
 #include <SFML/Graphics.hpp>
+#include "Box2D/Box2D.h"
 
 #include <exception>
 #include <iostream>
@@ -15,6 +15,9 @@
 using namespace sf;
 using namespace std;
 
+using IlluminatiConfirmed::Character;
+using IlluminatiConfirmed::Game;
+
 int main() {
   try {
     sf::RenderWindow window;
@@ -23,15 +26,15 @@ int main() {
 
     b2World world(b2Vec2(0.0f, 0.0f));
     world.Dump();
-    SFMLDebugDraw debugDraw(window);
-    world.SetDebugDraw(&debugDraw);
-    debugDraw.SetFlags(b2Draw::e_shapeBit + b2Draw::e_aabbBit +
-                       b2Draw::e_centerOfMassBit + b2Draw::e_pairBit);
+    //    SFMLDebugDraw debugDraw(window);
+    //    world.SetDebugDraw(&debugDraw);
+    //    debugDraw.SetFlags(b2Draw::e_shapeBit + b2Draw::e_aabbBit +
+    //                       b2Draw::e_centerOfMassBit + b2Draw::e_pairBit);
     std::stringstream sstream;
     sf::Text fpsCounter;
     sf::Font mainFont;
     if (!mainFont.loadFromFile(
-            "../Game/res/Franchise-Bold-hinted.ttf")) // Set path to your font
+            "../Game/res/Franchise-Bold-hinted.ttf"))  // Set path to your font
       throw EXCEPTION("I can't open file with font.", nullptr);
     fpsCounter.setFont(mainFont);
     fpsCounter.setColor(sf::Color::White);
@@ -52,8 +55,7 @@ int main() {
       sf::Mouse::getPosition();
 
       while (window.pollEvent(event)) {
-        if (event.type == sf::Event::Closed)
-          window.close();
+        if (event.type == sf::Event::Closed) window.close();
 
         if (event.type == sf::Event::KeyPressed) {
           if (event.key.code == sf::Keyboard::Tab) {

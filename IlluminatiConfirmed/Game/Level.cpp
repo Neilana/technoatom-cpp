@@ -1,7 +1,11 @@
 #include "Level.h"
 
-#include "../Logger/Logger.h"
 #include <iostream>
+#include "../Logger/Logger.h"
+
+using IlluminatiConfirmed::Object;
+using IlluminatiConfirmed::Layer;
+using IlluminatiConfirmed::Level;
 
 // int Object::GetPropertyInt(const std::string &name) {
 //    return std::stoi(m_properties.at(name));
@@ -129,8 +133,7 @@ void Level::loadLayersFromFile(tinyxml2::XMLDocument &levelFile) {
       if (x >= m_width) {
         x = 0;
         y++;
-        if (y >= m_height)
-          y = 0;
+        if (y >= m_height) y = 0;
       }
     }
     m_layers.push_back(layer);
@@ -244,16 +247,15 @@ void Level::loadMapFromFile(const std::string &filename) {
           << "\" failed with message: " << levelFile.ErrorName() << "\n";
   }
 
-  loadMapInfoFromFile(levelFile); // загружаем основную инфу
-  loadLayersFromFile(levelFile);  // загружаем слои
-  loadObjectsFromFile(levelFile); // загружаем объекты
+  loadMapInfoFromFile(levelFile);  // загружаем основную инфу
+  loadLayersFromFile(levelFile);   // загружаем слои
+  loadObjectsFromFile(levelFile);  // загружаем объекты
 }
 
 Object Level::GetObject(const std::string &name) {
   // Только первый объект с заданным именем
   for (auto &&it : m_objects)
-    if (it.m_name == name)
-      return it;
+    if (it.m_name == name) return it;
   throw EXCEPTION("Unknown object", nullptr);
 }
 
@@ -261,8 +263,7 @@ std::vector<Object> Level::GetObjectsByName(const std::string &name) {
   // Все объекты с заданным именем
   std::vector<Object> vec;
   for (auto &&it : m_objects)
-    if (it.m_name == name)
-      vec.push_back(it);
+    if (it.m_name == name) vec.push_back(it);
   return vec;
 }
 
@@ -270,8 +271,7 @@ std::vector<Object> Level::GetObjectsByType(const std::string &type) {
   // Все объекты с заданным именем
   std::vector<Object> vec;
   for (auto &&it : m_objects)
-    if (it.m_type == type)
-      vec.push_back(it);
+    if (it.m_type == type) vec.push_back(it);
   return vec;
 }
 
@@ -282,6 +282,5 @@ sf::Vector2i Level::GetTileSize() {
 void Level::Draw(sf::RenderWindow &window) {
   // Рисуем все тайлы (объекты НЕ рисуем!)
   for (auto &&layer : m_layers)
-    for (auto &&tile : layer.m_tiles)
-      window.draw(tile);
+    for (auto &&tile : layer.m_tiles) window.draw(tile);
 }

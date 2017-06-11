@@ -5,6 +5,8 @@
 #include <string>
 
 using namespace sf;
+using IlluminatiConfirmed::Character;
+using IlluminatiConfirmed::Bullet;
 
 // Character::Character(const std::string& file, int f, int width, int height) {
 //  x = 0;
@@ -142,31 +144,30 @@ using namespace sf;
 
 void Character::move(Direction key, float deltaTime) {
   currentFrame += 0.005 * deltaTime;
-  if (currentFrame > m_frames)
-    currentFrame -= m_frames;
+  if (currentFrame > m_frames) currentFrame -= m_frames;
   m_direction = key;
   switch (key) {
-  case Direction::Right: { //в процессе выбора физики движения)
-    m_body->SetLinearVelocity(b2Vec2(10.0f, 0.0f));
-    sprite.setTextureRect(rightRects[int(currentFrame)]);
-    break;
-  }
-  case Direction::Left: { //в процессе выбора физики движения)
-    m_body->SetLinearVelocity(b2Vec2(-10.0f, 0.0f));
-    sprite.setTextureRect(leftRects[int(currentFrame)]);
-    break;
-  }
-  case Direction::Up: { //в процессе выбора физики движения)
-    m_body->SetLinearVelocity(b2Vec2(0.0f, -10.0f));
-    sprite.setTextureRect(backRects[int(currentFrame)]);
-    break;
-  }
+    case Direction::Right: {  //в процессе выбора физики движения)
+      m_body->SetLinearVelocity(b2Vec2(10.0f, 0.0f));
+      sprite.setTextureRect(rightRects[int(currentFrame)]);
+      break;
+    }
+    case Direction::Left: {  //в процессе выбора физики движения)
+      m_body->SetLinearVelocity(b2Vec2(-10.0f, 0.0f));
+      sprite.setTextureRect(leftRects[int(currentFrame)]);
+      break;
+    }
+    case Direction::Up: {  //в процессе выбора физики движения)
+      m_body->SetLinearVelocity(b2Vec2(0.0f, -10.0f));
+      sprite.setTextureRect(backRects[int(currentFrame)]);
+      break;
+    }
 
-  case Direction::Down: { //в процессе выбора физики движения)
-    m_body->SetLinearVelocity(b2Vec2(0.0f, 10.0f));
-    sprite.setTextureRect(frontRects[int(currentFrame)]);
-    break;
-  }
+    case Direction::Down: {  //в процессе выбора физики движения)
+      m_body->SetLinearVelocity(b2Vec2(0.0f, 10.0f));
+      sprite.setTextureRect(frontRects[int(currentFrame)]);
+      break;
+    }
   }
 }
 

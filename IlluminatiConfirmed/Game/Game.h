@@ -12,6 +12,9 @@
 #include "Level.h"
 #include "constants.h"
 
+using IlluminatiConfirmed::Character;
+
+namespace IlluminatiConfirmed {
 class Game {
 private:
   Level m_level;
@@ -52,3 +55,4 @@ public:
 
   void sendBullet(Character *hero);
 };
+}

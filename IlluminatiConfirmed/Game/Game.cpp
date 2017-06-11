@@ -1,11 +1,13 @@
 #include "Game.h"
 #include <iostream>
 
+using IlluminatiConfirmed::Game;
+
 Game::Game(b2World *world) : m_world(world) { m_currentHeroId = 0; }
 
 void Game::initNewGame(const std::string &mapFile) {
-  m_level.loadMapFromFile(mapFile); // загружаем карту
-  initCharacters();                 // загружаем персонажей
+  m_level.loadMapFromFile(mapFile);  // загружаем карту
+  initCharacters();                  // загружаем персонажей
   initPhysics();
 }
 
@@ -34,12 +36,10 @@ void Game::draw(sf::RenderWindow &window) {
   m_level.Draw(window);
 
   // рисуем всех персонажей
-  for (auto &&it : m_heroes)
-    it->draw(window);
+  for (auto &&it : m_heroes) it->draw(window);
 
   // рисуем пули
-  for (auto &&it : bullets)
-    it->draw(window);
+  for (auto &&it : bullets) it->draw(window);
 }
 
 void Game::initPhysics() {
@@ -55,11 +55,9 @@ void Game::initPhysics() {
 }
 
 void Game::updatePhysics(sf::RenderWindow &window) {
-  for (auto &&it : m_heroes)
-    it->updatePhysics(window);
+  for (auto &&it : m_heroes) it->updatePhysics(window);
 
-  for (auto &&it : bullets)
-    it->updatePhysics(window);
+  for (auto &&it : bullets) it->updatePhysics(window);
 
   bullets.remove_if([](auto &i) { return i->hasStopped(); });
 }
@@ -107,7 +105,8 @@ void Game::buildBarriers(std::vector<Object> &walls) {
     // add four walls to the static body
     polygonShape.SetAsBox(
         walls[i].m_rect.width / 64.0,
-        walls[i].m_rect.height / 64.0, // 64 - потому что сначала мы делим на 2,
+        walls[i].m_rect.height /
+            64.0,  // 64 - потому что сначала мы делим на 2,
         // чтобы получить половину ширины/высоты,
         // а затем делим на SCALE = 32
         SfVector2toB2Vec2(

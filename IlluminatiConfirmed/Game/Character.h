@@ -1,13 +1,15 @@
 #pragma once
 
+#include <vector>
 #include "Box2D/Box2D.h"
 #include "Bullet.h"
 #include "SFML/Graphics.hpp"
 #include "constants.h"
-#include <vector>
+
+namespace IlluminatiConfirmed {
 
 class Character {
-private:
+ private:
   float currentFrame;
   int m_frames;
 
@@ -22,11 +24,11 @@ private:
   std::vector<sf::Rect<int>> rightRects;
 
   float m_max_speed = 10.f;
-  float m_max_force = 13.f; //нет времени думать какая разница :D
+  float m_max_force = 13.f;  //нет времени думать какая разница :D
 
   Direction m_direction;
 
-public:
+ public:
   int tileWidth, tileHeight;
   b2Body *m_body;
   // Character();
@@ -37,12 +39,13 @@ public:
 
   Character(const std::string &file, b2World *world, int frames, int width,
             int height, const std::string &bulletsFile)
-      : m_frames(frames), m_direction(Direction::Down),
+      : m_frames(frames),
+        m_direction(Direction::Down),
         m_spriteBullets(bulletsFile) {
     b2BodyDef body_def;
 
     body_def.type = b2_dynamicBody;
-    body_def.fixedRotation = true; //пока что
+    body_def.fixedRotation = true;  //пока что
 
     body_def.position.Set(0, 0);
     m_body = world->CreateBody(&body_def);
@@ -105,8 +108,10 @@ public:
   void draw(sf::RenderWindow &window) {
     { window.draw(sprite); }
   }
-  template <typename T> void setCoordinates(sf::Vector2<T> vec) {
+  template <typename T>
+  void setCoordinates(sf::Vector2<T> vec) {
     m_body->SetTransform(SfVector2toB2Vec2(vec), m_body->GetAngle());
     sprite.setPosition(static_cast<sf::Vector2f>(vec));
   }
 };
+}

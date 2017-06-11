@@ -1,7 +1,7 @@
 #pragma once
 
-#include "tinyxml2.h"
 #include <SFML/Graphics.hpp>
+#include "tinyxml2.h"
 
 #include <map>
 #include <string>
@@ -13,6 +13,8 @@
 #else
 #define LOG() LOGGER("level")
 #endif
+
+namespace IlluminatiConfirmed {
 
 // struct Object {
 //    int GetPropertyInt(const std::string &name);
@@ -46,7 +48,7 @@ struct Object {
 };
 
 class Level {
-public:
+ public:
   void loadMapFromFile(const std::string &filename);
   void loadMapInfoFromFile(tinyxml2::XMLDocument &levelFile);
   void loadLayersFromFile(tinyxml2::XMLDocument &levelFile);
@@ -59,7 +61,7 @@ public:
   void Draw(sf::RenderWindow &window);
   sf::Vector2i GetTileSize();
 
-private:
+ private:
   int m_width, m_height, m_tileWidth, m_tileHeight;
   int m_firstTileId;
   sf::Rect<float> m_drawingBounds;
@@ -69,3 +71,4 @@ private:
 
   std::vector<sf::Rect<int>> m_subRects;
 };
+}
