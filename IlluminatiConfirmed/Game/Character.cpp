@@ -171,7 +171,7 @@ void Character::move(Direction key, float deltaTime) {
   }
 }
 
-std::shared_ptr<Bullet> Character::attack(b2World *world) {
+std::shared_ptr<Bullet> Character::attack(b2World &world) {
   float damage = 10.0;
   std::shared_ptr<Bullet> bullet = std::make_shared<Bullet>(
       world, sprite.getPosition(), m_direction, damage, m_spriteBullets);

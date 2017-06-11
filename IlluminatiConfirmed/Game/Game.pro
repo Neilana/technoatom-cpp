@@ -9,7 +9,12 @@ SOURCES += main.cpp \
     Character.cpp \
     Game.cpp \
     ../../Libs/tinyxml2/tinyxml2.cpp \
-    "../../Libs/Box2D-SFML2-Debug-Draw/Box2D-SFML Debug Draw/SFMLDebugDraw.cpp"
+    "../../Libs/Box2D-SFML2-Debug-Draw/Box2D-SFML Debug Draw/SFMLDebugDraw.cpp" \
+    Bullet.cpp \
+    Screen.cpp \
+    ScreenGame.cpp \
+    ScreenMenu.cpp \
+    ../../Libs/ScreenChoseCharacters.cpp
 
 HEADERS += \
     Level.h \
@@ -17,8 +22,14 @@ HEADERS += \
     Game.h \
     Character.h \
     ../../Libs/tinyxml2/tinyxml2.h \
-    ../../Libs/Box2D/Box2D.h
-    ForTestbedCharacter.h
+    ../../Libs/Box2D/Box2D/Box2Box2D.h \
+    "../../Libs/Box2D-SFML2-Debug-Draw/Box2D-SFML Debug Draw/SFMLDebugDraw.h" \
+    Bullet.h \
+    Screen.h \
+    ScreenGame.h \
+    ScreenMenu.h \
+    ../../Libs/ScreenChoseCharacters.h
+   # ForTestbedCharacter.h
 
 
 LIBS += -L$$PWD/../../Libs/Box2D/Build/ -lBox2D

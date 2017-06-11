@@ -1,9 +1,18 @@
-#include "Game.h"
+#include <SFML/Graphics.hpp>
+#include "Box2D/Box2D.h"
+#include "SFMLDebugDraw.h"
+
 #include <iostream>
+#include "Game.h"
+
+using namespace sf;
+using namespace std;
 
 using IlluminatiConfirmed::Game;
 
-Game::Game(b2World *world) : m_world(world) { m_currentHeroId = 0; }
+Game::Game(sf::RenderWindow &window) : m_world(b2Vec2(0.0f, 0.0f)) {
+  m_currentHeroId = 0;
+}
 
 void Game::initNewGame(const std::string &mapFile) {
   m_level.loadMapFromFile(mapFile);  // загружаем карту
@@ -32,6 +41,8 @@ void Game::initCharacters() {
 }
 
 void Game::draw(sf::RenderWindow &window) {
+  window.clear();
+
   // рисуем карту
   m_level.Draw(window);
 
@@ -39,7 +50,21 @@ void Game::draw(sf::RenderWindow &window) {
   for (auto &&it : m_heroes) it->draw(window);
 
   // рисуем пули
-  for (auto &&it : bullets) it->draw(window);
+  for (auto &&it : m_bullets) it->draw(window);
+
+  // дебаг
+  // m_world.Dump();
+  SFMLDebugDraw debugDraw(window);
+  m_world.SetDebugDraw(&debugDraw);
+  debugDraw.SetFlags(b2Draw::e_shapeBit + b2Draw::e_aabbBit +
+                     b2Draw::e_centerOfMassBit + b2Draw::e_pairBit);
+  m_world.DrawDebugData();
+  //  sstream.precision(0);
+  //  sstream << std::fixed << "FPS: " << 1.f / timeSf.asSeconds();
+  //  fpsCounter.setString(sstream.str());
+  //  window.draw(fpsCounter);
+  //  sstream.str("");
+  window.display();
 }
 
 void Game::initPhysics() {
@@ -54,38 +79,15 @@ void Game::initPhysics() {
   buildBarriers(walls);
 }
 
-void Game::updatePhysics(sf::RenderWindow &window) {
-  for (auto &&it : m_heroes) it->updatePhysics(window);
-
-  for (auto &&it : bullets) it->updatePhysics(window);
-
-  bullets.remove_if([](auto &i) { return i->hasStopped(); });
+void Game::updatePhysics() {
+  m_world.Step(1 / 60.f, 8, 3);
+  for (auto &&it : m_heroes) it->updatePhysics();
+  for (auto &&it : m_bullets) it->updatePhysics();
+  m_bullets.remove_if([](auto &i) { return i->hasStopped(); });
 }
 
 void Game::buildBarriers(std::vector<Object> &walls) {
-  // загружаем в Box2D стены
-  // std::vector<Object> walls = m_level.GetObjectsByType("Wall");
   for (size_t i = 0; i < walls.size(); i++) {
-    // b2BodyDef bodyDef;
-    // bodyDef.type = b2_staticBody;
-    //    bodyDef.position = SfVector2toB2Vec2(sf::Vector2i(
-    //        (walls[i].m_rect.left +
-    //            tileSize.x / 2 * (walls[i].m_rect.width / tileSize.x - 1)) ,
-    //         (walls[i].m_rect.top +
-    //            tileSize.y / 2 * (walls[i].m_rect.height / tileSize.y - 1))));
-
-    //    b2Body *body = m_world->CreateBody(&bodyDef);
-    //    b2PolygonShape shape;
-    //    auto size = SfVector2toB2Vec2(
-    //        sf::Vector2i(walls[i].m_rect.width / 2, walls[i].m_rect.height /
-    //        2));
-    //    shape.SetAsBox(size.x, size.y);
-    //    b2FixtureDef fixture;
-    //    fixture.shape = &shape;
-    //    fixture.restitution = 0.1f;
-
-    //    body->CreateFixture(&fixture);
-
     // я запуталась, в  том, что вверху и переписала. ща стены норм рисуются
     // ещё здесь надо будет сделать оптимизацию и вынести часть этой ерунды за
     // пределы for
@@ -100,7 +102,7 @@ void Game::buildBarriers(std::vector<Object> &walls) {
     b2BodyDef myBodyDef;
     myBodyDef.type = b2_staticBody;
     myBodyDef.position.Set(0, 0);
-    b2Body *staticBody = m_world->CreateBody(&myBodyDef);
+    b2Body *staticBody = m_world.CreateBody(&myBodyDef);
 
     // add four walls to the static body
     polygonShape.SetAsBox(
@@ -120,5 +122,5 @@ void Game::buildBarriers(std::vector<Object> &walls) {
 
 void Game::sendBullet(Character *hero) {
   std::shared_ptr<Bullet> bullet = hero->attack(m_world);
-  bullets.push_back(bullet);
+  m_bullets.push_back(bullet);
 }

@@ -34,10 +34,10 @@ class Character {
   // Character();
   void move(Direction key, float deltaTime);
   // void move(Direction key);
-  std::shared_ptr<Bullet> attack(b2World *world);
+  std::shared_ptr<Bullet> attack(b2World &world);
   sf::Vector2f getSFMLPosition() { return sprite.getPosition(); }
 
-  Character(const std::string &file, b2World *world, int frames, int width,
+  Character(const std::string &file, b2World &world, int frames, int width,
             int height, const std::string &bulletsFile)
       : m_frames(frames),
         m_direction(Direction::Down),
@@ -48,7 +48,7 @@ class Character {
     body_def.fixedRotation = true;  //пока что
 
     body_def.position.Set(0, 0);
-    m_body = world->CreateBody(&body_def);
+    m_body = world.CreateBody(&body_def);
 
     b2CircleShape circle_shape;
     // circle_shape.m_radius = 2.f;
@@ -93,7 +93,7 @@ class Character {
     }
   }
 
-  void updatePhysics(const sf::RenderWindow &window) {
+  void updatePhysics() {
     //    m_body->SetTransform(
     //        m_body->GetPosition(),
     //        RadBetweenVectors(m_body->GetPosition(),

@@ -2,7 +2,7 @@
 
 using IlluminatiConfirmed::Bullet;
 
-Bullet::Bullet(b2World *world, sf::Vector2f const pos, Direction direction,
+Bullet::Bullet(b2World &world, sf::Vector2f const pos, Direction direction,
                float damage, const std::string &spriteFile)
     : m_damage(damage) {
   m_texture.loadFromFile(spriteFile);
@@ -65,7 +65,7 @@ Bullet::Bullet(b2World *world, sf::Vector2f const pos, Direction direction,
   }
 
   body_def.position.Set(x, y);
-  m_body = world->CreateBody(&body_def);
+  m_body = world.CreateBody(&body_def);
   m_body->CreateFixture(&fixture);
   m_body->SetLinearVelocity(b2Vec2(vx, vy));
 

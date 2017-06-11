@@ -3,18 +3,26 @@
 #include "SFML/Graphics.hpp"
 #include "math.h"
 
+#include <string>
+
 const int WINDOW_HEIGHT = 800;
 const int WINDOW_WIDTH = 800;
 
 const float SCALE = 32.0;
 
 enum class Direction { Up, Down, Left, Right };
+enum class ScreenName { MainMenu, ChoseCharacters, Game };
+// enum class MenuOptions { NewGame, Continue, Save, Load, Exit }
 
-template <typename T> b2Vec2 SfVector2toB2Vec2(const sf::Vector2<T> &vector) {
+const std::string MAP_FILE_1 = "../Game/maps/map25x25_1.tmx";
+
+template <typename T>
+b2Vec2 SfVector2toB2Vec2(const sf::Vector2<T> &vector) {
   return b2Vec2(vector.x / SCALE, vector.y / SCALE);
 }
 
-template <typename T> sf::Vector2<T> B2Vec2toSfVector2(const b2Vec2 &vector) {
+template <typename T>
+sf::Vector2<T> B2Vec2toSfVector2(const b2Vec2 &vector) {
   return sf::Vector2<T>(vector.x * SCALE, vector.y * SCALE);
 }
 

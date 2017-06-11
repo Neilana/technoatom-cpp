@@ -16,25 +16,23 @@ using IlluminatiConfirmed::Character;
 
 namespace IlluminatiConfirmed {
 class Game {
-private:
+ private:
   Level m_level;
   int m_currentHeroId;
-  b2World *m_world;
+  // b2World *m_world;
+  b2World m_world;
 
   // physics Box2D
-  // std::vector<Object> walls; // level?
-  std::unique_ptr<b2World> world;
-  // std::list<Bullet*> bullets;
-  std::list<std::shared_ptr<Bullet>> bullets;
+  // std::unique_ptr<b2World> m_world;
+  std::list<std::shared_ptr<Bullet>> m_bullets;
+  std::vector<std::shared_ptr<Character>> m_heroes;
 
   b2Body *playerBody;
 
   void buildBarriers(std::vector<Object> &walls);
 
-public:
-  std::vector<std::shared_ptr<Character>> m_heroes;
-
-  Game(b2World *world);
+ public:
+  Game(sf::RenderWindow &window);
   void initNewGame(const std::string &mapFile);
   void initCharacters();
   void initPhysics();
@@ -51,7 +49,7 @@ public:
   // m_heroes[m_currentHero].move(dir); }
 
   // void update(time, key);
-  void updatePhysics(sf::RenderWindow &window);
+  void updatePhysics();
 
   void sendBullet(Character *hero);
 };

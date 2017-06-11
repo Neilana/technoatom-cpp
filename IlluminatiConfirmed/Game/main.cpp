@@ -1,5 +1,6 @@
 #include <SFML/Graphics.hpp>
 #include "Box2D/Box2D.h"
+#include "SFMLDebugDraw.h"
 
 #include <exception>
 #include <iostream>
@@ -9,7 +10,9 @@
 #include "Character.h"
 #include "Game.h"
 #include "Level.h"
-#include "SFMLDebugDraw.h"
+#include "Screen.h"
+#include "ScreenGame.h"
+#include "ScreenMenu.h"
 //#include "constants.h"
 
 using namespace sf;
@@ -17,19 +20,26 @@ using namespace std;
 
 using IlluminatiConfirmed::Character;
 using IlluminatiConfirmed::Game;
+using IlluminatiConfirmed::Screen;
+using IlluminatiConfirmed::ScreenMenu;
+using IlluminatiConfirmed::ScreenGame;
 
 int main() {
   try {
+    std::map<ScreenName, Screen *> screenNameToScreen;
+
+    // menu = 0
+    ScreenMenu screen0;
+    screenNameToScreen[ScreenName::MainMenu] = &screen0;
+
+    // game = 1
+    ScreenGame screen1;
+    screenNameToScreen[ScreenName::Game] = &screen1;
+
     sf::RenderWindow window;
     window.create(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Level.h test");
     window.setFramerateLimit(60);
 
-    b2World world(b2Vec2(0.0f, 0.0f));
-    world.Dump();
-    //    SFMLDebugDraw debugDraw(window);
-    //    world.SetDebugDraw(&debugDraw);
-    //    debugDraw.SetFlags(b2Draw::e_shapeBit + b2Draw::e_aabbBit +
-    //                       b2Draw::e_centerOfMassBit + b2Draw::e_pairBit);
     std::stringstream sstream;
     sf::Text fpsCounter;
     sf::Font mainFont;
@@ -39,62 +49,15 @@ int main() {
     fpsCounter.setFont(mainFont);
     fpsCounter.setColor(sf::Color::White);
 
-    Game game(&world);
-    game.initNewGame("../Game/maps/map25x25_1.tmx");
-
-    auto currentHero = game.selectNextHero();
+    Game game(window);
+    game.initNewGame(MAP_FILE_1);
 
     Clock clock;
-    world.Dump();
+
+    // while (screenName != ScreenName::Exit) {
+    ScreenName screenName = ScreenName::MainMenu;
     while (window.isOpen()) {
-      auto timeSf = clock.restart();
-      auto time = timeSf.asMicroseconds();
-      time = time / 800;
-
-      sf::Event event;
-      sf::Mouse::getPosition();
-
-      while (window.pollEvent(event)) {
-        if (event.type == sf::Event::Closed) window.close();
-
-        if (event.type == sf::Event::KeyPressed) {
-          if (event.key.code == sf::Keyboard::Tab) {
-            currentHero = game.selectNextHero();
-          }
-          // если написать ниже - будет трэш, будет оооч много создаваться сразу
-          if (event.key.code == sf::Keyboard::Space) {
-            game.sendBullet(currentHero.get());
-            // currentHero->attack();
-          }
-        }
-      }
-
-      if (Keyboard::isKeyPressed(Keyboard::Left)) {
-        currentHero->move(Direction::Left, time);
-      }
-      if (Keyboard::isKeyPressed(Keyboard::Right)) {
-        currentHero->move(Direction::Right, time);
-      }
-      if (Keyboard::isKeyPressed(Keyboard::Up)) {
-        currentHero->move(Direction::Up, time);
-      }
-      if (Keyboard::isKeyPressed(Keyboard::Down)) {
-        currentHero->move(Direction::Down, time);
-      }
-
-      world.Step(1 / 60.f, 8, 3);
-
-      window.clear();
-      game.updatePhysics(window);
-      game.draw(window);
-      world.DrawDebugData();
-
-      sstream.precision(0);
-      sstream << std::fixed << "FPS: " << 1.f / timeSf.asSeconds();
-      fpsCounter.setString(sstream.str());
-      window.draw(fpsCounter);
-      sstream.str("");
-      window.display();
+      screenName = screenNameToScreen[screenName]->run(game, window);
     }
   } catch (IlluminatiConfirmed::Exception &e) {
     std::cout << e.what();
