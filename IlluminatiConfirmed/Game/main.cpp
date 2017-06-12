@@ -31,7 +31,7 @@ using IlluminatiConfirmed::GameDatabase;
 
 int main() {
   try {
-    GameDatabase db;
+    GameDatabase db = GameDatabase::getInstance();
 
     std::map<ScreenName, Screen *> screenNameToScreen;
 

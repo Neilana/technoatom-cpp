@@ -8,7 +8,7 @@
 namespace IlluminatiConfirmed {
 class Screen {
  private:
-  // virtual void loadTitle();
+  // virtual void loadTitle() {};
   // virtual void loadBackground();
  public:
   Screen(){};

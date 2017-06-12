@@ -4,17 +4,7 @@
 
 using IlluminatiConfirmed::ScreenMenu;
 
-ScreenMenu::ScreenMenu() {
-  //  alpha_max = 3 * 255;
-  // alpha_div = 3;
-  playing = false;
-
-  float x = WINDOW_WIDTH / 2.0 - 50;
-  float y = WINDOW_HEIGHT / 2.0 - 140;
-
-  float fontSize = 35;
-  int deltaY = 35;
-
+void ScreenMenu::initBackground() {
   if (!m_backgroundTexture.loadFromFile(
           "../Game/sprites/backgrounds/menu3_1.png")) {
     // std::cout << "Error loading presentation.gif" << std::endl;
@@ -26,6 +16,14 @@ ScreenMenu::ScreenMenu() {
     // std::cerr << "Error loading verdanab.ttf" << std::endl;
     // return (-1);
   }
+}
+
+void ScreenMenu::initMenuOptions() {
+  // float x = WINDOW_WIDTH / 2.0 - 50;
+  float y = 250;
+
+  float fontSize = 35;
+  int deltaY = 35;
 
   m_selectedOption = 0;
 
@@ -34,8 +32,15 @@ ScreenMenu::ScreenMenu() {
   option.setFont(m_font);
   option.setCharacterSize(fontSize);
   option.setString("New Game");
-  option.setPosition(x, y);
+  // option.setPosition(x, y);
   option.setColor(sf::Color::Green);
+
+  // center text
+  sf::FloatRect textRect = option.getLocalBounds();
+  option.setOrigin(textRect.left + textRect.width / 2.0f,
+                   textRect.top + textRect.height / 2.0f);
+  option.setPosition(sf::Vector2f(WINDOW_WIDTH / 2.0f, y));
+
   m_menuOptions.push_back(option);
   m_screenNameByOption[0] = ScreenName::ChoseCharacters;
 
@@ -43,7 +48,9 @@ ScreenMenu::ScreenMenu() {
   y += deltaY;
   option.setColor(sf::Color::White);
   option.setString("Continue");
-  option.setPosition(x, y);
+  // option.setPosition(x, y);
+  option.setPosition(sf::Vector2f(WINDOW_WIDTH / 2.0f, y));
+
   m_menuOptions.push_back(option);
   m_screenNameByOption[1] = ScreenName::Game;
 
@@ -61,19 +68,37 @@ ScreenMenu::ScreenMenu() {
 
   y += deltaY;
   option.setString("Exit");
-  option.setPosition(x, y);
+  // option.setPosition(x, y);
+  option.setPosition(sf::Vector2f(WINDOW_WIDTH / 2.0f, y));
   m_menuOptions.push_back(option);
   // m_screenByOption[0] = ScreenName::Game;
+}
 
-  float titleX = WINDOW_WIDTH / 2.0 - 80;
-  float titleY = 25;
-  fontSize = 45;
+void ScreenMenu::initTitle() {
+  float fontSize = 45;
 
   m_title.setFont(m_font);
   m_title.setCharacterSize(fontSize);
   m_title.setString("Main Menu");
-  m_title.setPosition(titleX, titleY);
+  // m_title.setPosition(titleX, titleY);
   m_title.setColor(sf::Color::White);
+
+  // center text
+  sf::FloatRect textRect = m_title.getLocalBounds();
+  m_title.setOrigin(textRect.left + textRect.width / 2.0f,
+                    textRect.top + textRect.height / 2.0f);
+  m_title.setPosition(sf::Vector2f(WINDOW_WIDTH / 2.0f, 40));
+}
+
+ScreenMenu::ScreenMenu() {
+  //  alpha_max = 3 * 255;
+  // alpha_div = 3;
+
+  initBackground();
+  initMenuOptions();
+  initTitle();
+
+  playing = false;
 }
 
 ScreenName ScreenMenu::run(Game &game, sf::RenderWindow &window) {

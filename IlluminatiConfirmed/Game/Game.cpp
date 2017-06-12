@@ -22,7 +22,7 @@ void Game::initNewGame(const std::string &mapFile) {
 
 void Game::initCharacters() {
   std::shared_ptr<Character> hero1 = std::make_shared<Character>(
-      "../Game/sprites/characters/demon.png", m_world, 4, 64, 64,
+      "../Game/sprites/characters/demon1.png", m_world, 4, 64, 64,
       "../Game/sprites/bullets/bullet1.png");
   hero1->setCoordinates(sf::Vector2u(500, 500));
   m_heroes.push_back(std::move(hero1));

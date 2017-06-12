@@ -12,8 +12,12 @@ namespace IlluminatiConfirmed {
 class GameDatabase {
  private:
   QSqlDatabase m_db;
+  GameDatabase();
 
  public:
-  GameDatabase();
+  static GameDatabase& getInstance() {
+    static GameDatabase instance;
+    return instance;
+  };
 };
 }

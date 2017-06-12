@@ -31,6 +31,10 @@ class ScreenMenu : public IlluminatiConfirmed::Screen {
   int m_selectedOption;
   std::map<int, ScreenName> m_screenNameByOption;
 
+  void initTitle();
+  void initBackground();
+  void initMenuOptions();
+
  public:
   ScreenMenu();
 

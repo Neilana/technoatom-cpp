@@ -16,9 +16,9 @@ GameDatabase::GameDatabase() {
   m_db.setDatabaseName("../Game/database/GameDB.db3");
   m_db.open();
 
-  QSqlQuery query;
-  query.exec("SELECT * FROM CharactersImages");
-  while (query.next()) {
-    qDebug() << query.value(1).toString();
-  }
+  //  QSqlQuery query;
+  //  query.exec("SELECT * FROM CharactersImages");
+  //  while (query.next()) {
+  //    qDebug() << query.value(1).toString();
+  //  }
 }
