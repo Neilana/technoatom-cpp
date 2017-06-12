@@ -25,8 +25,6 @@ using IlluminatiConfirmed::Game;
 using IlluminatiConfirmed::Screen;
 using IlluminatiConfirmed::ScreenGame;
 
-using IlluminatiConfirmed::ScreenGame;
-
 ScreenGame::ScreenGame() {}
 
 ScreenName ScreenGame::run(Game &game, sf::RenderWindow &window) {

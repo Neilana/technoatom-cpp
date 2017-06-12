@@ -3,8 +3,3 @@
 #include "constants.h"
 
 using IlluminatiConfirmed::Screen;
-
-Screen::Screen()
-{
-
-}

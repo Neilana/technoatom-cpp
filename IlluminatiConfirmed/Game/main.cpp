@@ -11,9 +11,12 @@
 #include "Game.h"
 #include "Level.h"
 #include "Screen.h"
+#include "ScreenChoseCharacters.h"
 #include "ScreenGame.h"
 #include "ScreenMenu.h"
 //#include "constants.h"
+
+#include "GameDatabase.h"
 
 using namespace sf;
 using namespace std;
@@ -23,18 +26,26 @@ using IlluminatiConfirmed::Game;
 using IlluminatiConfirmed::Screen;
 using IlluminatiConfirmed::ScreenMenu;
 using IlluminatiConfirmed::ScreenGame;
+using IlluminatiConfirmed::ScreenChoseCharacters;
+using IlluminatiConfirmed::GameDatabase;
 
 int main() {
   try {
+    GameDatabase db;
+
     std::map<ScreenName, Screen *> screenNameToScreen;
 
     // menu = 0
     ScreenMenu screen0;
     screenNameToScreen[ScreenName::MainMenu] = &screen0;
 
+    // new game = 1
+    ScreenChoseCharacters screen1;
+    screenNameToScreen[ScreenName::ChoseCharacters] = &screen1;
+
     // game = 1
-    ScreenGame screen1;
-    screenNameToScreen[ScreenName::Game] = &screen1;
+    ScreenGame screen2;
+    screenNameToScreen[ScreenName::Game] = &screen2;
 
     sf::RenderWindow window;
     window.create(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Level.h test");

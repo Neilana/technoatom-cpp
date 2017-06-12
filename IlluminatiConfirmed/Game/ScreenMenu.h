@@ -26,6 +26,7 @@ class ScreenMenu : public IlluminatiConfirmed::Screen {
   sf::Texture m_backgroundTexture;
   sf::Sprite m_backgroundSprite;
   std::vector<sf::Text> m_menuOptions;
+  sf::Text m_title;
 
   int m_selectedOption;
   std::map<int, ScreenName> m_screenNameByOption;

@@ -1,7 +1,8 @@
+QT += core gui sql
 TEMPLATE = app
 CONFIG += console c++14
 CONFIG -= app_bundle
-CONFIG -= qt
+#CONFIG -= qt
 DEFINES += TIXML_USE_STL
 
 SOURCES += main.cpp \
@@ -14,7 +15,8 @@ SOURCES += main.cpp \
     Screen.cpp \
     ScreenGame.cpp \
     ScreenMenu.cpp \
-    ../../Libs/ScreenChoseCharacters.cpp
+    ScreenChoseCharacters.cpp \
+    GameDatabase.cpp
 
 HEADERS += \
     Level.h \
@@ -28,7 +30,8 @@ HEADERS += \
     Screen.h \
     ScreenGame.h \
     ScreenMenu.h \
-    ../../Libs/ScreenChoseCharacters.h
+    ScreenChoseCharacters.h \
+    GameDatabase.h
    # ForTestbedCharacter.h
 
 

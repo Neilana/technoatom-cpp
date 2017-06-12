@@ -37,7 +37,7 @@ ScreenMenu::ScreenMenu() {
   option.setPosition(x, y);
   option.setColor(sf::Color::Green);
   m_menuOptions.push_back(option);
-  m_screenNameByOption[0] = ScreenName::Game;
+  m_screenNameByOption[0] = ScreenName::ChoseCharacters;
 
   // 1
   y += deltaY;
@@ -64,6 +64,16 @@ ScreenMenu::ScreenMenu() {
   option.setPosition(x, y);
   m_menuOptions.push_back(option);
   // m_screenByOption[0] = ScreenName::Game;
+
+  float titleX = WINDOW_WIDTH / 2.0 - 80;
+  float titleY = 25;
+  fontSize = 45;
+
+  m_title.setFont(m_font);
+  m_title.setCharacterSize(fontSize);
+  m_title.setString("Main Menu");
+  m_title.setPosition(titleX, titleY);
+  m_title.setColor(sf::Color::White);
 }
 
 ScreenName ScreenMenu::run(Game &game, sf::RenderWindow &window) {
@@ -95,7 +105,9 @@ ScreenName ScreenMenu::run(Game &game, sf::RenderWindow &window) {
           case sf::Keyboard::Return:
 
             if (m_selectedOption == m_menuOptions.size() - 1) window.close();
-            if (m_selectedOption == 0) screen = ScreenName::Game;
+            // if (m_selectedOption == 1) screen = ScreenName::Game;
+            // if (m_selectedOption == 0)
+            //  screen = ScreenName::ChoseCharacters;  // new game
             screen = m_screenNameByOption[m_selectedOption];
             running = false;
 
@@ -109,7 +121,7 @@ ScreenName ScreenMenu::run(Game &game, sf::RenderWindow &window) {
 
       // Drawing
       window.draw(m_backgroundSprite);
-
+      window.draw(m_title);
       // рисуем пункты меню
       for (auto &&it : m_menuOptions) window.draw(it);
     }
