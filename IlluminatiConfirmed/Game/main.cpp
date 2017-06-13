@@ -10,10 +10,10 @@
 #include "Character.h"
 #include "Game.h"
 #include "Level.h"
-#include "Screen.h"
 #include "ScreenChoseCharacters.h"
 #include "ScreenGame.h"
 #include "ScreenMenu.h"
+#include "screens/Screen.h"
 //#include "constants.h"
 
 #include "GameDatabase.h"
@@ -55,7 +55,9 @@ int main() {
     sf::Text fpsCounter;
     sf::Font mainFont;
     if (!mainFont.loadFromFile(
-            "../Game/res/Franchise-Bold-hinted.ttf"))  // Set path to your font
+            "../Game/resources/fonts/Franchise-Bold-hinted.ttf"))  // Set path
+                                                                   // to your
+                                                                   // font
       throw EXCEPTION("I can't open file with font.", nullptr);
     fpsCounter.setFont(mainFont);
     fpsCounter.setColor(sf::Color::White);

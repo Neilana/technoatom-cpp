@@ -13,7 +13,7 @@ using IlluminatiConfirmed::GameDatabase;
 
 GameDatabase::GameDatabase() {
   m_db = QSqlDatabase::addDatabase("QSQLITE");
-  m_db.setDatabaseName("../Game/database/GameDB.db3");
+  m_db.setDatabaseName("../Game/resources/database/GameDB.db3");
   m_db.open();
 
   //  QSqlQuery query;

@@ -6,34 +6,36 @@ CONFIG -= app_bundle
 DEFINES += TIXML_USE_STL
 
 SOURCES += main.cpp \
-    Level.cpp \
-    Character.cpp \
-    Game.cpp \
+    classes/Level.cpp \
+    classes/Character.cpp \
+    classes/Game.cpp \
     ../../Libs/tinyxml2/tinyxml2.cpp \
     "../../Libs/Box2D-SFML2-Debug-Draw/Box2D-SFML Debug Draw/SFMLDebugDraw.cpp" \
-    Bullet.cpp \
-    Screen.cpp \
-    ScreenGame.cpp \
-    ScreenMenu.cpp \
-    ScreenChoseCharacters.cpp \
-    GameDatabase.cpp
+    classes/Bullet.cpp \
+    classes/screens/Screen.cpp \
+    classes/screens/ScreenGame.cpp \
+    classes/screens/ScreenMenu.cpp \
+    classes/screens/ScreenChoseCharacters.cpp \
+    classes/GameDatabase.cpp
 
 HEADERS += \
-    Level.h \
+    classes/Level.h \
     constants.h \
-    Game.h \
-    Character.h \
+    classes/Game.h \
+    classes/Character.h \
     ../../Libs/tinyxml2/tinyxml2.h \
     ../../Libs/Box2D/Box2D/Box2Box2D.h \
     "../../Libs/Box2D-SFML2-Debug-Draw/Box2D-SFML Debug Draw/SFMLDebugDraw.h" \
-    Bullet.h \
-    Screen.h \
-    ScreenGame.h \
-    ScreenMenu.h \
-    ScreenChoseCharacters.h \
-    GameDatabase.h
+    classes/Bullet.h \
+    classes/screens/Screen.h \
+    classes/screens/ScreenGame.h \
+    classes/screens/ScreenMenu.h \
+    classes/screens/ScreenChoseCharacters.h \
+    classes/GameDatabase.h
    # ForTestbedCharacter.h
 
+INCLUDEPATH += classes/ \
+  classes/screens
 
 LIBS += -L$$PWD/../../Libs/Box2D/Build/ -lBox2D
 INCLUDEPATH += $$PWD/../../Libs/Box2D/

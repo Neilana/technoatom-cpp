@@ -6,13 +6,14 @@ using IlluminatiConfirmed::ScreenMenu;
 
 void ScreenMenu::initBackground() {
   if (!m_backgroundTexture.loadFromFile(
-          "../Game/sprites/backgrounds/menu3_1.png")) {
+          "../Game/resources/sprites/backgrounds/menu3_1.png")) {
     // std::cout << "Error loading presentation.gif" << std::endl;
     // return (-1);
   }
   m_backgroundSprite.setTexture(m_backgroundTexture);
   // sprite.setColor(sf::Color(255, 255, 255, alpha));
-  if (!m_font.loadFromFile("../Game/res/Franchise-Bold-hinted.ttf")) {
+  if (!m_font.loadFromFile(
+          "../Game/resources/fonts/Franchise-Bold-hinted.ttf")) {
     // std::cerr << "Error loading verdanab.ttf" << std::endl;
     // return (-1);
   }

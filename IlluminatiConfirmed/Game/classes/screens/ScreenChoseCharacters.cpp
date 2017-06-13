@@ -14,13 +14,14 @@ using IlluminatiConfirmed::GameDatabase;
 
 void ScreenChoseCharacters::initBackground() {
   if (!m_backgroundTexture.loadFromFile(
-          "../Game/sprites/backgrounds/menu3_1.png")) {
+          "../Game/resources/sprites/backgrounds/menu3_1.png")) {
     // std::cout << "Error loading presentation.gif" << std::endl;
     // return (-1);
   }
   m_backgroundSprite.setTexture(m_backgroundTexture);
   // sprite.setColor(sf::Color(255, 255, 255, alpha));
-  if (!m_font.loadFromFile("../Game/res/Franchise-Bold-hinted.ttf")) {
+  if (!m_font.loadFromFile(
+          "../Game/resources/fonts/Franchise-Bold-hinted.ttf")) {
     // std::cerr << "Error loading verdanab.ttf" << std::endl;
     // return (-1);
   }
@@ -52,7 +53,7 @@ ScreenChoseCharacters::ScreenChoseCharacters() {
 
   showCharacters();
 
-  //  texture.loadFromFile("../Game/sprites/characters/panda.png");
+  //  texture.loadFromFile("../Game/resources/sprites/characters/panda.png");
 }
 
 ScreenName ScreenChoseCharacters::run(Game &game, sf::RenderWindow &window) {
@@ -106,7 +107,7 @@ void ScreenChoseCharacters::showCharacters() {
     int width = query.value(2).toInt();
     int height = query.value(3).toInt();
 
-    fileName = "../Game/sprites/characters/" + fileName;
+    fileName = "../Game/resources/sprites/characters/" + fileName;
 
     std::shared_ptr<AvailableCharacter> bufCharacter =
         std::make_shared<AvailableCharacter>(fileName, width, height, x, y);

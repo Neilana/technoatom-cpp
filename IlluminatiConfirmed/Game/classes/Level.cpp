@@ -38,7 +38,7 @@ void Level::loadMapInfoFromFile(tinyxml2::XMLDocument &levelFile) {
   tinyxml2::XMLElement *image;
   image = tilesetElement->FirstChildElement("image");
 
-  std::string imagePath = "../Game/maps/";
+  std::string imagePath = "../Game/resources/maps/";
   imagePath += image->Attribute("source");
 
   // Пытаемся загрузить тайлсет

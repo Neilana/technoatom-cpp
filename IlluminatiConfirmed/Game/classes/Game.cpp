@@ -22,20 +22,20 @@ void Game::initNewGame(const std::string &mapFile) {
 
 void Game::initCharacters() {
   std::shared_ptr<Character> hero1 = std::make_shared<Character>(
-      "../Game/sprites/characters/demon1.png", m_world, 4, 64, 64,
-      "../Game/sprites/bullets/bullet1.png");
+      "../Game/resources/sprites/characters/demon1.png", m_world, 4, 64, 64,
+      "../Game/resources/sprites/bullets/bullet1.png");
   hero1->setCoordinates(sf::Vector2u(500, 500));
   m_heroes.push_back(std::move(hero1));
 
   std::shared_ptr<Character> hero2 = std::make_shared<Character>(
-      "../Game/sprites/characters/panda.png", m_world, 3, 32, 32,
-      "../Game/sprites/bullets/bullet2.png");
+      "../Game/resources/sprites/characters/panda.png", m_world, 3, 32, 32,
+      "../Game/resources/sprites/bullets/bullet2.png");
   hero2->setCoordinates(sf::Vector2u(100, 100));
   m_heroes.push_back(std::move(hero2));
 
   std::shared_ptr<Character> hero3 = std::make_shared<Character>(
-      "../Game/sprites/characters/spider1.png", m_world, 10, 64, 64,
-      "../Game/sprites/bullets/bullet3.png");
+      "../Game/resources/sprites/characters/spider1.png", m_world, 10, 64, 64,
+      "../Game/resources/sprites/bullets/bullet3.png");
   hero3->setCoordinates(sf::Vector2u(300, 300));
   m_heroes.push_back(std::move(hero3));
 }

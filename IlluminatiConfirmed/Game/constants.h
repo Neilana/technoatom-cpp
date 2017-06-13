@@ -14,7 +14,7 @@ enum class Direction { Up, Down, Left, Right };
 enum class ScreenName { MainMenu, ChoseCharacters, Game };
 // enum class MenuOptions { NewGame, Continue, Save, Load, Exit }
 
-const std::string MAP_FILE_1 = "../Game/maps/map25x25_1.tmx";
+const std::string MAP_FILE_1 = "../Game/resources/maps/map25x25_1.tmx";
 
 template <typename T>
 b2Vec2 SfVector2toB2Vec2(const sf::Vector2<T> &vector) {
