@@ -5,12 +5,17 @@
 
 #include <string>
 
+#define UNUSE(var) \
+  do {             \
+    (void)var;     \
+  } while (0);
+
 const int WINDOW_HEIGHT = 800;
 const int WINDOW_WIDTH = 800;
 
 const float SCALE = 32.0;
 
-enum class Direction { Up, Down, Left, Right };
+enum class Direction { Up, Down, Left, Right, Nothing };
 enum class ScreenName { MainMenu, ChoseCharacters, Game };
 // enum class MenuOptions { NewGame, Continue, Save, Load, Exit }
 
@@ -30,3 +35,5 @@ template <typename V1, typename V2>
 float RadBetweenVectors(const V1 &v1, const V2 &v2) {
   return static_cast<float>(atan2(v2.y - v1.y, v2.x - v1.x));
 }
+
+inline float SfPointtoB2Point(float point) { return point / SCALE; }

@@ -3,7 +3,7 @@
 #include "Screen.h"
 
 namespace IlluminatiConfirmed {
-class ScreenChoseCharacters : public IlluminatiConfirmed::Screen {
+class ScreenChoseCharacters : public Screen {
  private:
   struct AvailableCharacter {
     sf::RectangleShape m_sprite;

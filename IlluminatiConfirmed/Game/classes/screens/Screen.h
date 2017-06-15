@@ -11,9 +11,9 @@ class Screen {
   // virtual void loadTitle() {};
   // virtual void loadBackground();
  public:
-  Screen(){};
+  Screen() {}
   virtual ScreenName run(IlluminatiConfirmed::Game &game,
                          sf::RenderWindow &window) = 0;
-  virtual ~Screen(){};
+  virtual ~Screen() {}
 };
 }

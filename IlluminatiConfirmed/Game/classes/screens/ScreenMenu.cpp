@@ -138,6 +138,8 @@ ScreenName ScreenMenu::run(Game &game, sf::RenderWindow &window) {
             running = false;
 
             break;
+          default:
+            break;
         }
         m_menuOptions[m_selectedOption].setColor(sf::Color::Green);
       }

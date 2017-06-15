@@ -4,11 +4,11 @@
 #include "constants.h"
 
 namespace IlluminatiConfirmed {
-class ScreenGame : public IlluminatiConfirmed::Screen {
+class ScreenGame : public Screen {
  public:
   ScreenGame();
 
-  ScreenName run(IlluminatiConfirmed::Game &game, sf::RenderWindow &window);
-  ~ScreenGame(){};
+  ScreenName run(Game &game, sf::RenderWindow &window);
+  ~ScreenGame() {}
 };
 }

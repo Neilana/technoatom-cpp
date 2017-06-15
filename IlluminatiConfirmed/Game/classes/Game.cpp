@@ -3,6 +3,7 @@
 #include "SFMLDebugDraw.h"
 
 #include <iostream>
+
 #include "Game.h"
 
 using namespace sf;
@@ -12,6 +13,14 @@ using IlluminatiConfirmed::Game;
 
 Game::Game(sf::RenderWindow &window) : m_world(b2Vec2(0.0f, 0.0f)) {
   m_currentHeroId = 0;
+
+  MyContactListener *listner = new MyContactListener;
+  m_world.SetContactListener(listner);
+  SFMLDebugDraw *debugDraw =
+      new SFMLDebugDraw(window);  //утечка памяти, бокс не будет это удалять
+  debugDraw->SetFlags(b2Draw::e_shapeBit + b2Draw::e_centerOfMassBit +
+                      b2Draw::e_pairBit);
+  m_world.SetDebugDraw(debugDraw);
 }
 
 void Game::initNewGame(const std::string &mapFile) {
@@ -21,23 +30,49 @@ void Game::initNewGame(const std::string &mapFile) {
 }
 
 void Game::initCharacters() {
-  std::shared_ptr<Character> hero1 = std::make_shared<Character>(
-      "../Game/resources/sprites/characters/demon1.png", m_world, 4, 64, 64,
-      "../Game/resources/sprites/bullets/bullet1.png");
-  hero1->setCoordinates(sf::Vector2u(500, 500));
-  m_heroes.push_back(std::move(hero1));
+  //  std::shared_ptr<CharacterAlinasBoys> hero1 =
+  //  std::make_shared<CharacterAlinasBoys>(
+  //      "../Game/resources/sprites/characters/demon1.png", m_world, 4, 64, 64,
+  //      "../Game/resources/sprites/bullets/bullet1.png");
 
-  std::shared_ptr<Character> hero2 = std::make_shared<Character>(
-      "../Game/resources/sprites/characters/panda.png", m_world, 3, 32, 32,
-      "../Game/resources/sprites/bullets/bullet2.png");
-  hero2->setCoordinates(sf::Vector2u(100, 100));
-  m_heroes.push_back(std::move(hero2));
+  m_heroes.push_back(std::static_pointer_cast<BaseCharacter>(
+      std::make_shared<CharacterAlinasBoys>(
+          m_world, CharacterSpriteInfo(
+                       {"../Game/resources/sprites/characters/demon1.png", 64,
+                        64, 64, 4, 100, 100}))));
 
-  std::shared_ptr<Character> hero3 = std::make_shared<Character>(
-      "../Game/resources/sprites/characters/spider1.png", m_world, 10, 64, 64,
-      "../Game/resources/sprites/bullets/bullet3.png");
-  hero3->setCoordinates(sf::Vector2u(300, 300));
-  m_heroes.push_back(std::move(hero3));
+  //  std::shared_ptr<CharacterAlinasBoys> hero2 =
+  //  std::make_shared<CharacterAlinasBoys>(
+  //      "../Game/resources/sprites/characters/panda.png", m_world, 3, 32,32,
+  //      "../Game/resources/sprites/bullets/bullet2.png");
+
+  m_heroes.push_back(
+      std::static_pointer_cast<BaseCharacter>(std::make_shared<Kolobashka>(
+          m_world,
+          CharacterSpriteInfo({"../Game/resources/sprites/characters/panda.png",
+                               32, 32, 64, 3, 200, 200}))));
+
+  //  std::shared_ptr<CharacterAlinasBoys> hero3 =
+  //  std::make_shared<CharacterAlinasBoys>(
+  //"../Game/resources/sprites/characters/spider1.png", m_world, 10,64,64,
+  //      "../Game/resources/sprites/bullets/bullet3.png");
+
+  m_heroes.push_back(std::static_pointer_cast<BaseCharacter>(
+      std::make_shared<CharacterAlinasBoys>(
+          m_world, CharacterSpriteInfo(
+                       {"../Game/resources/sprites/characters/spider1.png", 64,
+                        64, 64, 10, 300, 300}))));
+  //  std::shared_ptr<CharacterAlinasBoys> hero3 =
+  //      std::make_shared<CharacterAlinasBoys>(
+  //          m_world, CharacterSpriteInfo(
+  //    {"../Game/resources/sprites/characters/spider1.png",64,
+  //                        64, 64, 10, 300, 300}));
+
+  m_heroes.push_back(std::static_pointer_cast<BaseCharacter>(
+      std::make_shared<CharacterSouthPark>(
+          m_world,
+          CharacterSpriteInfo({"../Game/resources/sprites/characters/kyle.png",
+                               192, 192, 64, 2, 400, 400}))));
 }
 
 void Game::draw(sf::RenderWindow &window) {
@@ -54,17 +89,6 @@ void Game::draw(sf::RenderWindow &window) {
 
   // дебаг
   // m_world.Dump();
-  SFMLDebugDraw debugDraw(window);
-  m_world.SetDebugDraw(&debugDraw);
-  debugDraw.SetFlags(b2Draw::e_shapeBit + b2Draw::e_aabbBit +
-                     b2Draw::e_centerOfMassBit + b2Draw::e_pairBit);
-  m_world.DrawDebugData();
-  //  sstream.precision(0);
-  //  sstream << std::fixed << "FPS: " << 1.f / timeSf.asSeconds();
-  //  fpsCounter.setString(sstream.str());
-  //  window.draw(fpsCounter);
-  //  sstream.str("");
-  window.display();
 }
 
 void Game::initPhysics() {
@@ -81,9 +105,9 @@ void Game::initPhysics() {
 
 void Game::updatePhysics() {
   m_world.Step(1 / 60.f, 8, 3);
-  for (auto &&it : m_heroes) it->updatePhysics();
-  for (auto &&it : m_bullets) it->updatePhysics();
-  m_bullets.remove_if([](auto &i) { return i->hasStopped(); });
+  // for (auto &&it : m_heroes) it->updatePhysics();
+  // for (auto &&it : m_bullets) it->updatePhysics();
+  // m_bullets.remove_if([](auto &i) { return i->hasStopped(); });
 }
 
 void Game::buildBarriers(std::vector<Object> &walls) {

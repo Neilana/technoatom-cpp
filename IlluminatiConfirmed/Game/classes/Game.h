@@ -10,22 +10,24 @@
 #include "Bullet.h"
 #include "Character.h"
 #include "Level.h"
+#include "charactersouthpark.h"
 #include "constants.h"
 
 using IlluminatiConfirmed::Character;
 
 namespace IlluminatiConfirmed {
 class Game {
- private:
+ public:
   Level m_level;
   int m_currentHeroId;
   // b2World *m_world;
   b2World m_world;
+  inline b2World &getWorld() { return m_world; }
 
   // physics Box2D
   // std::unique_ptr<b2World> m_world;
   std::list<std::shared_ptr<Bullet>> m_bullets;
-  std::vector<std::shared_ptr<Character>> m_heroes;
+  std::vector<std::shared_ptr<BaseCharacter>> m_heroes;
 
   b2Body *playerBody;
 
@@ -40,7 +42,7 @@ class Game {
 
   void draw(sf::RenderWindow &window);
 
-  std::shared_ptr<Character> selectNextHero() {
+  std::shared_ptr<BaseCharacter> selectNextHero() {
     m_currentHeroId++;
     m_currentHeroId %= m_heroes.size();
     return m_heroes[m_currentHeroId];

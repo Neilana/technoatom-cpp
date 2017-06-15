@@ -4,7 +4,7 @@
 #include <QDebug>
 //#include <QDir>
 //#include <QFile>
-#include <QSql>
+//#include <QSql>
 #include <QSqlDatabase>
 #include <QSqlError>
 #include <QSqlQuery>

@@ -122,9 +122,9 @@ void Level::loadLayersFromFile(tinyxml2::XMLDocument &levelFile) {
 
           layer.m_tiles.push_back(sprite);
         } else {
-          LOG() << "Something wrong with tile element: "
-                << tileElement->Attribute("gid") << " on layer "
-                << layerElement->Attribute("name") << ".\n";
+          // LOG() << "Something wrong with tile element: "
+          //      << tileElement->Attribute("gid") << " on layer "
+          //      << layerElement->Attribute("name") << ".\n";
         }
       }
       tileElement = tileElement->NextSiblingElement("tile");
