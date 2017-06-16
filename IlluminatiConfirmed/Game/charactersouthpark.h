@@ -29,13 +29,14 @@ struct CharacterSpriteInfo {
 
 class BaseCharacter {
  public:
-  BaseCharacter(Type type, const CharacterSpriteInfo& sprite_data);
+  BaseCharacter(Type type, b2World& world,
+                const CharacterSpriteInfo& sprite_data);
   Type getType() const;
 
   virtual void draw(sf::RenderWindow& window) = 0;
   virtual void move(float deltaTime);
-  virtual void contact(b2Fixture* A, b2Fixture* B) = 0;
-  virtual void endContact(b2Fixture* A, b2Fixture* B) = 0;
+  virtual void contact(b2Fixture* B) = 0;
+  virtual void endContact(b2Fixture* B) = 0;
   virtual ~BaseCharacter();
 
   Type m_type;
@@ -59,8 +60,8 @@ class CharacterSouthPark : public BaseCharacter {
   CharacterSouthPark(b2World& world, const CharacterSpriteInfo& sprite_data);
   void move(float deltaTime) override;
   void draw(sf::RenderWindow& window) override;
-  void contact(b2Fixture* A, b2Fixture* B) override;
-  void endContact(b2Fixture* A, b2Fixture* B) override;
+  void contact(b2Fixture* B) override;
+  void endContact(b2Fixture* B) override;
   ~CharacterSouthPark();
 
   b2MotorJoint* m_b2_joint;
@@ -72,8 +73,8 @@ class CharacterAlinasBoys : public BaseCharacter {
   CharacterAlinasBoys(b2World& world, const CharacterSpriteInfo& sprite_data);
   void move(float deltaTime) override;
   void draw(sf::RenderWindow& window) override;
-  void contact(b2Fixture* A, b2Fixture* B) override;
-  void endContact(b2Fixture* A, b2Fixture* B) override;
+  void contact(b2Fixture* B) override;
+  void endContact(b2Fixture* B) override;
   ~CharacterAlinasBoys();
 };
 
@@ -89,11 +90,11 @@ class Kolobashka : public CharacterAlinasBoys {
     m_sprite.setRotation(rad);
     window.draw(m_sprite);
   }
-  void contact(b2Fixture* A, b2Fixture* B) override {
+  void contact(b2Fixture* B) override {
     LOG() << "I'am AlinasBoys Kolobashka and I've begun the colliding with.. hz"
           << std::endl;
   }
-  void endContact(b2Fixture* A, b2Fixture* B) override {
+  void endContact(b2Fixture* B) override {
     LOG() << "I'am AlinasBoys Kolobashka and I've dune the colliding with.. hz"
           << std::endl;
   }
@@ -102,45 +103,12 @@ class Kolobashka : public CharacterAlinasBoys {
 
 class MyContactListener : public b2ContactListener {
  public:
-  void BeginContact(b2Contact* contact) {
-    void* user_data_A = contact->GetFixtureA()->GetUserData();
-    if (user_data_A)
-      static_cast<BaseCharacter*>(user_data_A)
-          ->contact(contact->GetFixtureA(), contact->GetFixtureB());
-    void* user_data_B = contact->GetFixtureA()->GetUserData();
-    if (user_data_B)
-      static_cast<BaseCharacter*>(user_data_B)
-          ->contact(contact->GetFixtureA(), contact->GetFixtureB());
-    // if (Type::CHARACTER_SOUTH_PARK ==
-    //    static_cast<BaseCharacter*>(user_data)->getType()) {
-    //    static_cast<BaseCharacter*>(user_data)->getType()
-    // };
-  }
+  void BeginContact(b2Contact* contact) override;
 
-  void EndContact(b2Contact* contact) {
-    void* user_data_A = contact->GetFixtureA()->GetUserData();
-    if (user_data_A)
-      static_cast<BaseCharacter*>(user_data_A)
-          ->endContact(contact->GetFixtureA(), contact->GetFixtureB());
-    void* user_data_B = contact->GetFixtureA()->GetUserData();
-    if (user_data_B)
-      static_cast<BaseCharacter*>(user_data_B)
-          ->endContact(contact->GetFixtureA(), contact->GetFixtureB());
-  }
+  void EndContact(b2Contact* contact) override;
 
-  void PreSolve(b2Contact* contact, const b2Manifold* oldManifold) {
-    //    const b2Manifold* manifold = contact->GetManifold();
+  void PreSolve(b2Contact* contact, const b2Manifold* oldManifold) override;
 
-    //    b2Fixture* fixtureA = contact->GetFixtureA();
-    //    b2Fixture* fixtureB = contact->GetFixtureB();
-
-    //    b2WorldManifold worldManifold;
-    //    contact->GetWorldManifold(&worldManifold);
-
-    //    b2Body* bodyA = fixtureA->GetBody();
-    //    b2Body* bodyB = fixtureB->GetBody();
-  }
-
-  void PostSolve(b2Contact* contact, const b2ContactImpulse* Impulse) {}
+  void PostSolve(b2Contact* contact, const b2ContactImpulse* Impulse) override;
 };
 }

@@ -2,8 +2,53 @@
 
 using namespace IlluminatiConfirmed;
 
-BaseCharacter::BaseCharacter(Type type, const CharacterSpriteInfo& sprite_data)
+BaseCharacter::BaseCharacter(Type type, b2World& world,
+                             const CharacterSpriteInfo& sprite_data)
     : m_type(type) {
+  {
+    b2BodyDef bd;
+    bd.fixedRotation = true;
+    bd.type = b2_dynamicBody;
+    bd.position.Set(SfPointtoB2Point(sprite_data.x_position),
+                    SfPointtoB2Point(sprite_data.y_position));
+    bd.linearDamping = 1000.f;
+    m_b2_base = world.CreateBody(&bd);
+
+    b2PolygonShape poligon;
+    poligon.SetAsBox(0.5f, 0.1f);
+
+    b2FixtureDef fixture;
+    fixture.friction = 1.f;
+    fixture.density = 50.f;
+    fixture.restitution = 0;
+    fixture.isSensor = false;
+
+    fixture.shape = &poligon;
+    m_b2_base_fixture = m_b2_base->CreateFixture(&fixture);
+    m_b2_base_fixture->SetUserData(this);
+  }
+  {
+    b2BodyDef bd;
+    bd.type = b2_dynamicBody;
+    bd.position.Set(SfPointtoB2Point(sprite_data.x_position),
+                    SfPointtoB2Point(sprite_data.y_position));
+    bd.linearDamping = 0.f;
+    bd.fixedRotation = true;
+    m_b2_body = world.CreateBody(&bd);
+
+    b2PolygonShape poligon;
+    poligon.SetAsBox(.5f, 1.f, {0.f, -1.f}, 0);
+    b2FixtureDef fixture;
+    fixture.friction = 0.f;
+    fixture.density = 0.005f;
+    fixture.isSensor = true;
+
+    fixture.shape = &poligon;
+
+    m_b2_body_fixture = m_b2_body->CreateFixture(&fixture);
+    m_b2_body_fixture->SetUserData(this);
+  }
+
   if (!texture.loadFromFile(sprite_data.puth_to_texture)) {
     LOG() << "File " << sprite_data.puth_to_texture << " hasn't opened"
           << std::endl;
@@ -77,51 +122,7 @@ BaseCharacter::~BaseCharacter() {}
 
 CharacterSouthPark::CharacterSouthPark(b2World& world,
                                        const CharacterSpriteInfo& sprite_data)
-    : BaseCharacter(Type::CHARACTER_SOUTH_PARK, sprite_data) {
-  {
-    b2BodyDef bd;
-    bd.fixedRotation = true;
-    bd.type = b2_dynamicBody;
-    bd.position.Set(SfPointtoB2Point(sprite_data.x_position),
-                    SfPointtoB2Point(sprite_data.y_position));
-    bd.linearDamping = 1000.f;
-    m_b2_base = world.CreateBody(&bd);
-
-    b2PolygonShape poligon;
-    poligon.SetAsBox(0.5f, 0.1f);
-
-    b2FixtureDef fixture;
-    fixture.friction = 1.f;
-    fixture.density = 50.f;
-    fixture.restitution = 0;
-    fixture.isSensor = false;
-
-    fixture.shape = &poligon;
-    m_b2_base->SetGravityScale(0.f);
-    m_b2_base_fixture = m_b2_base->CreateFixture(&fixture);
-    m_b2_base_fixture->SetUserData(this);
-  }
-  {
-    b2BodyDef bd;
-    bd.type = b2_dynamicBody;
-    bd.position.Set(SfPointtoB2Point(sprite_data.x_position),
-                    SfPointtoB2Point(sprite_data.y_position));
-    bd.linearDamping = 0.f;
-    bd.fixedRotation = true;
-    m_b2_body = world.CreateBody(&bd);
-
-    b2PolygonShape poligon;
-    poligon.SetAsBox(.5f, 1.f, {0.f, -1.f}, 0);
-    b2FixtureDef fixture;
-    fixture.friction = 0.f;
-    fixture.density = 0.005f;
-    fixture.isSensor = true;
-
-    fixture.shape = &poligon;
-
-    m_b2_body_fixture = m_b2_body->CreateFixture(&fixture);
-    m_b2_body_fixture->SetUserData(this);
-  }
+    : BaseCharacter(Type::CHARACTER_SOUTH_PARK, world, sprite_data) {
   {
     b2PrismaticJointDef jd;
     jd.bodyA = m_b2_base;
@@ -181,67 +182,22 @@ void CharacterSouthPark::move(float deltaTime) {
 
   // g_debugDraw.DrawPoint(linearOffset, 4.0f, b2Color(0.9f, 0.9f, 0.9f));
 }
-void CharacterSouthPark::contact(b2Fixture* A, b2Fixture* B) {
+void CharacterSouthPark::contact(b2Fixture* B) {
   LOG() << "I'am SouthParkBoys and I've begun the colliding with.. hz"
         << std::endl;
-  UNUSE(A);
   UNUSE(B);
   //чекать с чем объект сталкивается
 }
-void CharacterSouthPark::endContact(b2Fixture* A, b2Fixture* B) {
+void CharacterSouthPark::endContact(b2Fixture* B) {
   LOG() << "I'am SouthParkBoys and I've dune the colliding with.. hz"
         << std::endl;
-  UNUSE(A);
   UNUSE(B);
 }
 CharacterSouthPark::~CharacterSouthPark() {}
 
 CharacterAlinasBoys::CharacterAlinasBoys(b2World& world,
                                          const CharacterSpriteInfo& sprite_data)
-    : BaseCharacter(Type::CHARACTER_SOUTH_PARK, sprite_data) {
-  {
-    b2BodyDef bd;
-    bd.fixedRotation = true;
-    bd.type = b2_dynamicBody;
-    bd.position.Set(SfPointtoB2Point(sprite_data.x_position),
-                    SfPointtoB2Point(sprite_data.y_position));
-    bd.linearDamping = 1000.f;
-    m_b2_base = world.CreateBody(&bd);
-
-    b2PolygonShape poligon;
-    poligon.SetAsBox(0.5f, 0.1f);
-
-    b2FixtureDef fixture;
-    fixture.friction = 1.f;
-    fixture.density = 50.f;
-    fixture.restitution = 0;
-    fixture.isSensor = false;
-
-    fixture.shape = &poligon;
-    m_b2_base_fixture = m_b2_base->CreateFixture(&fixture);
-    m_b2_base_fixture->SetUserData(this);
-  }
-  {
-    b2BodyDef bd;
-    bd.type = b2_dynamicBody;
-    bd.position.Set(SfPointtoB2Point(sprite_data.x_position),
-                    SfPointtoB2Point(sprite_data.y_position));
-    bd.linearDamping = 0.f;
-    bd.fixedRotation = true;
-    m_b2_body = world.CreateBody(&bd);
-
-    b2PolygonShape poligon;
-    poligon.SetAsBox(.5f, 1.f, {0.f, -1.f}, 0);
-    b2FixtureDef fixture;
-    fixture.friction = 0.f;
-    fixture.density = 0.005f;
-    fixture.isSensor = true;
-
-    fixture.shape = &poligon;
-
-    m_b2_body_fixture = m_b2_body->CreateFixture(&fixture);
-    m_b2_body_fixture->SetUserData(this);
-  }
+    : BaseCharacter(Type::CHARACTER_SOUTH_PARK, world, sprite_data) {
   {
     b2PrismaticJointDef jd;
     jd.bodyA = m_b2_base;
@@ -264,11 +220,52 @@ void CharacterAlinasBoys::move(float deltaTime) {
 void CharacterAlinasBoys::draw(sf::RenderWindow& window) {
   BaseCharacter::draw(window);
 }
-void CharacterAlinasBoys::contact(b2Fixture* A, b2Fixture* B) {
+void CharacterAlinasBoys::contact(b2Fixture* B) {
   LOG() << "I'am AlinasBoys and I've begun the colliding with.. hz"
         << std::endl;
 }
-void CharacterAlinasBoys::endContact(b2Fixture* A, b2Fixture* B) {
+void CharacterAlinasBoys::endContact(b2Fixture* B) {
   LOG() << "I'am AlinasBoys and I've done the colliding with.. hz" << std::endl;
 }
 CharacterAlinasBoys::~CharacterAlinasBoys() {}
+
+void MyContactListener::BeginContact(b2Contact* contact) {
+  void* user_data_A = contact->GetFixtureA()->GetUserData();
+  if (user_data_A)
+    static_cast<BaseCharacter*>(user_data_A)->contact(contact->GetFixtureB());
+  void* user_data_B = contact->GetFixtureA()->GetUserData();
+  if (user_data_B)
+    static_cast<BaseCharacter*>(user_data_B)->contact(contact->GetFixtureB());
+  // if (Type::CHARACTER_SOUTH_PARK ==
+  //    static_cast<BaseCharacter*>(user_data)->getType()) {
+  //    static_cast<BaseCharacter*>(user_data)->getType()
+  // };
+}
+
+void MyContactListener::EndContact(b2Contact* contact) {
+  void* user_data_A = contact->GetFixtureA()->GetUserData();
+  if (user_data_A)
+    static_cast<BaseCharacter*>(user_data_A)
+        ->endContact(contact->GetFixtureB());
+  void* user_data_B = contact->GetFixtureA()->GetUserData();
+  if (user_data_B)
+    static_cast<BaseCharacter*>(user_data_B)
+        ->endContact(contact->GetFixtureB());
+}
+
+void MyContactListener::PreSolve(b2Contact* contact,
+                                 const b2Manifold* oldManifold) {
+  //    const b2Manifold* manifold = contact->GetManifold();
+
+  //    b2Fixture* fixtureA = contact->GetFixtureA();
+  //    b2Fixture* fixtureB = contact->GetFixtureB();
+
+  //    b2WorldManifold worldManifold;
+  //    contact->GetWorldManifold(&worldManifold);
+
+  //    b2Body* bodyA = fixtureA->GetBody();
+  //    b2Body* bodyB = fixtureB->GetBody();
+}
+
+void MyContactListener::PostSolve(b2Contact* contact,
+                                  const b2ContactImpulse* Impulse) {}

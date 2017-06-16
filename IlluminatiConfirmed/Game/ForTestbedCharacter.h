@@ -79,6 +79,37 @@ class PID {
 class Character_ {
  public:
   Character_(b2World* world) {
+
+	  {
+		  b2BodyDef bd;
+		  bd.type = b2_staticBody;
+		  bd.position.Set(0.f, 15.f);
+		  auto fix = world->CreateBody(&bd);
+		  {
+			  b2PolygonShape poligon;
+			  poligon.SetAsBox(10.f, 0.5f);
+
+			  b2FixtureDef fixture;
+
+			  fixture.shape = &poligon;
+			  fixturee = fix->CreateFixture(&fixture);
+		  }
+
+		  {
+			  b2PolygonShape poligon;
+			  poligon.SetAsBox(2.f, 0.5f, {0.f, 3.f}, 0);
+
+			  b2FixtureDef fixture;
+
+			  fixture.shape = &poligon;
+			  fixtureee = fix->CreateFixture(&fixture);
+		  }
+
+	  }
+
+
+
+
     {
       b2BodyDef bd;
 	  bd.fixedRotation = true;
@@ -160,6 +191,9 @@ class Character_ {
        //m_joint = (b2MotorJoint*)world->CreateJoint(&mjd);
     }
   }
+
+  b2Fixture *fixturee;
+  b2Fixture *fixtureee;
   void UpdateForce(KeyEnum key, Settings *settings) {
     switch (key) {
       case KeyEnum::RIGHT: {
@@ -409,7 +443,9 @@ class MyTesttt : public Test {
     str += std::string("Mause :") + std::to_string(m_mouseWorld.x) +
            std::string(" : ") + std::to_string(m_mouseWorld.y) +
            std::string("is active: ") + std::to_string(m_ch.m_body->IsActive());
-    g_debugDraw.DrawString(5, m_textLine, str.c_str());
+	str += std::string(" fixture position: ") + std::to_string(static_cast<const b2PolygonShape*>(m_ch2.fixturee->GetShape())->m_centroid.x) + std::string(" : ") + std::to_string(static_cast<const b2PolygonShape*>(m_ch2.fixturee->GetShape())->m_centroid.y);
+	str += std::string(" fixture position: ") + std::to_string(static_cast<const b2PolygonShape*>(m_ch2.fixtureee->GetShape())->m_centroid.x) + std::string(" : ") + std::to_string(static_cast<const b2PolygonShape*>(m_ch2.fixtureee->GetShape())->m_centroid.y);
+	g_debugDraw.DrawString(5, m_textLine, str.c_str());
     g_debugDraw.DrawPoint(m_mouseWorld, 5, b2Color(100, 100, 100));
     str = "";
   }

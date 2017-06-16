@@ -2,6 +2,8 @@
 #include "Box2D/Box2D.h"
 #include "SFMLDebugDraw.h"
 
+#include "b2dJson.h"
+
 #include <iostream>
 
 #include "Game.h"
@@ -30,21 +32,11 @@ void Game::initNewGame(const std::string &mapFile) {
 }
 
 void Game::initCharacters() {
-  //  std::shared_ptr<CharacterAlinasBoys> hero1 =
-  //  std::make_shared<CharacterAlinasBoys>(
-  //      "../Game/resources/sprites/characters/demon1.png", m_world, 4, 64, 64,
-  //      "../Game/resources/sprites/bullets/bullet1.png");
-
   m_heroes.push_back(std::static_pointer_cast<BaseCharacter>(
       std::make_shared<CharacterAlinasBoys>(
           m_world, CharacterSpriteInfo(
                        {"../Game/resources/sprites/characters/demon1.png", 64,
                         64, 64, 4, 100, 100}))));
-
-  //  std::shared_ptr<CharacterAlinasBoys> hero2 =
-  //  std::make_shared<CharacterAlinasBoys>(
-  //      "../Game/resources/sprites/characters/panda.png", m_world, 3, 32,32,
-  //      "../Game/resources/sprites/bullets/bullet2.png");
 
   m_heroes.push_back(
       std::static_pointer_cast<BaseCharacter>(std::make_shared<Kolobashka>(
@@ -52,21 +44,11 @@ void Game::initCharacters() {
           CharacterSpriteInfo({"../Game/resources/sprites/characters/panda.png",
                                32, 32, 64, 3, 200, 200}))));
 
-  //  std::shared_ptr<CharacterAlinasBoys> hero3 =
-  //  std::make_shared<CharacterAlinasBoys>(
-  //"../Game/resources/sprites/characters/spider1.png", m_world, 10,64,64,
-  //      "../Game/resources/sprites/bullets/bullet3.png");
-
   m_heroes.push_back(std::static_pointer_cast<BaseCharacter>(
       std::make_shared<CharacterAlinasBoys>(
           m_world, CharacterSpriteInfo(
                        {"../Game/resources/sprites/characters/spider1.png", 64,
                         64, 64, 10, 300, 300}))));
-  //  std::shared_ptr<CharacterAlinasBoys> hero3 =
-  //      std::make_shared<CharacterAlinasBoys>(
-  //          m_world, CharacterSpriteInfo(
-  //    {"../Game/resources/sprites/characters/spider1.png",64,
-  //                        64, 64, 10, 300, 300}));
 
   m_heroes.push_back(std::static_pointer_cast<BaseCharacter>(
       std::make_shared<CharacterSouthPark>(
@@ -105,6 +87,17 @@ void Game::initPhysics() {
 
 void Game::updatePhysics() {
   m_world.Step(1 / 60.f, 8, 3);
+
+  b2dJson json(false);
+
+   std::string str = json.writeToString(&m_world);
+    std::string err;
+
+    json.readFromString(str, err, &m_world);
+
+    LOG() << err << std::endl;
+
+
   // for (auto &&it : m_heroes) it->updatePhysics();
   // for (auto &&it : m_bullets) it->updatePhysics();
   // m_bullets.remove_if([](auto &i) { return i->hasStopped(); });
@@ -112,9 +105,6 @@ void Game::updatePhysics() {
 
 void Game::buildBarriers(std::vector<Object> &walls) {
   for (size_t i = 0; i < walls.size(); i++) {
-    // я запуталась, в  том, что вверху и переписала. ща стены норм рисуются
-    // ещё здесь надо будет сделать оптимизацию и вынести часть этой ерунды за
-    // пределы for
     b2PolygonShape polygonShape;
 
     // fixture definition

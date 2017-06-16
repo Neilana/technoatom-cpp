@@ -11,6 +11,9 @@ SOURCES += main.cpp \
     classes/Game.cpp \
     ../../Libs/tinyxml2/tinyxml2.cpp \
     "../../Libs/Box2D-SFML2-Debug-Draw/Box2D-SFML Debug Draw/SFMLDebugDraw.cpp" \
+    ../../Libs/b2dJson/c++/b2dJson.cpp \
+    ../../Libs/b2dJson/c++/jsoncpp.cpp \
+    ../../Libs/b2dJson/c++/b2dJsonImage.cpp \
     classes/Bullet.cpp \
     classes/screens/Screen.cpp \
     classes/screens/ScreenGame.cpp \
@@ -50,3 +53,6 @@ INCLUDEPATH += $$PWD/../../Libs/tinyxml2/
 
 #repo: https://github.com/MrPlow442/Box2D-SFML2-Debug-Draw/
 INCLUDEPATH += "$$PWD/../../Libs/Box2D-SFML2-Debug-Draw/Box2D-SFML Debug Draw/"
+
+#repo: https://github.com/iforce2d/b2dJson
+INCLUDEPATH += $$PWD/../../Libs/b2dJson/c++

@@ -77,6 +77,7 @@ void Level::loadLayersFromFile(tinyxml2::XMLDocument &levelFile) {
   tinyxml2::XMLElement *layerElement;
   layerElement = map->FirstChildElement("layer");
   while (layerElement) {
+
     Layer layer;
 
     // Если присутствует opacity, то задаем прозрачность слоя, иначе он
