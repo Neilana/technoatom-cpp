@@ -15,20 +15,6 @@
 #endif
 
 namespace IlluminatiConfirmed {
-
-// struct Object {
-//    int GetPropertyInt(const std::string &name);
-//    float GetPropertyFloat(const std::string &name);
-//    const std::string &GetPropertyString(const std::string &name);
-
-//    std::string m_name;
-//    std::string m_type;
-//    sf::Rect<int> m_rect;
-
-//    sf::Sprite m_sprite;
-//    std::map<std::string, std::string> m_properties;
-//};
-
 struct Layer {
   int m_opacity;
   std::vector<sf::Sprite> m_tiles;

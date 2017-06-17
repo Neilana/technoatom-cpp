@@ -7,7 +7,6 @@ DEFINES += TIXML_USE_STL
 
 SOURCES += main.cpp \
     classes/Level.cpp \
-    classes/Character.cpp \
     classes/Game.cpp \
     ../../Libs/tinyxml2/tinyxml2.cpp \
     "../../Libs/Box2D-SFML2-Debug-Draw/Box2D-SFML Debug Draw/SFMLDebugDraw.cpp" \
@@ -17,35 +16,48 @@ SOURCES += main.cpp \
     classes/Bullet.cpp \
     classes/screens/Screen.cpp \
     classes/screens/ScreenGame.cpp \
-    classes/screens/ScreenMenu.cpp \
+    classes/screens/ScreenMenuMain.cpp \
     classes/screens/ScreenChoseCharacters.cpp \
     classes/GameDatabase.cpp \
-    charactersouthpark.cpp
+    classes/screens/ScreenMenu.cpp \
+    classes/screens/ScreenMenuLoad.cpp \
+    classes/screens/ScreenMenuSave.cpp \
+    classes/characters/BaseCharacter.cpp \
+    classes/characters/CharacterSouthPark.cpp \
+    classes/characters/CharacterAlinasBoys.cpp \
+    classes/MyContactListener.cpp
 
 HEADERS += \
     classes/Level.h \
     constants.h \
     classes/Game.h \
-    classes/Character.h \
     ../../Libs/tinyxml2/tinyxml2.h \
     ../../Libs/Box2D/Box2D/Box2D.h \
     "../../Libs/Box2D-SFML2-Debug-Draw/Box2D-SFML Debug Draw/SFMLDebugDraw.h" \
     classes/Bullet.h \
     classes/screens/Screen.h \
     classes/screens/ScreenGame.h \
-    classes/screens/ScreenMenu.h \
+    classes/screens/ScreenMenuMain.h \
     classes/screens/ScreenChoseCharacters.h \
     classes/GameDatabase.h \
-    charactersouthpark.h
+    classes/screens/ScreenMenu.h \
+    classes/screens/ScreenMenuLoad.h \
+    classes/screens/ScreenMenuSave.h \
+    classes/characters/BaseCharacter.h \
+    classes/characters/CharacterSouthPark.h \
+    classes/characters/CharacterAlinasBoys.h \
+    classes/MyContactListener.h
    # ForTestbedCharacter.h
 
 INCLUDEPATH += classes/ \
-  classes/screens
+  classes/screens \
+  classes/characters
 
 LIBS += -L$$PWD/../../Libs/Box2D/Build/ -lBox2D
 INCLUDEPATH += $$PWD/../../Libs/Box2D/
 
-LIBS += -L$$PWD/../../Libs/SFML/Build -lsfml-audio -lsfml-graphics -lsfml-network -lsfml-window -lsfml-system
+win32:LIBS += -L$$PWD/../../Libs/SFML/Build -lsfml-audio -lsfml-graphics -lsfml-network -lsfml-window -lsfml-system
+unix: LIBS += -lsfml-audio -lsfml-graphics -lsfml-network -lsfml-window -lsfml-system
 INCLUDEPATH += $$PWD/../../Libs/SFML/include
 
 win32:LIBS += -L$$PWD/../../Libs/tinyxml2/Build/ -llibtinyxml2.dll

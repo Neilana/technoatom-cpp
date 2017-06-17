@@ -5,9 +5,9 @@
 
 #include <string>
 
-#define UNUSE(var) \
-  do {             \
-    (void)var;     \
+#define UNUSE(var)                                                             \
+  do {                                                                         \
+    (void)var;                                                                 \
   } while (0);
 
 const int WINDOW_HEIGHT = 800;
@@ -16,18 +16,19 @@ const int WINDOW_WIDTH = 800;
 const float SCALE = 32.0;
 
 enum class Direction { Up, Down, Left, Right, Nothing };
-enum class ScreenName { MainMenu, ChoseCharacters, Game };
-// enum class MenuOptions { NewGame, Continue, Save, Load, Exit }
+enum class ScreenName { MainMenu, ChoseCharacters, Game, Load, Save };
 
 const std::string MAP_FILE_1 = "../Game/resources/maps/map25x25_1.tmx";
+const std::string FONT_FILE =
+    "../Game/resources/fonts/Franchise-Bold-hinted.ttf";
+const std::string MENU_BACKGROUND_FILE =
+    "../Game/resources/sprites/backgrounds/menu3_1.png";
 
-template <typename T>
-b2Vec2 SfVector2toB2Vec2(const sf::Vector2<T> &vector) {
+template <typename T> b2Vec2 SfVector2toB2Vec2(const sf::Vector2<T> &vector) {
   return b2Vec2(vector.x / SCALE, vector.y / SCALE);
 }
 
-template <typename T>
-sf::Vector2<T> B2Vec2toSfVector2(const b2Vec2 &vector) {
+template <typename T> sf::Vector2<T> B2Vec2toSfVector2(const b2Vec2 &vector) {
   return sf::Vector2<T>(vector.x * SCALE, vector.y * SCALE);
 }
 

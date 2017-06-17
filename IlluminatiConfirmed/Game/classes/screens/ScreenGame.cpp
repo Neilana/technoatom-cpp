@@ -1,6 +1,6 @@
-#include <SFML/Graphics.hpp>
 #include "Box2D/Box2D.h"
 #include "SFMLDebugDraw.h"
+#include <SFML/Graphics.hpp>
 
 #include <exception>
 #include <iostream>
@@ -10,19 +10,15 @@
 #include "../Exceptions/Exception.h"
 #include "Screen.h"
 #include "ScreenGame.h"
-#include "ScreenMenu.h"
+#include "ScreenMenuMain.h"
 
-#include "Character.h"
 #include "Game.h"
 #include "Level.h"
 
 using namespace sf;
 using namespace std;
 
-using IlluminatiConfirmed::Character;
-using IlluminatiConfirmed::Game;
-using IlluminatiConfirmed::Screen;
-using IlluminatiConfirmed::ScreenGame;
+using namespace IlluminatiConfirmed;
 
 ScreenGame::ScreenGame() {}
 
@@ -38,8 +34,7 @@ ScreenName ScreenGame::run(Game &game, sf::RenderWindow &window) {
 
     sf::Text fpsCounter;
     sf::Font mainFont;
-    if (!mainFont.loadFromFile(
-            "../Game/resources/fonts/Franchise-Bold-hinted.ttf"))
+    if (!mainFont.loadFromFile(FONT_FILE))
       throw EXCEPTION("I can't open file with font.", nullptr);
     fpsCounter.setFont(mainFont);
     fpsCounter.setColor(sf::Color::White);
@@ -48,7 +43,8 @@ ScreenName ScreenGame::run(Game &game, sf::RenderWindow &window) {
     sf::Mouse::getPosition();
 
     while (window.pollEvent(event)) {
-      if (event.type == sf::Event::Closed) window.close();
+      if (event.type == sf::Event::Closed)
+        window.close();
 
       if (event.type == sf::Event::KeyPressed) {
         if (event.key.code == sf::Keyboard::Tab) {

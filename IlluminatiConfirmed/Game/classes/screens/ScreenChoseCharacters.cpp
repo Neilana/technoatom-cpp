@@ -10,42 +10,10 @@ using namespace std;
 
 using IlluminatiConfirmed::ScreenChoseCharacters;
 using IlluminatiConfirmed::GameDatabase;
-;
-
-void ScreenChoseCharacters::initBackground() {
-  if (!m_backgroundTexture.loadFromFile(
-          "../Game/resources/sprites/backgrounds/menu3_1.png")) {
-    // std::cout << "Error loading presentation.gif" << std::endl;
-    // return (-1);
-  }
-  m_backgroundSprite.setTexture(m_backgroundTexture);
-  // sprite.setColor(sf::Color(255, 255, 255, alpha));
-  if (!m_font.loadFromFile(
-          "../Game/resources/fonts/Franchise-Bold-hinted.ttf")) {
-    // std::cerr << "Error loading verdanab.ttf" << std::endl;
-    // return (-1);
-  }
-}
-
-void ScreenChoseCharacters::initTitle() {
-  float titleX = WINDOW_WIDTH / 2.0 - 100;
-  float titleY = 25;
-  float fontSize = 45;
-
-  m_title.setFont(m_font);
-  m_title.setCharacterSize(fontSize);
-  m_title.setString("Chose Characters");
-  // m_title.setPosition(titleX, titleY);
-  m_title.setColor(sf::Color::White);
-
-  // center text
-  sf::FloatRect textRect = m_title.getLocalBounds();
-  m_title.setOrigin(textRect.left + textRect.width / 2.0f,
-                    textRect.top + textRect.height / 2.0f);
-  m_title.setPosition(sf::Vector2f(WINDOW_WIDTH / 2.0f, 40));
-}
 
 ScreenChoseCharacters::ScreenChoseCharacters() {
+  m_title.setString("Chose Characters");
+
   initBackground();
   initTitle();
 

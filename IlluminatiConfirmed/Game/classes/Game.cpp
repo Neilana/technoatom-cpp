@@ -1,17 +1,19 @@
-#include <SFML/Graphics.hpp>
 #include "Box2D/Box2D.h"
 #include "SFMLDebugDraw.h"
+#include <SFML/Graphics.hpp>
 
 #include "b2dJson.h"
 
 #include <iostream>
 
+#include "CharacterAlinasBoys.h"
 #include "Game.h"
+#include "MyContactListener.h"
 
 using namespace sf;
 using namespace std;
 
-using IlluminatiConfirmed::Game;
+using namespace IlluminatiConfirmed;
 
 Game::Game(sf::RenderWindow &window) : m_world(b2Vec2(0.0f, 0.0f)) {
   m_currentHeroId = 0;
@@ -19,15 +21,15 @@ Game::Game(sf::RenderWindow &window) : m_world(b2Vec2(0.0f, 0.0f)) {
   MyContactListener *listner = new MyContactListener;
   m_world.SetContactListener(listner);
   SFMLDebugDraw *debugDraw =
-      new SFMLDebugDraw(window);  //утечка памяти, бокс не будет это удалять
+      new SFMLDebugDraw(window); //утечка памяти, бокс не будет это удалять
   debugDraw->SetFlags(b2Draw::e_shapeBit + b2Draw::e_centerOfMassBit +
                       b2Draw::e_pairBit);
   m_world.SetDebugDraw(debugDraw);
 }
 
 void Game::initNewGame(const std::string &mapFile) {
-  m_level.loadMapFromFile(mapFile);  // загружаем карту
-  initCharacters();                  // загружаем персонажей
+  m_level.loadMapFromFile(mapFile); // загружаем карту
+  initCharacters();                 // загружаем персонажей
   initPhysics();
 }
 
@@ -35,14 +37,14 @@ void Game::initCharacters() {
   m_heroes.push_back(std::static_pointer_cast<BaseCharacter>(
       std::make_shared<CharacterAlinasBoys>(
           m_world, CharacterSpriteInfo(
-                       {"../Game/resources/sprites/characters/demon1.png", 64,
-                        64, 64, 4, 100, 100}))));
+                       {"../Game/resources/sprites/characters/demon2.png", 64,
+                        48, 48, 4, 100, 100}))));
 
-  m_heroes.push_back(
-      std::static_pointer_cast<BaseCharacter>(std::make_shared<Kolobashka>(
+  m_heroes.push_back(std::static_pointer_cast<BaseCharacter>(
+      std::make_shared<CharacterAlinasBoys>(
           m_world,
           CharacterSpriteInfo({"../Game/resources/sprites/characters/panda.png",
-                               32, 32, 64, 3, 200, 200}))));
+                               32, 32, 32, 3, 200, 200}))));
 
   m_heroes.push_back(std::static_pointer_cast<BaseCharacter>(
       std::make_shared<CharacterAlinasBoys>(
@@ -64,10 +66,12 @@ void Game::draw(sf::RenderWindow &window) {
   m_level.Draw(window);
 
   // рисуем всех персонажей
-  for (auto &&it : m_heroes) it->draw(window);
+  for (auto &&it : m_heroes)
+    it->draw(window);
 
   // рисуем пули
-  for (auto &&it : m_bullets) it->draw(window);
+  for (auto &&it : m_bullets)
+    it->draw(window);
 
   // дебаг
   // m_world.Dump();
@@ -88,18 +92,18 @@ void Game::initPhysics() {
 void Game::updatePhysics() {
   m_world.Step(1 / 60.f, 8, 3);
 
-  b2dJson json(false);
+  //  b2dJson json(false);
 
-   std::string str = json.writeToString(&m_world);
-    std::string err;
+  // std::string str = json.writeToString(&m_world);
+  // std::string err;
 
-    json.readFromString(str, err, &m_world);
+  // json.readFromString(str, err, &m_world);
 
-    LOG() << err << std::endl;
-
+  // LOG() << err << std::endl;
 
   // for (auto &&it : m_heroes) it->updatePhysics();
-  // for (auto &&it : m_bullets) it->updatePhysics();
+  // for (auto &&it : m_bullets)
+  // it->updatePhysics();
   // m_bullets.remove_if([](auto &i) { return i->hasStopped(); });
 }
 
@@ -121,8 +125,7 @@ void Game::buildBarriers(std::vector<Object> &walls) {
     // add four walls to the static body
     polygonShape.SetAsBox(
         walls[i].m_rect.width / 64.0,
-        walls[i].m_rect.height /
-            64.0,  // 64 - потому что сначала мы делим на 2,
+        walls[i].m_rect.height / 64.0, // 64 - потому что сначала мы делим на 2,
         // чтобы получить половину ширины/высоты,
         // а затем делим на SCALE = 32
         SfVector2toB2Vec2(
@@ -134,7 +137,29 @@ void Game::buildBarriers(std::vector<Object> &walls) {
   }
 }
 
-void Game::sendBullet(Character *hero) {
-  std::shared_ptr<Bullet> bullet = hero->attack(m_world);
-  m_bullets.push_back(bullet);
+void Game::sendBullet(BaseCharacter *hero) {
+  // std::shared_ptr<Bullet> bullet = hero->attack(m_world);
+  // m_bullets.push_back(bullet);
+}
+
+void Game::saveGame(const std::string &fileName) {
+  b2dJson json;
+  json.writeToFile(&m_world, fileName.c_str());
+
+  //  b2dJson json(false);
+  //  std::string str = json.writeToString(&m_world);
+  //  std::string err;
+
+  //  json.readFromString(str, err, &m_world);
+
+  //  LOG() << err << std::endl;
+}
+
+void Game::loadGame(const std::string &fileName) {
+  std::string err;
+  b2dJson json;
+  m_world = *(json.readFromFile(
+      fileName.c_str(),
+      err)); // ыыыыы, оно почему-то заработало, но выглядит стрёмно
+  updatePhysics();
 }

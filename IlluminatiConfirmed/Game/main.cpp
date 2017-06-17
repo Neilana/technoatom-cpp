@@ -1,18 +1,21 @@
-#include <SFML/Graphics.hpp>
 #include "Box2D/Box2D.h"
 #include "SFMLDebugDraw.h"
+#include <SFML/Graphics.hpp>
 
 #include <exception>
 #include <iostream>
 #include <vector>
 
 #include "../Exceptions/Exception.h"
-#include "Character.h"
 #include "Game.h"
 #include "Level.h"
+
 #include "ScreenChoseCharacters.h"
 #include "ScreenGame.h"
-#include "ScreenMenu.h"
+#include "ScreenMenuLoad.h"
+#include "ScreenMenuMain.h"
+#include "ScreenMenuSave.h"
+
 #include "screens/Screen.h"
 //#include "constants.h"
 
@@ -21,13 +24,15 @@
 using namespace sf;
 using namespace std;
 
-using IlluminatiConfirmed::Character;
-using IlluminatiConfirmed::Game;
-using IlluminatiConfirmed::Screen;
-using IlluminatiConfirmed::ScreenMenu;
-using IlluminatiConfirmed::ScreenGame;
-using IlluminatiConfirmed::ScreenChoseCharacters;
-using IlluminatiConfirmed::GameDatabase;
+using namespace IlluminatiConfirmed;
+
+// using IlluminatiConfirmed::Character;
+// using IlluminatiConfirmed::Game;
+// using IlluminatiConfirmed::Screen;
+// using IlluminatiConfirmed::ScreenMenuMain;
+// using IlluminatiConfirmed::ScreenGame;
+// using IlluminatiConfirmed::ScreenChoseCharacters;
+// using IlluminatiConfirmed::GameDatabase;
 
 int main() {
   try {
@@ -36,7 +41,7 @@ int main() {
     std::map<ScreenName, Screen *> screenNameToScreen;
 
     // menu = 0
-    ScreenMenu screen0;
+    ScreenMenuMain screen0;
     screenNameToScreen[ScreenName::MainMenu] = &screen0;
 
     // new game = 1
@@ -47,6 +52,14 @@ int main() {
     ScreenGame screen2;
     screenNameToScreen[ScreenName::Game] = &screen2;
 
+    // load
+    ScreenMenuLoad screen3;
+    screenNameToScreen[ScreenName::Load] = &screen3;
+
+    // save
+    ScreenMenuSave screen4;
+    screenNameToScreen[ScreenName::Save] = &screen4;
+
     sf::RenderWindow window;
     window.create(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Level.h test");
     window.setFramerateLimit(60);
@@ -54,10 +67,9 @@ int main() {
     std::stringstream sstream;
     sf::Text fpsCounter;
     sf::Font mainFont;
-    if (!mainFont.loadFromFile(
-            "../Game/resources/fonts/Franchise-Bold-hinted.ttf"))  // Set path
-                                                                   // to your
-                                                                   // font
+    if (!mainFont.loadFromFile(FONT_FILE)) // Set path
+                                           // to your
+                                           // font
       throw EXCEPTION("I can't open file with font.", nullptr);
     fpsCounter.setFont(mainFont);
     fpsCounter.setColor(sf::Color::White);

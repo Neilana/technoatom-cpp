@@ -1,10 +1,11 @@
 #pragma once
 
 #include "Screen.h"
+#include "ScreenMenu.h"
 
 namespace IlluminatiConfirmed {
-class ScreenChoseCharacters : public Screen {
- private:
+class ScreenChoseCharacters : public ScreenMenu {
+private:
   struct AvailableCharacter {
     sf::RectangleShape m_sprite;
     sf::Texture m_texture;
@@ -20,20 +21,16 @@ class ScreenChoseCharacters : public Screen {
       m_sprite.setOutlineThickness(3);
     }
   };
-  sf::Texture m_backgroundTexture;
-  sf::Sprite m_backgroundSprite;
-  sf::Font m_font;
-  sf::Text m_title;
   sf::Texture texture;
   std::vector<std::shared_ptr<AvailableCharacter>> m_characters;
 
-  void initTitle();
-  void initBackground();
-  void initMenuOptions();
+  // void initTitle();
+  // void initBackground();
+  // void initMenuOptions();
 
   void showCharacters();
 
- public:
+public:
   ScreenChoseCharacters();
 
   ScreenName run(IlluminatiConfirmed::Game &game, sf::RenderWindow &window);
