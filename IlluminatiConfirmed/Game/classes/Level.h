@@ -47,13 +47,13 @@ class Level {
  public:
   void loadMapFromFile(const std::string &filename);
 
-  Object GetObject(const std::string &name);
-  std::vector<Object> GetObjectsByName(const std::string &name);
-  std::vector<Object> GetObjectsByType(const std::string &name);
+  const std::vector<Object> &GetVecObjectsByNameOfGroup(
+      const std::string &name);
+
   const Layer &GetLayerByName(const std::string &name);
-  std::vector<std::pair<sf::Rect<int>, sf::Vector2i>>
-  GetVecOfRectsByNameOfObjAndLayer(const std::string &name_obj,
-                                   const std::string &name_layer);
+  std::vector<std::vector<std::pair<sf::Rect<int>, sf::Vector2i>>>
+  GetVecOfRectsByNameOfObjsGroupAndLayer(const std::string &name_obj_gr,
+                                         const std::string &name_layer);
   sf::Vector2i GetTileSize();
   MapInfo GetMapInfo();
 
@@ -64,7 +64,7 @@ class Level {
   int m_width, m_height, m_tileWidth, m_tileHeight, m_firstTileId, m_columns,
       m_rows;
   std::string m_name_of_tileset;
-  std::vector<Object> m_objects;
+  std::map<std::string, std::vector<Object>> m_objects_by_name_group;
   std::vector<Layer> m_layers;
 };
 }

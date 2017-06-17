@@ -77,12 +77,12 @@ void Game::initPhysics() {
   // sf::Vector2i tileSize = m_level.GetTileSize();
 
   // загружаем в Box2D стены
-  std::vector<Object> walls = m_level.GetObjectsByType("Wall");
-  buildBarriers(walls);
+  //std::vector<Object> walls = m_level.GetObjectsByType("Wall");
+  //buildBarriers(walls);
 
   // загружаем здания
-  walls = m_level.GetObjectsByType("Building");
-  buildBarriers(walls);
+  //walls = m_level.GetObjectsByType("Building");
+  //buildBarriers(walls);
 }
 
 void Game::updatePhysics() {
