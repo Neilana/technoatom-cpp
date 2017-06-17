@@ -37,3 +37,23 @@ float RadBetweenVectors(const V1 &v1, const V2 &v2) {
 }
 
 inline float SfPointtoB2Point(float point) { return point / SCALE; }
+
+inline b2Vec2 getShapePosition(const b2Shape *shape)
+{
+    if(shape->m_type == b2Shape::e_circle)
+    {
+        return static_cast<const b2CircleShape*>(shape)->m_p;
+    }
+    else if(shape->m_type == b2Shape::e_polygon)
+    {
+        return static_cast<const b2PolygonShape*>(shape)->m_centroid;
+    }
+    return b2Vec2_zero;
+}
+
+inline b2Vec2 getFixtureWorldPosition(const b2Fixture *fixture)
+{
+    return fixture->GetBody()->GetPosition()+getShapePosition(fixture->GetShape());
+}
+
+

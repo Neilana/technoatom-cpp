@@ -20,7 +20,9 @@ SOURCES += main.cpp \
     classes/screens/ScreenMenu.cpp \
     classes/screens/ScreenChoseCharacters.cpp \
     classes/GameDatabase.cpp \
-    charactersouthpark.cpp
+    charactersouthpark.cpp \
+    classes/Base.cpp \
+    Level.t.cpp
 
 HEADERS += \
     classes/Level.h \
@@ -36,7 +38,8 @@ HEADERS += \
     classes/screens/ScreenMenu.h \
     classes/screens/ScreenChoseCharacters.h \
     classes/GameDatabase.h \
-    charactersouthpark.h
+    charactersouthpark.h \
+    classes/Base.h
    # ForTestbedCharacter.h
 
 INCLUDEPATH += classes/ \
@@ -56,3 +59,9 @@ INCLUDEPATH += "$$PWD/../../Libs/Box2D-SFML2-Debug-Draw/Box2D-SFML Debug Draw/"
 
 #repo: https://github.com/iforce2d/b2dJson
 INCLUDEPATH += $$PWD/../../Libs/b2dJson/c++
+
+# Google Test
+unix|win32: LIBS += -L$$PWD/../../../googletest-master/googletest/lib/ -lgtest
+
+INCLUDEPATH += $$PWD/../../../googletest-master/googletest/include
+DEPENDPATH += $$PWD/../../../googletest-master/googletest/include

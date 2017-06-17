@@ -1,6 +1,7 @@
 #include <SFML/Graphics.hpp>
 #include "Box2D/Box2D.h"
 #include "SFMLDebugDraw.h"
+#include "gtest/gtest.h"
 
 #include <exception>
 #include <iostream>
@@ -29,52 +30,58 @@ using IlluminatiConfirmed::ScreenGame;
 using IlluminatiConfirmed::ScreenChoseCharacters;
 using IlluminatiConfirmed::GameDatabase;
 
-int main() {
-  try {
-    GameDatabase db = GameDatabase::getInstance();
+int main(int argc, char *argv[]) {
+    ::testing::InitGoogleTest(&argc, argv);
+     // запускаем только определённый тест (чтобы проще смотреть дампы)
+     //::testing::GTEST_FLAG(filter) = "VectorTest3*";
 
-    std::map<ScreenName, Screen *> screenNameToScreen;
+     return RUN_ALL_TESTS();
 
-    // menu = 0
-    ScreenMenu screen0;
-    screenNameToScreen[ScreenName::MainMenu] = &screen0;
+//  try {
+//    GameDatabase db = GameDatabase::getInstance();
 
-    // new game = 1
-    ScreenChoseCharacters screen1;
-    screenNameToScreen[ScreenName::ChoseCharacters] = &screen1;
+//    std::map<ScreenName, Screen *> screenNameToScreen;
 
-    // game = 1
-    ScreenGame screen2;
-    screenNameToScreen[ScreenName::Game] = &screen2;
+//    // menu = 0
+//    ScreenMenu screen0;
+//    screenNameToScreen[ScreenName::MainMenu] = &screen0;
 
-    sf::RenderWindow window;
-    window.create(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Level.h test");
-    window.setFramerateLimit(60);
+//    // new game = 1
+//    ScreenChoseCharacters screen1;
+//    screenNameToScreen[ScreenName::ChoseCharacters] = &screen1;
 
-    std::stringstream sstream;
-    sf::Text fpsCounter;
-    sf::Font mainFont;
-    if (!mainFont.loadFromFile(
-            "../Game/resources/fonts/Franchise-Bold-hinted.ttf"))  // Set path
-                                                                   // to your
-                                                                   // font
-      throw EXCEPTION("I can't open file with font.", nullptr);
-    fpsCounter.setFont(mainFont);
-    fpsCounter.setColor(sf::Color::White);
+//    // game = 1
+//    ScreenGame screen2;
+//    screenNameToScreen[ScreenName::Game] = &screen2;
 
-    Game game(window);
-    game.initNewGame(MAP_FILE_1);
+//    sf::RenderWindow window;
+//    window.create(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Level.h test");
+//    window.setFramerateLimit(60);
 
-    Clock clock;
+//    std::stringstream sstream;
+//    sf::Text fpsCounter;
+//    sf::Font mainFont;
+//    if (!mainFont.loadFromFile(
+//            "../Game/resources/fonts/Franchise-Bold-hinted.ttf"))  // Set path
+//                                                                   // to your
+//                                                                   // font
+//      throw EXCEPTION("I can't open file with font.", nullptr);
+//    fpsCounter.setFont(mainFont);
+//    fpsCounter.setColor(sf::Color::White);
 
-    // while (screenName != ScreenName::Exit) {
-    ScreenName screenName = ScreenName::MainMenu;
-    while (window.isOpen()) {
-      screenName = screenNameToScreen[screenName]->run(game, window);
-    }
-  } catch (IlluminatiConfirmed::Exception &e) {
-    std::cout << e.what();
-  }
+//    Game game(window);
+//    game.initNewGame(MAP_FILE_1);
 
-  return 0;
+//    Clock clock;
+
+//    // while (screenName != ScreenName::Exit) {
+//    ScreenName screenName = ScreenName::MainMenu;
+//    while (window.isOpen()) {
+//      screenName = screenNameToScreen[screenName]->run(game, window);
+//    }
+//  } catch (IlluminatiConfirmed::Exception &e) {
+//    std::cout << e.what();
+//  }
+
+//  return 0;
 }

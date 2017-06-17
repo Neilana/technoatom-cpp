@@ -61,7 +61,7 @@ void Game::draw(sf::RenderWindow &window) {
   window.clear();
 
   // рисуем карту
-  m_level.Draw(window);
+  //m_level.Draw(window);
 
   // рисуем всех персонажей
   for (auto &&it : m_heroes) it->draw(window);
@@ -89,14 +89,11 @@ void Game::updatePhysics() {
   m_world.Step(1 / 60.f, 8, 3);
 
   b2dJson json(false);
-
-   std::string str = json.writeToString(&m_world);
-    std::string err;
-
-    json.readFromString(str, err, &m_world);
-
-    LOG() << err << std::endl;
-
+  static bool ff = true;
+  if (ff) {
+    ff = false;
+    json.writeToFile(&m_world, "json.txt");
+  }
 
   // for (auto &&it : m_heroes) it->updatePhysics();
   // for (auto &&it : m_bullets) it->updatePhysics();

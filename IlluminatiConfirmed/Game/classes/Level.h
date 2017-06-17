@@ -15,60 +15,56 @@
 #endif
 
 namespace IlluminatiConfirmed {
-
-// struct Object {
-//    int GetPropertyInt(const std::string &name);
-//    float GetPropertyFloat(const std::string &name);
-//    const std::string &GetPropertyString(const std::string &name);
-
-//    std::string m_name;
-//    std::string m_type;
-//    sf::Rect<int> m_rect;
-
-//    sf::Sprite m_sprite;
-//    std::map<std::string, std::string> m_properties;
-//};
-
 struct Layer {
   int m_opacity;
-  std::vector<sf::Sprite> m_tiles;
+  std::string m_name;
+  std::map<int, std::pair<sf::Rect<int>, sf::Vector2i>> m_sub_rects;
 };
 
 struct Object {
-  int GetPropertyInt(const std::string &name);
-  float GetPropertyFloat(const std::string &name);
-  const std::string &GetPropertyString(const std::string &name);
-
   std::string m_name;
   std::string m_type;
   sf::Rect<int> m_rect;
+};
 
-  sf::Sprite m_sprite;
-  std::map<std::string, std::string> m_properties;
+struct MapInfo {
+  sf::Vector2i tile_size;
+  sf::Vector2i map_size_by_tile;
+  int m_firstTileId, m_columns, m_rows;
+  /*!
+   * \brief operator == for tests
+   * \param rhs
+   */
+  bool operator==(const MapInfo &rhs) const {
+    return (tile_size == rhs.tile_size) &&
+           (map_size_by_tile == rhs.map_size_by_tile) &&
+           (m_firstTileId == rhs.m_firstTileId) &&
+           (m_columns == rhs.m_columns) && (m_rows == rhs.m_rows);
+  }
 };
 
 class Level {
  public:
   void loadMapFromFile(const std::string &filename);
-  void loadMapInfoFromFile(tinyxml2::XMLDocument &levelFile);
-  void loadLayersFromFile(tinyxml2::XMLDocument &levelFile);
-  void loadObjectsFromFile(tinyxml2::XMLDocument &levelFile);
 
   Object GetObject(const std::string &name);
   std::vector<Object> GetObjectsByName(const std::string &name);
   std::vector<Object> GetObjectsByType(const std::string &name);
-
-  void Draw(sf::RenderWindow &window);
+  const Layer &GetLayerByName(const std::string &name);
+  std::vector<std::pair<sf::Rect<int>, sf::Vector2i>>
+  GetVecOfRectsByNameOfObjAndLayer(const std::string &name_obj,
+                                   const std::string &name_layer);
   sf::Vector2i GetTileSize();
+  MapInfo GetMapInfo();
 
  private:
-  int m_width, m_height, m_tileWidth, m_tileHeight;
-  int m_firstTileId;
-  sf::Rect<float> m_drawingBounds;
-  sf::Texture m_tilesetImage;
+  void loadMapInfoFromFile(tinyxml2::XMLDocument &levelFile);
+  void loadLayersFromFile(tinyxml2::XMLDocument &levelFile);
+  void loadObjectsFromFile(tinyxml2::XMLDocument &levelFile);
+  int m_width, m_height, m_tileWidth, m_tileHeight, m_firstTileId, m_columns,
+      m_rows;
+  std::string m_name_of_tileset;
   std::vector<Object> m_objects;
   std::vector<Layer> m_layers;
-
-  std::vector<sf::Rect<int>> m_subRects;
 };
 }
