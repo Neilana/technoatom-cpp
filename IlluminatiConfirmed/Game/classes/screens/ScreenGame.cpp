@@ -57,20 +57,31 @@ ScreenName ScreenGame::run(Game &game, sf::RenderWindow &window) {
         //}
       }
     }
-
-    currentHero->move(time);
-    //    if (Keyboard::isKeyPressed(Keyboard::Left)) {
-    //      currentHero->move(Direction::Left, time);
-    //    }
-    //    if (Keyboard::isKeyPressed(Keyboard::Right)) {
-    //      currentHero->move(Direction::Right, time);
-    //    }
-    //    if (Keyboard::isKeyPressed(Keyboard::Up)) {
-    //      currentHero->move(Direction::Up, time);
-    //    }
-    //    if (Keyboard::isKeyPressed(Keyboard::Down)) {
-    //      currentHero->move(Direction::Down, time);
-    //    }
+    b2Vec2 velocity = {0.f, 0.f};
+    Direction dir = Direction::Down;
+    if (Keyboard::isKeyPressed(Keyboard::Left)) {
+      velocity += b2Vec2({-1.f, 0.f});
+      dir = Direction::Left;
+      // currentHero->move(Direction::Left, time);
+    }
+    if (Keyboard::isKeyPressed(Keyboard::Right)) {
+      // currentHero->move(Direction::Right, time);
+      velocity += b2Vec2({+1.f, 0.f});
+      dir = Direction::Right;
+    }
+    if (Keyboard::isKeyPressed(Keyboard::Up)) {
+      // currentHero->move(Direction::Up, time);
+      velocity += b2Vec2({0.f, -1.f});
+      dir = Direction::Up;
+    }
+    if (Keyboard::isKeyPressed(Keyboard::Down)) {
+      // currentHero->move(Direction::Down, time);
+      velocity += b2Vec2({0.f, +1.f});
+      dir = Direction::Down;
+    }
+    if (velocity.Length() > 0.0) {
+      currentHero->move(velocity, time);
+    }
 
     if (Keyboard::isKeyPressed(Keyboard::Escape)) {
       return ScreenName::MainMenu;

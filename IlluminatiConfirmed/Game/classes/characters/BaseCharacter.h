@@ -4,6 +4,7 @@
 #include "constants.h"
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include <map>
 
 #define DEBUG_ON
 #if defined(DEBUG_ON)
@@ -33,18 +34,20 @@ public:
   Type getType() const;
 
   virtual void draw(sf::RenderWindow &window) = 0;
-  virtual void move(float deltaTime);
+  virtual void move(b2Vec2 velocity, float deltaTime);
   virtual void contact(b2Fixture *B) = 0;
   virtual void endContact(b2Fixture *B) = 0;
   virtual ~BaseCharacter() {}
 
   Type m_type;
-
-  std::vector<sf::Rect<int>> front_rects;
-  std::vector<sf::Rect<int>> back_rects;
-  std::vector<sf::Rect<int>> left_rects;
-  std::vector<sf::Rect<int>> right_rects;
-
+  int m_frames;
+  Direction m_dir;
+  //  std::vector<sf::Rect<int>> front_rects;
+  //  std::vector<sf::Rect<int>> back_rects;
+  //  std::vector<sf::Rect<int>> left_rects;
+  //  std::vector<sf::Rect<int>> right_rects;
+  std::map<Direction, std::vector<sf::Rect<int>>>
+      m_directionRects; // ыыыыыыы....
   b2Body *m_b2_base;
   b2Fixture *m_b2_base_fixture;
   b2Body *m_b2_body;

@@ -38,3 +38,16 @@ float RadBetweenVectors(const V1 &v1, const V2 &v2) {
 }
 
 inline float SfPointtoB2Point(float point) { return point / SCALE; }
+
+inline Direction findDirectonByVelocity(b2Vec2 &vector) {
+  // Direction dir = Direction::Up;
+  if (vector.y > 0.0)
+    return Direction::Down;
+  if (vector.y < 0.0)
+    return Direction::Up;
+
+  if (vector.x > 0.0)
+    return Direction::Right;
+  if (vector.x < 0.0)
+    return Direction::Left;
+}

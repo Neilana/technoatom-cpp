@@ -42,8 +42,8 @@ CharacterSouthPark::CharacterSouthPark(b2World &world,
 void CharacterSouthPark::draw(sf::RenderWindow &window) {
   BaseCharacter::draw(window);
 }
-void CharacterSouthPark::move(float deltaTime) {
-  BaseCharacter::move(deltaTime);
+void CharacterSouthPark::move(b2Vec2 velocity, float deltaTime) {
+  BaseCharacter::move(velocity, deltaTime);
 
   static float m_time;
   static int dir = 1;

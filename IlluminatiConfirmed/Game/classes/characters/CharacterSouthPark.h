@@ -14,7 +14,7 @@ namespace IlluminatiConfirmed {
 class CharacterSouthPark : public BaseCharacter {
 public:
   CharacterSouthPark(b2World &world, const CharacterSpriteInfo &sprite_data);
-  void move(float deltaTime) override;
+  void move(b2Vec2 velocity, float deltaTime) override;
   void draw(sf::RenderWindow &window) override;
   void contact(b2Fixture *B) override;
   void endContact(b2Fixture *B) override;

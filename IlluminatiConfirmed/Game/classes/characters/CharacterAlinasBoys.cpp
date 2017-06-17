@@ -21,8 +21,8 @@ CharacterAlinasBoys::CharacterAlinasBoys(b2World &world,
   }
   m_sprite.setPosition(B2Vec2toSfVector2<float>(m_b2_body->GetPosition()));
 }
-void CharacterAlinasBoys::move(float deltaTime) {
-  BaseCharacter::move(deltaTime);
+void CharacterAlinasBoys::move(b2Vec2 velocity, float deltaTime) {
+  BaseCharacter::move(velocity, deltaTime);
 }
 void CharacterAlinasBoys::draw(sf::RenderWindow &window) {
   BaseCharacter::draw(window);
