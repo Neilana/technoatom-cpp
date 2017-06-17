@@ -34,7 +34,7 @@ Bullet::Bullet(b2World &world, sf::Vector2f const pos, Direction direction,
     // m_body->SetLinearVelocity(b2Vec2(100.0, 0.0));
     x = pos.x / SCALE + 1;
     y = pos.y / SCALE;
-    vx = 2.0;
+    vx = 10.0;
     vy = 0.0;
     break;
   }
@@ -42,7 +42,7 @@ Bullet::Bullet(b2World &world, sf::Vector2f const pos, Direction direction,
     //    m_body->SetLinearVelocity(b2Vec2(-100.0, 0.0));
     x = pos.x / SCALE - 1;
     y = pos.y / SCALE;
-    vx = -2.0;
+    vx = -10.0;
     vy = 0.0;
     break;
   }
@@ -51,7 +51,7 @@ Bullet::Bullet(b2World &world, sf::Vector2f const pos, Direction direction,
     x = pos.x / SCALE;
     y = pos.y / SCALE - 1;
     vx = 0.0;
-    vy = -2.0;
+    vy = -10.0;
     break;
   }
 
@@ -59,7 +59,7 @@ Bullet::Bullet(b2World &world, sf::Vector2f const pos, Direction direction,
     x = pos.x / SCALE;
     y = pos.y / SCALE + 1;
     vx = 0.0;
-    vy = 2.0;
+    vy = 10.0;
     break;
   }
   }

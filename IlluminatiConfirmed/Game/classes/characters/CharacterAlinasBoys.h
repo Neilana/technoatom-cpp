@@ -6,7 +6,8 @@ using IlluminatiConfirmed::BaseCharacter;
 namespace IlluminatiConfirmed {
 class CharacterAlinasBoys : public BaseCharacter {
 public:
-  CharacterAlinasBoys(b2World &world, const CharacterSpriteInfo &sprite_data);
+  CharacterAlinasBoys(b2World &world, const CharacterSpriteInfo &sprite_data,
+                      const std::string &bullets);
   void move(b2Vec2 velocity, float deltaTime) override;
   void draw(sf::RenderWindow &window) override;
   void contact(b2Fixture *B) override;

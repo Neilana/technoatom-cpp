@@ -4,6 +4,7 @@
 
 #include <list>
 #include <memory>
+#include <set>
 #include <string>
 #include <vector>
 
@@ -34,8 +35,8 @@ public:
 
 public:
   Game(sf::RenderWindow &window);
-  void initNewGame(const std::string &mapFile);
-  void initCharacters();
+  void initNewGame(const std::string &mapFile, std::set<int> ids);
+  void initCharacters(std::set<int> ids);
   void initPhysics();
   // void LoadMap(std::vector<Object> &&vec, sf::Vector2i tileSize);
 

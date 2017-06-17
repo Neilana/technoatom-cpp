@@ -29,6 +29,7 @@ ScreenName ScreenChoseCharacters::run(Game &game, sf::RenderWindow &window) {
   window.clear();
   sf::RectangleShape rectangle;
   Clock clock;
+  std::set<int> ids;
   while (running) {
 
     auto timeSf = clock.restart();
@@ -42,6 +43,8 @@ ScreenName ScreenChoseCharacters::run(Game &game, sf::RenderWindow &window) {
       }
 
       if (Keyboard::isKeyPressed(Keyboard::Return)) {
+        ids.insert(m_characters[m_selectedCharId].get()->m_id);
+        game.initNewGame(MAP_FILE_1, ids);
         return ScreenName::Game;
       }
 
@@ -96,6 +99,7 @@ void ScreenChoseCharacters::showCharacters() {
   QSqlQuery query;
   query.exec("SELECT * FROM CharactersImages");
   while (query.next()) {
+    int id = query.value(0).toInt();
     std::string fileName = query.value(1).toString().toStdString();
     int width = query.value(2).toInt();
     int height = query.value(3).toInt();
@@ -104,7 +108,7 @@ void ScreenChoseCharacters::showCharacters() {
     fileName = CHARACTERS_SPRITES_DIRECTORY + fileName;
 
     std::shared_ptr<AvailableCharacter> bufCharacter =
-        std::make_shared<AvailableCharacter>(fileName, width, height, x, y,
+        std::make_shared<AvailableCharacter>(id, fileName, width, height, x, y,
                                              frames);
 
     m_characters.push_back(std::move(bufCharacter));

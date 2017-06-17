@@ -11,9 +11,10 @@ private:
     sf::Texture m_texture;
     std::vector<sf::Rect<int>> frontRects;
     int m_frames;
+    int m_id;
 
-    AvailableCharacter(const std::string &fileName, int width, int height,
-                       int x, int y, int frames) {
+    AvailableCharacter(int id, const std::string &fileName, int width,
+                       int height, int x, int y, int frames) {
       m_sprite.setSize(
           sf::Vector2f(DEFAULT_SPRITE_SIZE_X, DEFAULT_SPRITE_SIZE_Y));
       m_texture.loadFromFile(fileName);
@@ -28,10 +29,12 @@ private:
         int row = 0;
         frontRects.push_back({column * width, height * row++, width, height});
       }
+      m_id = id;
     }
   };
   sf::Texture texture;
   std::vector<std::shared_ptr<AvailableCharacter>> m_characters;
+  // std::map<int, int> m_selectedCharsId;
 
   int m_selectedCharId;
   // void initTitle();

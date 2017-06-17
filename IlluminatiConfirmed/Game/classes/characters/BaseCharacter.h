@@ -31,7 +31,8 @@ struct CharacterSpriteInfo {
 class BaseCharacter {
 public:
   BaseCharacter(Type type, b2World &world,
-                const CharacterSpriteInfo &sprite_data);
+                const CharacterSpriteInfo &sprite_data,
+                const std::string &bullets);
   Type getType() const;
 
   virtual void draw(sf::RenderWindow &window) = 0;
@@ -59,6 +60,8 @@ public:
 
   sf::Texture texture;
   sf::Sprite m_sprite;
+
+  std::string m_bulletsFile;
 
   //  void updatePhysics() {
   //    //    m_body->SetTransform(

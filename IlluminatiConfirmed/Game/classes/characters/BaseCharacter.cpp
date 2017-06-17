@@ -4,8 +4,10 @@
 using namespace IlluminatiConfirmed;
 
 BaseCharacter::BaseCharacter(Type type, b2World &world,
-                             const CharacterSpriteInfo &sprite_data)
-    : m_type(type) {
+                             const CharacterSpriteInfo &sprite_data,
+                             const std::string &bullets)
+    : m_type(type), m_spriteBullets(bullets) {
+
   {
     b2BodyDef bd;
     bd.fixedRotation = true;

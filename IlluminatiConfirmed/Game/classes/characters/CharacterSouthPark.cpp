@@ -3,8 +3,9 @@
 using namespace IlluminatiConfirmed;
 
 CharacterSouthPark::CharacterSouthPark(b2World &world,
-                                       const CharacterSpriteInfo &sprite_data)
-    : BaseCharacter(Type::CHARACTER_SOUTH_PARK, world, sprite_data) {
+                                       const CharacterSpriteInfo &sprite_data,
+                                       const std::string &bullets)
+    : BaseCharacter(Type::CHARACTER_SOUTH_PARK, world, sprite_data, bullets) {
   {
     b2PrismaticJointDef jd;
     jd.bodyA = m_b2_base;

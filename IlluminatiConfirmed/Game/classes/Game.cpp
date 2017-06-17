@@ -8,6 +8,7 @@
 
 #include "CharacterAlinasBoys.h"
 #include "Game.h"
+#include "GameDatabase.h"
 #include "MyContactListener.h"
 
 using namespace sf;
@@ -27,36 +28,73 @@ Game::Game(sf::RenderWindow &window) : m_world(b2Vec2(0.0f, 0.0f)) {
   m_world.SetDebugDraw(debugDraw);
 }
 
-void Game::initNewGame(const std::string &mapFile) {
+void Game::initNewGame(const std::string &mapFile, std::set<int> ids) {
   m_level.loadMapFromFile(mapFile); // загружаем карту
-  initCharacters();                 // загружаем персонажей
+  initCharacters(ids);              // загружаем персонажей
   initPhysics();
 }
 
-void Game::initCharacters() {
-  m_heroes.push_back(std::static_pointer_cast<BaseCharacter>(
-      std::make_shared<CharacterAlinasBoys>(
-          m_world, CharacterSpriteInfo(
-                       {"../Game/resources/sprites/characters/demon1.png", 64,
-                        64, 64, 4, 100, 100}))));
+void Game::initCharacters(std::set<int> ids) {
+  //  m_heroes.push_back(std::static_pointer_cast<BaseCharacter>(
+  //      std::make_shared<CharacterAlinasBoys>(
+  //          m_world, CharacterSpriteInfo(
+  //                       {"../Game/resources/sprites/characters/demon1.png",
+  //                       64,
+  //                        64, 64, 4, 100, 100}))));
 
-  m_heroes.push_back(std::static_pointer_cast<BaseCharacter>(
-      std::make_shared<CharacterAlinasBoys>(
-          m_world,
-          CharacterSpriteInfo({"../Game/resources/sprites/characters/panda.png",
-                               32, 32, 32, 3, 200, 200}))));
+  //  m_heroes.push_back(std::static_pointer_cast<BaseCharacter>(
+  //      std::make_shared<CharacterAlinasBoys>(
+  //          m_world,
+  //          CharacterSpriteInfo({"../Game/resources/sprites/characters/panda.png",
+  //                               32, 32, 32, 3, 200, 200}))));
 
-  m_heroes.push_back(std::static_pointer_cast<BaseCharacter>(
-      std::make_shared<CharacterAlinasBoys>(
-          m_world, CharacterSpriteInfo(
-                       {"../Game/resources/sprites/characters/spider1.png", 64,
-                        64, 64, 10, 300, 300}))));
+  //  m_heroes.push_back(std::static_pointer_cast<BaseCharacter>(
+  //      std::make_shared<CharacterAlinasBoys>(
+  //          m_world, CharacterSpriteInfo(
+  //                       {"../Game/resources/sprites/characters/spider1.png",
+  //                       64,
+  //                        64, 64, 10, 300, 300}))));
 
-  m_heroes.push_back(std::static_pointer_cast<BaseCharacter>(
-      std::make_shared<CharacterSouthPark>(
-          m_world,
-          CharacterSpriteInfo({"../Game/resources/sprites/characters/kyle.png",
-                               192, 192, 64, 2, 400, 400}))));
+  //  m_heroes.push_back(std::static_pointer_cast<BaseCharacter>(
+  //      std::make_shared<CharacterSouthPark>(
+  //          m_world,
+  //          CharacterSpriteInfo({"../Game/resources/sprites/characters/kyle.png",
+  //                               192, 192, 64, 2, 400, 400}))));
+
+  GameDatabase db = GameDatabase::getInstance();
+  for (auto it : ids) {
+    int id = it;
+    QString str =
+        "SELECT * FROM CharactersImages WHERE Id=" + QString::number(it);
+    QSqlQuery query;
+    query.exec(str);
+    while (query.next()) {
+
+      std::string fileName = CHARACTERS_SPRITES_DIRECTORY +
+                             query.value(1).toString().toStdString();
+      int width = query.value(2).toInt();
+      int height = query.value(3).toInt();
+      int frames = query.value(4).toInt();
+      std::string master = query.value(7).toString().toStdString();
+      std::string bulletsFile =
+          BULLETS_SPRITES_DIRECTORY + query.value(6).toString().toStdString();
+      if (master == "Alina") {
+        m_heroes.push_back(std::static_pointer_cast<BaseCharacter>(
+            std::make_shared<CharacterAlinasBoys>(
+                m_world, CharacterSpriteInfo({fileName, width, height, width,
+                                              frames, 300, 300}),
+                bulletsFile)));
+      }
+      if (master == "Anton") {
+        m_heroes.push_back(std::static_pointer_cast<BaseCharacter>(
+            std::make_shared<CharacterSouthPark>(
+                m_world,
+                CharacterSpriteInfo({fileName, width, height,
+                                     DEFAULT_SPRITE_SIZE_X, frames, 300, 300}),
+                bulletsFile)));
+      }
+    }
+  }
 }
 
 void Game::draw(sf::RenderWindow &window) {
@@ -102,9 +140,9 @@ void Game::updatePhysics() {
   // LOG() << err << std::endl;
 
   // for (auto &&it : m_heroes) it->updatePhysics();
-  // for (auto &&it : m_bullets)
-  // it->updatePhysics();
-  // m_bullets.remove_if([](auto &i) { return i->hasStopped(); });
+  for (auto &&it : m_bullets)
+    it->updatePhysics();
+  m_bullets.remove_if([](auto &i) { return i->hasStopped(); });
 }
 
 void Game::buildBarriers(std::vector<Object> &walls) {

@@ -75,7 +75,7 @@ int main() {
     fpsCounter.setColor(sf::Color::White);
 
     Game game(window);
-    game.initNewGame(MAP_FILE_1);
+    // game.initNewGame(MAP_FILE_1);
 
     Clock clock;
 

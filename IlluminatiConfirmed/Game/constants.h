@@ -31,6 +31,7 @@ const std::string MENU_BACKGROUND_FILE =
 
 const int DEFAULT_SPRITE_SIZE_X = 64;
 const int DEFAULT_SPRITE_SIZE_Y = 64;
+const int TEAM_MEMBERS_COUNT = 2;
 
 template <typename T> b2Vec2 SfVector2toB2Vec2(const sf::Vector2<T> &vector) {
   return b2Vec2(vector.x / SCALE, vector.y / SCALE);
