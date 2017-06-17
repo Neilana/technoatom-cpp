@@ -1,6 +1,7 @@
 #pragma once
 #include "../../Logger/Logger.h"
 #include "Box2D/Box2D.h"
+#include "Bullet.h"
 #include "constants.h"
 #include <SFML/Graphics.hpp>
 #include <iostream>
@@ -39,9 +40,12 @@ public:
   virtual void endContact(b2Fixture *B) = 0;
   virtual ~BaseCharacter() {}
 
+  std::shared_ptr<Bullet> attack(b2World &world);
+
   Type m_type;
   int m_frames;
-  Direction m_dir;
+  std::string m_spriteBullets;
+  Direction m_direction;
   //  std::vector<sf::Rect<int>> front_rects;
   //  std::vector<sf::Rect<int>> back_rects;
   //  std::vector<sf::Rect<int>> left_rects;

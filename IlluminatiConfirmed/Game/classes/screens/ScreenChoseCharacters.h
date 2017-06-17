@@ -9,21 +9,31 @@ private:
   struct AvailableCharacter {
     sf::RectangleShape m_sprite;
     sf::Texture m_texture;
+    std::vector<sf::Rect<int>> frontRects;
+    int m_frames;
+
     AvailableCharacter(const std::string &fileName, int width, int height,
-                       int x, int y) {
-      m_sprite.setSize(sf::Vector2f(width, height));
+                       int x, int y, int frames) {
+      m_sprite.setSize(
+          sf::Vector2f(DEFAULT_SPRITE_SIZE_X, DEFAULT_SPRITE_SIZE_Y));
       m_texture.loadFromFile(fileName);
       m_sprite.setTexture(&m_texture);
       m_sprite.setTextureRect(sf::Rect<int>(0, 0, width, height));
       m_sprite.setPosition(x, y);
 
-      m_sprite.setOutlineColor(sf::Color::Green);
+      m_sprite.setOutlineColor(sf::Color::Transparent);
       m_sprite.setOutlineThickness(3);
+      m_frames = frames;
+      for (int column = 0; column < m_frames; column++) {
+        int row = 0;
+        frontRects.push_back({column * width, height * row++, width, height});
+      }
     }
   };
   sf::Texture texture;
   std::vector<std::shared_ptr<AvailableCharacter>> m_characters;
 
+  int m_selectedCharId;
   // void initTitle();
   // void initBackground();
   // void initMenuOptions();

@@ -65,7 +65,7 @@ BaseCharacter::BaseCharacter(Type type, b2World &world,
   //  right_rects.reserve(sprite_data.count_of_frames);
 
   m_frames = sprite_data.count_of_frames;
-  m_dir = Direction::Down;
+  m_direction = Direction::Down;
 
   m_sprite.setTexture(texture);
   m_sprite.scale((float)sprite_data.size / sprite_data.width,
@@ -117,27 +117,27 @@ void BaseCharacter::move(b2Vec2 velocity, float deltaTime) {
   //  b2Vec2 velocity = {0.f, 0.f};
   //  if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
   //   // velocity += b2Vec2({-1.f, 0.f});
-  //    m_dir = Direction::Left;
+  //    m_direction = Direction::Left;
   //    // m_sprite.setTextureRect(left_rects.at((int)currentFrame));
   //  }
   //  if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
   //    velocity += b2Vec2({+1.f, 0.f});
-  //    m_dir = Direction::Right;
+  //    m_direction = Direction::Right;
   //    // m_sprite.setTextureRect(right_rects.at((int)currentFrame));
   //  }
   //  if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
   //    //velocity += b2Vec2({0.f, -1.f});
-  //    m_dir = Direction::Up;
+  //    m_direction = Direction::Up;
   //    // m_sprite.setTextureRect(back_rects.at((int)currentFrame));
   //  }
   //  if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
   //    //velocity += b2Vec2({0.f, +1.f});
-  //    m_dir = Direction::Down;
+  //    m_direction = Direction::Down;
   //    // m_sprite.setTextureRect(front_rects.at((int)currentFrame));
   //  }
 
-  m_dir = findDirectonByVelocity(velocity);
-  m_sprite.setTextureRect(m_directionRects[m_dir].at((int)currentFrame));
+  m_direction = findDirectonByVelocity(velocity);
+  m_sprite.setTextureRect(m_directionRects[m_direction].at((int)currentFrame));
 
   velocity.Normalize();
   velocity *= 100.f;
@@ -149,4 +149,11 @@ void BaseCharacter::move(b2Vec2 velocity, float deltaTime) {
 void BaseCharacter::draw(sf::RenderWindow &window) {
   m_sprite.setPosition(B2Vec2toSfVector2<float>(m_b2_body->GetPosition()));
   window.draw(m_sprite);
+}
+
+std::shared_ptr<Bullet> BaseCharacter::attack(b2World &world) {
+  float damage = 10.0;
+  std::shared_ptr<Bullet> bullet = std::make_shared<Bullet>(
+      world, m_sprite.getPosition(), m_direction, damage, m_spriteBullets);
+  return bullet;
 }

@@ -51,10 +51,10 @@ ScreenName ScreenGame::run(Game &game, sf::RenderWindow &window) {
           currentHero = game.selectNextHero();
         }
         // если написать ниже - будет трэш, будет оооч много создаваться сразу
-        // if (event.key.code == sf::Keyboard::Space) {
-        //  game.sendBullet(currentHero.get());
-        // currentHero->attack();
-        //}
+        if (event.key.code == sf::Keyboard::Space) {
+          game.sendBullet(currentHero.get());
+          // currentHero->attack();
+        }
       }
     }
     b2Vec2 velocity = {0.f, 0.f};

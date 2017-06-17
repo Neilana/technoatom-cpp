@@ -19,10 +19,18 @@ enum class Direction { Up, Down, Left, Right, Nothing };
 enum class ScreenName { MainMenu, ChoseCharacters, Game, Load, Save };
 
 const std::string MAP_FILE_1 = "../Game/resources/maps/map25x25_1.tmx";
+const std::string CHARACTERS_SPRITES_DIRECTORY =
+    "../Game/resources/sprites/characters/";
+const std::string BULLETS_SPRITES_DIRECTORY =
+    "../Game/resources/sprites/bullets/";
+
 const std::string FONT_FILE =
     "../Game/resources/fonts/Franchise-Bold-hinted.ttf";
 const std::string MENU_BACKGROUND_FILE =
     "../Game/resources/sprites/backgrounds/menu3_1.png";
+
+const int DEFAULT_SPRITE_SIZE_X = 64;
+const int DEFAULT_SPRITE_SIZE_Y = 64;
 
 template <typename T> b2Vec2 SfVector2toB2Vec2(const sf::Vector2<T> &vector) {
   return b2Vec2(vector.x / SCALE, vector.y / SCALE);

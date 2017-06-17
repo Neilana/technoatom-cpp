@@ -37,8 +37,8 @@ void Game::initCharacters() {
   m_heroes.push_back(std::static_pointer_cast<BaseCharacter>(
       std::make_shared<CharacterAlinasBoys>(
           m_world, CharacterSpriteInfo(
-                       {"../Game/resources/sprites/characters/demon2.png", 64,
-                        48, 48, 4, 100, 100}))));
+                       {"../Game/resources/sprites/characters/demon1.png", 64,
+                        64, 64, 4, 100, 100}))));
 
   m_heroes.push_back(std::static_pointer_cast<BaseCharacter>(
       std::make_shared<CharacterAlinasBoys>(
@@ -138,8 +138,8 @@ void Game::buildBarriers(std::vector<Object> &walls) {
 }
 
 void Game::sendBullet(BaseCharacter *hero) {
-  // std::shared_ptr<Bullet> bullet = hero->attack(m_world);
-  // m_bullets.push_back(bullet);
+  std::shared_ptr<Bullet> bullet = hero->attack(m_world);
+  m_bullets.push_back(bullet);
 }
 
 void Game::saveGame(const std::string &fileName) {
