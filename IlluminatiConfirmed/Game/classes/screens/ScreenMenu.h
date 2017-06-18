@@ -1,44 +1,29 @@
 #pragma once
+#include <SFML/Graphics.hpp>
 
-#include <map>
+#include "Game.h"
 #include "Screen.h"
 #include "constants.h"
 
 namespace IlluminatiConfirmed {
-class ScreenMenu : public IlluminatiConfirmed::Screen {
- private:
-  //  int alpha_max;
-  //  int alpha_div;
-  bool playing;
-
-  enum class MenuOptions {
-    NewGame,  // -> chose chars screen
-    Continue,
-    Save,
-    Load,
-    Exit
-  };
+class ScreenMenu : public Screen {
+protected:
+  sf::Color m_inactiveColor;
+  sf::Color m_activeColor;
 
   sf::Font m_font;
   // int m_fontSize;
   // float m_deltaY;
-
+  sf::Text m_title;
   sf::Texture m_backgroundTexture;
   sf::Sprite m_backgroundSprite;
-  std::vector<sf::Text> m_menuOptions;
-  sf::Text m_title;
 
-  int m_selectedOption;
-  std::map<int, ScreenName> m_screenNameByOption;
-
-  void initTitle();
   void initBackground();
-  void initMenuOptions();
+  void initTitle();
 
- public:
-  ScreenMenu();
-
-  ScreenName run(IlluminatiConfirmed::Game &game, sf::RenderWindow &window);
-  ~ScreenMenu(){};
+public:
+  ScreenMenu()
+      : m_inactiveColor(sf::Color(118, 161, 113)),
+        m_activeColor(sf::Color(180, 231, 106)){};
 };
 }

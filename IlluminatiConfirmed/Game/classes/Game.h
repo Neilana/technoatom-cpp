@@ -4,20 +4,20 @@
 
 #include <list>
 #include <memory>
+#include <set>
 #include <string>
 #include <vector>
 
 #include "Bullet.h"
-#include "Character.h"
+#include "CharacterSouthPark.h"
 #include "Level.h"
-#include "charactersouthpark.h"
 #include "constants.h"
 
-using IlluminatiConfirmed::Character;
+// using IlluminatiConfirmed::Character;
 
 namespace IlluminatiConfirmed {
 class Game {
- public:
+public:
   Level m_level;
   int m_currentHeroId;
   // b2World *m_world;
@@ -33,10 +33,10 @@ class Game {
 
   void buildBarriers(std::vector<Object> &walls);
 
- public:
+public:
   Game(sf::RenderWindow &window);
-  void initNewGame(const std::string &mapFile);
-  void initCharacters();
+  void initNewGame(const std::string &mapFile, std::set<int> ids);
+  void initCharacters(std::set<int> ids);
   void initPhysics();
   // void LoadMap(std::vector<Object> &&vec, sf::Vector2i tileSize);
 
@@ -53,6 +53,8 @@ class Game {
   // void update(time, key);
   void updatePhysics();
 
-  void sendBullet(Character *hero);
+  void sendBullet(BaseCharacter *hero);
+  void saveGame(const std::string &fileName);
+  void loadGame(const std::string &fileName);
 };
 }

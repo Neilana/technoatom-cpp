@@ -7,10 +7,13 @@
 
 namespace IlluminatiConfirmed {
 class Screen {
- private:
+protected:
   // virtual void loadTitle() {};
   // virtual void loadBackground();
- public:
+  //  sf::Color m_inactiveColor;
+  //  sf::Color m_activeColor;
+
+public:
   Screen() {}
   virtual ScreenName run(IlluminatiConfirmed::Game &game,
                          sf::RenderWindow &window) = 0;

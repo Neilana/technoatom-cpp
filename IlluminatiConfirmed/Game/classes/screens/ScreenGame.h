@@ -5,7 +5,7 @@
 
 namespace IlluminatiConfirmed {
 class ScreenGame : public Screen {
- public:
+public:
   ScreenGame();
 
   ScreenName run(Game &game, sf::RenderWindow &window);

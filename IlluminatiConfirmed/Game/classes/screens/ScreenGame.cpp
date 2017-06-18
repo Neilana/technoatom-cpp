@@ -1,6 +1,6 @@
-#include <SFML/Graphics.hpp>
 #include "Box2D/Box2D.h"
 #include "SFMLDebugDraw.h"
+#include <SFML/Graphics.hpp>
 
 #include <exception>
 #include <iostream>
@@ -10,19 +10,15 @@
 #include "../Exceptions/Exception.h"
 #include "Screen.h"
 #include "ScreenGame.h"
-#include "ScreenMenu.h"
+#include "ScreenMenuMain.h"
 
-#include "Character.h"
 #include "Game.h"
 #include "Level.h"
 
 using namespace sf;
 using namespace std;
 
-using IlluminatiConfirmed::Character;
-using IlluminatiConfirmed::Game;
-using IlluminatiConfirmed::Screen;
-using IlluminatiConfirmed::ScreenGame;
+using namespace IlluminatiConfirmed;
 
 ScreenGame::ScreenGame() {}
 
@@ -38,8 +34,7 @@ ScreenName ScreenGame::run(Game &game, sf::RenderWindow &window) {
 
     sf::Text fpsCounter;
     sf::Font mainFont;
-    if (!mainFont.loadFromFile(
-            "../Game/resources/fonts/Franchise-Bold-hinted.ttf"))
+    if (!mainFont.loadFromFile(FONT_FILE))
       throw EXCEPTION("I can't open file with font.", nullptr);
     fpsCounter.setFont(mainFont);
     fpsCounter.setColor(sf::Color::White);
@@ -48,33 +43,39 @@ ScreenName ScreenGame::run(Game &game, sf::RenderWindow &window) {
     sf::Mouse::getPosition();
 
     while (window.pollEvent(event)) {
-      if (event.type == sf::Event::Closed) window.close();
+      if (event.type == sf::Event::Closed)
+        window.close();
 
       if (event.type == sf::Event::KeyPressed) {
         if (event.key.code == sf::Keyboard::Tab) {
           currentHero = game.selectNextHero();
         }
         // если написать ниже - будет трэш, будет оооч много создаваться сразу
-        // if (event.key.code == sf::Keyboard::Space) {
-        //  game.sendBullet(currentHero.get());
-        // currentHero->attack();
-        //}
+        if (event.key.code == sf::Keyboard::Space) {
+          game.sendBullet(currentHero.get());
+          // currentHero->attack();
+        }
       }
     }
-
-    currentHero->move(time);
-    //    if (Keyboard::isKeyPressed(Keyboard::Left)) {
-    //      currentHero->move(Direction::Left, time);
-    //    }
-    //    if (Keyboard::isKeyPressed(Keyboard::Right)) {
-    //      currentHero->move(Direction::Right, time);
-    //    }
-    //    if (Keyboard::isKeyPressed(Keyboard::Up)) {
-    //      currentHero->move(Direction::Up, time);
-    //    }
-    //    if (Keyboard::isKeyPressed(Keyboard::Down)) {
-    //      currentHero->move(Direction::Down, time);
-    //    }
+    b2Vec2 velocity = {0.f, 0.f};
+    if (Keyboard::isKeyPressed(Keyboard::Left)) {
+      velocity += b2Vec2({-1.f, 0.f});
+    }
+    if (Keyboard::isKeyPressed(Keyboard::Right)) {
+      // currentHero->move(Direction::Right, time);
+      velocity += b2Vec2({+1.f, 0.f});
+    }
+    if (Keyboard::isKeyPressed(Keyboard::Up)) {
+      // currentHero->move(Direction::Up, time);
+      velocity += b2Vec2({0.f, -1.f});
+    }
+    if (Keyboard::isKeyPressed(Keyboard::Down)) {
+      // currentHero->move(Direction::Down, time);
+      velocity += b2Vec2({0.f, +1.f});
+    }
+    if (velocity.Length() > 0.0) {
+      currentHero->move(velocity, time);
+    }
 
     if (Keyboard::isKeyPressed(Keyboard::Escape)) {
       return ScreenName::MainMenu;

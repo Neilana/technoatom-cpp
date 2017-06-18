@@ -1,17 +1,20 @@
-#include <SFML/Graphics.hpp>
 #include "Box2D/Box2D.h"
 #include "SFMLDebugDraw.h"
+#include <SFML/Graphics.hpp>
 
 #include "b2dJson.h"
 
 #include <iostream>
 
+#include "CharacterAlinasBoys.h"
 #include "Game.h"
+#include "GameDatabase.h"
+#include "MyContactListener.h"
 
 using namespace sf;
 using namespace std;
 
-using IlluminatiConfirmed::Game;
+using namespace IlluminatiConfirmed;
 
 Game::Game(sf::RenderWindow &window) : m_world(b2Vec2(0.0f, 0.0f)) {
   m_currentHeroId = 0;
@@ -19,42 +22,79 @@ Game::Game(sf::RenderWindow &window) : m_world(b2Vec2(0.0f, 0.0f)) {
   MyContactListener *listner = new MyContactListener;
   m_world.SetContactListener(listner);
   SFMLDebugDraw *debugDraw =
-      new SFMLDebugDraw(window);  //утечка памяти, бокс не будет это удалять
+      new SFMLDebugDraw(window); //утечка памяти, бокс не будет это удалять
   debugDraw->SetFlags(b2Draw::e_shapeBit + b2Draw::e_centerOfMassBit +
                       b2Draw::e_pairBit);
   m_world.SetDebugDraw(debugDraw);
 }
 
-void Game::initNewGame(const std::string &mapFile) {
-  m_level.loadMapFromFile(mapFile);  // загружаем карту
-  initCharacters();                  // загружаем персонажей
+void Game::initNewGame(const std::string &mapFile, std::set<int> ids) {
+  m_level.loadMapFromFile(mapFile); // загружаем карту
+  initCharacters(ids);              // загружаем персонажей
   initPhysics();
 }
 
-void Game::initCharacters() {
-  m_heroes.push_back(std::static_pointer_cast<BaseCharacter>(
-      std::make_shared<CharacterAlinasBoys>(
-          m_world, CharacterSpriteInfo(
-                       {"../Game/resources/sprites/characters/demon1.png", 64,
-                        64, 64, 4, 100, 100}))));
+void Game::initCharacters(std::set<int> ids) {
+  //  m_heroes.push_back(std::static_pointer_cast<BaseCharacter>(
+  //      std::make_shared<CharacterAlinasBoys>(
+  //          m_world, CharacterSpriteInfo(
+  //                       {"../Game/resources/sprites/characters/demon1.png",
+  //                       64,
+  //                        64, 64, 4, 100, 100}))));
 
-  m_heroes.push_back(
-      std::static_pointer_cast<BaseCharacter>(std::make_shared<Kolobashka>(
-          m_world,
-          CharacterSpriteInfo({"../Game/resources/sprites/characters/panda.png",
-                               32, 32, 64, 3, 200, 200}))));
+  //  m_heroes.push_back(std::static_pointer_cast<BaseCharacter>(
+  //      std::make_shared<CharacterAlinasBoys>(
+  //          m_world,
+  //          CharacterSpriteInfo({"../Game/resources/sprites/characters/panda.png",
+  //                               32, 32, 32, 3, 200, 200}))));
 
-  m_heroes.push_back(std::static_pointer_cast<BaseCharacter>(
-      std::make_shared<CharacterAlinasBoys>(
-          m_world, CharacterSpriteInfo(
-                       {"../Game/resources/sprites/characters/spider1.png", 64,
-                        64, 64, 10, 300, 300}))));
+  //  m_heroes.push_back(std::static_pointer_cast<BaseCharacter>(
+  //      std::make_shared<CharacterAlinasBoys>(
+  //          m_world, CharacterSpriteInfo(
+  //                       {"../Game/resources/sprites/characters/spider1.png",
+  //                       64,
+  //                        64, 64, 10, 300, 300}))));
 
-  m_heroes.push_back(std::static_pointer_cast<BaseCharacter>(
-      std::make_shared<CharacterSouthPark>(
-          m_world,
-          CharacterSpriteInfo({"../Game/resources/sprites/characters/kyle.png",
-                               192, 192, 64, 2, 400, 400}))));
+  //  m_heroes.push_back(std::static_pointer_cast<BaseCharacter>(
+  //      std::make_shared<CharacterSouthPark>(
+  //          m_world,
+  //          CharacterSpriteInfo({"../Game/resources/sprites/characters/kyle.png",
+  //                               192, 192, 64, 2, 400, 400}))));
+
+  GameDatabase db = GameDatabase::getInstance();
+  for (auto it : ids) {
+    int id = it;
+    QString str =
+        "SELECT * FROM CharactersImages WHERE Id=" + QString::number(it);
+    QSqlQuery query;
+    query.exec(str);
+    while (query.next()) {
+
+      std::string fileName = CHARACTERS_SPRITES_DIRECTORY +
+                             query.value(1).toString().toStdString();
+      int width = query.value(2).toInt();
+      int height = query.value(3).toInt();
+      int frames = query.value(4).toInt();
+      std::string master = query.value(7).toString().toStdString();
+      std::string bulletsFile =
+          BULLETS_SPRITES_DIRECTORY + query.value(6).toString().toStdString();
+      if (master == "Alina") {
+        m_heroes.push_back(std::static_pointer_cast<BaseCharacter>(
+            std::make_shared<CharacterAlinasBoys>(
+                m_world, CharacterSpriteInfo({fileName, width, height, width,
+                                              frames, 300, 300}),
+                bulletsFile)));
+      }
+      if (master == "Anton") {
+        m_heroes.push_back(std::static_pointer_cast<BaseCharacter>(
+            std::make_shared<CharacterSouthPark>(
+                m_world,
+                CharacterSpriteInfo({fileName, width, height,
+                                     DEFAULT_SPRITE_SIZE_X, frames, 300, 300}),
+                bulletsFile)));
+      }
+    }
+  }
 }
 
 void Game::draw(sf::RenderWindow &window) {
@@ -64,10 +104,12 @@ void Game::draw(sf::RenderWindow &window) {
   //m_level.Draw(window);
 
   // рисуем всех персонажей
-  for (auto &&it : m_heroes) it->draw(window);
+  for (auto &&it : m_heroes)
+    it->draw(window);
 
   // рисуем пули
-  for (auto &&it : m_bullets) it->draw(window);
+  for (auto &&it : m_bullets)
+    it->draw(window);
 
   // дебаг
   // m_world.Dump();
@@ -88,16 +130,20 @@ void Game::initPhysics() {
 void Game::updatePhysics() {
   m_world.Step(1 / 60.f, 8, 3);
 
-  b2dJson json(false);
-  static bool ff = true;
-  if (ff) {
-    ff = false;
-    json.writeToFile(&m_world, "json.txt");
-  }
+
+  //  b2dJson json(false);
+
+  // std::string str = json.writeToString(&m_world);
+  // std::string err;
+
+  // json.readFromString(str, err, &m_world);
+
+  // LOG() << err << std::endl;
 
   // for (auto &&it : m_heroes) it->updatePhysics();
-  // for (auto &&it : m_bullets) it->updatePhysics();
-  // m_bullets.remove_if([](auto &i) { return i->hasStopped(); });
+  for (auto &&it : m_bullets)
+    it->updatePhysics();
+  m_bullets.remove_if([](auto &i) { return i->hasStopped(); });
 }
 
 void Game::buildBarriers(std::vector<Object> &walls) {
@@ -118,8 +164,7 @@ void Game::buildBarriers(std::vector<Object> &walls) {
     // add four walls to the static body
     polygonShape.SetAsBox(
         walls[i].m_rect.width / 64.0,
-        walls[i].m_rect.height /
-            64.0,  // 64 - потому что сначала мы делим на 2,
+        walls[i].m_rect.height / 64.0, // 64 - потому что сначала мы делим на 2,
         // чтобы получить половину ширины/высоты,
         // а затем делим на SCALE = 32
         SfVector2toB2Vec2(
@@ -131,7 +176,29 @@ void Game::buildBarriers(std::vector<Object> &walls) {
   }
 }
 
-void Game::sendBullet(Character *hero) {
+void Game::sendBullet(BaseCharacter *hero) {
   std::shared_ptr<Bullet> bullet = hero->attack(m_world);
   m_bullets.push_back(bullet);
+}
+
+void Game::saveGame(const std::string &fileName) {
+  b2dJson json;
+  json.writeToFile(&m_world, fileName.c_str());
+
+  //  b2dJson json(false);
+  //  std::string str = json.writeToString(&m_world);
+  //  std::string err;
+
+  //  json.readFromString(str, err, &m_world);
+
+  //  LOG() << err << std::endl;
+}
+
+void Game::loadGame(const std::string &fileName) {
+  std::string err;
+  b2dJson json;
+  m_world = *(json.readFromFile(
+      fileName.c_str(),
+      err)); // ыыыыы, оно почему-то заработало, но выглядит стрёмно
+  updatePhysics();
 }
