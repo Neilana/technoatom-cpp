@@ -48,7 +48,8 @@ INCLUDEPATH += classes/ \
 LIBS += -L$$PWD/../../Libs/Box2D/Build/ -lBox2D
 INCLUDEPATH += $$PWD/../../Libs/Box2D/
 
-LIBS += -L$$PWD/../../Libs/SFML/Build -lsfml-audio -lsfml-graphics -lsfml-network -lsfml-window -lsfml-system
+win32:LIBS += -L$$PWD/../../Libs/SFML/Build -lsfml-audio -lsfml-graphics -lsfml-network -lsfml-window -lsfml-system
+unix: LIBS += -lsfml-audio -lsfml-graphics -lsfml-network -lsfml-window -lsfml-system
 INCLUDEPATH += $$PWD/../../Libs/SFML/include
 
 win32:LIBS += -L$$PWD/../../Libs/tinyxml2/Build/ -llibtinyxml2.dll
