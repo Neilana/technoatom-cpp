@@ -127,7 +127,7 @@ void Game::initPhysics() {
   // buildBarriers(walls);
 }
 
-void Game::updatePhysics() {
+void Game::updatePhysics(float time) {
   m_world.Step(1 / 60.f, 8, 3);
 
   //  b2dJson json(false);
@@ -139,7 +139,8 @@ void Game::updatePhysics() {
 
   // LOG() << err << std::endl;
 
-  // for (auto &&it : m_heroes) it->updatePhysics();
+  for (auto &&it : m_heroes)
+    it->updatePhysics(time);
   for (auto &&it : m_bullets)
     it->updatePhysics();
   m_bullets.remove_if([](auto &i) { return i->hasStopped(); });
@@ -199,5 +200,5 @@ void Game::loadGame(const std::string &fileName) {
   m_world = *(json.readFromFile(
       fileName.c_str(),
       err)); // ыыыыы, оно почему-то заработало, но выглядит стрёмно
-  updatePhysics();
+  // updatePhysics();
 }

@@ -80,7 +80,7 @@ ScreenName ScreenGame::run(Game &game, sf::RenderWindow &window) {
     if (Keyboard::isKeyPressed(Keyboard::Escape)) {
       return ScreenName::MainMenu;
     }
-    game.updatePhysics();
+    game.updatePhysics(time);
     game.draw(window);
 
     static bool press = true;

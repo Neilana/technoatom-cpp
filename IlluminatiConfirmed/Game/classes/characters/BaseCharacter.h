@@ -63,16 +63,16 @@ public:
 
   std::string m_bulletsFile;
 
-  //  void updatePhysics() {
-  //    //    m_body->SetTransform(
-  //    //        m_body->GetPosition(),
-  //    //        RadBetweenVectors(m_body->GetPosition(),
-  //    // SfVector2toB2Vec2(sf::Mouse::getPosition(window))));
+  virtual void updatePhysics(float deltaTime) {
+    //    m_body->SetTransform(
+    //        m_body->GetPosition(),
+    //        RadBetweenVectors(m_body->GetPosition(),
+    // SfVector2toB2Vec2(sf::Mouse::getPosition(window))));
 
-  //    // sprite.setPosition(FromBox2DtoPixel(m_body->GetPosition().x),
-  //    //                   FromBox2DtoPixel(m_body->GetPosition().y));
-  //    m_sprite.setPosition(B2Vec2toSfVector2<float>(m_b2_body->GetPosition()));
-  //    // sprite.setRotation(m_body->GetAngle() * 180 / 3.14159265);
-  //  }
+    // sprite.setPosition(FromBox2DtoPixel(m_body->GetPosition().x),
+    //                   FromBox2DtoPixel(m_body->GetPosition().y));
+    m_sprite.setPosition(B2Vec2toSfVector2<float>(m_b2_body->GetPosition()));
+    // sprite.setRotation(m_body->GetAngle() * 180 / 3.14159265);
+  }
 };
 }

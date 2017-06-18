@@ -51,7 +51,7 @@ public:
   // m_heroes[m_currentHero].move(dir); }
 
   // void update(time, key);
-  void updatePhysics();
+  void updatePhysics(float time);
 
   void sendBullet(BaseCharacter *hero);
   void saveGame(const std::string &fileName);
