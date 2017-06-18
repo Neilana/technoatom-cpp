@@ -1,6 +1,6 @@
+#include <SFML/Graphics.hpp>
 #include "Box2D/Box2D.h"
 #include "SFMLDebugDraw.h"
-#include <SFML/Graphics.hpp>
 
 #include "b2dJson.h"
 
@@ -20,17 +20,32 @@ Game::Game(sf::RenderWindow &window) : m_world(b2Vec2(0.0f, 0.0f)) {
   m_currentHeroId = 0;
 
   MyContactListener *listner = new MyContactListener;
-  m_world.SetContactListener(listner);
+  //m_world.SetContactListener(listner);  //не работает, здания имеют другой
+                                        //базовый класс, крошится если оставить
+                                        //прежний
   SFMLDebugDraw *debugDraw =
-      new SFMLDebugDraw(window); //утечка памяти, бокс не будет это удалять
+      new SFMLDebugDraw(window);  //утечка памяти, бокс не будет это удалять
   debugDraw->SetFlags(b2Draw::e_shapeBit + b2Draw::e_centerOfMassBit +
                       b2Draw::e_pairBit);
   m_world.SetDebugDraw(debugDraw);
 }
 
-void Game::initNewGame(const std::string &mapFile, std::set<int> ids) {
-  m_level.loadMapFromFile(mapFile); // загружаем карту
-  initCharacters(ids);              // загружаем персонажей
+void Game::initNewGame(const std::string &map_puth, const std::string &file,
+                       std::set<int> ids) {
+  Level level;
+
+  level.loadMapFromFile(map_puth + file);
+
+  m_texture.loadFromFile(map_puth + level.GetMapInfo().m_name_of_tileset);
+  m_ground = Ground(m_texture, level.GetLayerByName(LAYER_GROUND));
+
+  auto big_objs =
+      level.GetVecOfBigObjs(OBJECT_SPRITE, OBJECT_BODY, LAYER_BUILDINGS);
+
+  for (auto &&it : big_objs) {
+    m_vec_map.push_back(MapsStuff(m_texture, std::move(it), m_world));
+  }
+  initCharacters(ids);  // загружаем персонажей
   initPhysics();
 }
 
@@ -69,7 +84,6 @@ void Game::initCharacters(std::set<int> ids) {
     QSqlQuery query;
     query.exec(str);
     while (query.next()) {
-
       std::string fileName = CHARACTERS_SPRITES_DIRECTORY +
                              query.value(1).toString().toStdString();
       int width = query.value(2).toInt();
@@ -98,18 +112,19 @@ void Game::initCharacters(std::set<int> ids) {
 }
 
 void Game::draw(sf::RenderWindow &window) {
-  window.clear();
+  // рисуем землю
+  m_ground.draw_ground(window);
 
-  // рисуем карту
-  // m_level.Draw(window);
+  //рисуем здания
+  for (auto &&it : m_vec_map) {
+    it.draw(window);
+  }
 
   // рисуем всех персонажей
-  for (auto &&it : m_heroes)
-    it->draw(window);
+  for (auto &&it : m_heroes) it->draw(window);
 
   // рисуем пули
-  for (auto &&it : m_bullets)
-    it->draw(window);
+  for (auto &&it : m_bullets) it->draw(window);
 
   // дебаг
   // m_world.Dump();
@@ -137,12 +152,10 @@ void Game::updatePhysics(float time) {
 
   // json.readFromString(str, err, &m_world);
 
-  // LOG() << err << std::endl;
+  // LOG() << err << std::endl;3
 
-  for (auto &&it : m_heroes)
-    it->updatePhysics(time);
-  for (auto &&it : m_bullets)
-    it->updatePhysics();
+  for (auto &&it : m_heroes) it->updatePhysics(time);
+  for (auto &&it : m_bullets) it->updatePhysics();
   m_bullets.remove_if([](auto &i) { return i->hasStopped(); });
 }
 
@@ -164,7 +177,8 @@ void Game::buildBarriers(std::vector<Object> &walls) {
     // add four walls to the static body
     polygonShape.SetAsBox(
         walls[i].m_rect.width / 64.0,
-        walls[i].m_rect.height / 64.0, // 64 - потому что сначала мы делим на 2,
+        walls[i].m_rect.height /
+            64.0,  // 64 - потому что сначала мы делим на 2,
         // чтобы получить половину ширины/высоты,
         // а затем делим на SCALE = 32
         SfVector2toB2Vec2(
@@ -199,6 +213,6 @@ void Game::loadGame(const std::string &fileName) {
   b2dJson json;
   m_world = *(json.readFromFile(
       fileName.c_str(),
-      err)); // ыыыыы, оно почему-то заработало, но выглядит стрёмно
+      err));  // ыыыыы, оно почему-то заработало, но выглядит стрёмно
   // updatePhysics();
 }

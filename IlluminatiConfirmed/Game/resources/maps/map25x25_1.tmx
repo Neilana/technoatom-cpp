@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="25" height="25" tilewidth="32" tileheight="32" nextobjectid="130">
+<map version="2017.05.16" orientation="orthogonal" renderorder="right-down" width="25" height="25" tilewidth="32" tileheight="32" nextobjectid="130">
  <tileset firstgid="1" name="tiles_2_cut" tilewidth="32" tileheight="32" tilecount="6250" columns="25">
   <image source="tiles_2_cut.png" width="800" height="8000"/>
  </tileset>
- <layer name="Ground" width="25" height="25">
+ <layer name="Layer_Ground" width="25" height="25">
   <data>
    <tile gid="2201"/>
    <tile gid="2201"/>

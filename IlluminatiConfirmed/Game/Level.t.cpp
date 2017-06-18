@@ -5,7 +5,7 @@
 
 using namespace IlluminatiConfirmed;
 
-TEST(LevelTest, CheckDefaultConstructor) {
+TEST(LevelTest, CheckInfoMap) {
   try {
     Level level;
     level.loadMapFromFile("../Game/resources/maps/test_ver3000.tmx");
@@ -14,28 +14,40 @@ TEST(LevelTest, CheckDefaultConstructor) {
     sf::Vector2i actual = level.GetTileSize();
 
     ASSERT_EQ(expected, actual);
+  } catch (Exception &e) {
+    std::cout << e.what();
+  }
+}
 
-    auto actual_info = level.GetMapInfo();
+TEST(LevelTest, CheckLoadMapBigObjs) {
+  try {
+    Level level_layer;
+    level_layer.loadMapFromFile("../Game/resources/maps/test_ver3002.tmx");
+    auto actual_Layer = level_layer.GetVecOfBigObjs(
+        "Buildings_sprite", "Buildings_obj", "Building_layer");
 
-    decltype(actual_info) excepted_info = {{32, 32}, {5, 5}, 1, 25, 250};
+    std::vector<IlluminatiConfirmed::Big_Object> excepted_layer = {
+        {{"3", "sprite", {106, 110, 46, 32}},
+         {"3", "body", {106, 130, 46, 13}},
+         {{{448, 320, 32, 32}, {96, 96}},
+          {{480, 320, 32, 32}, {128, 96}},
+          {{448, 352, 32, 32}, {96, 128}},
+          {{480, 352, 32, 32}, {128, 128}}}},
 
-    ASSERT_EQ(excepted_info, actual_info);
+        {{"2", "sprite", {41, 109, 46, 32}},
+         {"2", "body", {41, 129, 46, 13}},
+         {{{448, 320, 32, 32}, {32, 96}},
+          {{480, 320, 32, 32}, {64, 96}},
+          {{448, 352, 32, 32}, {32, 128}},
+          {{480, 352, 32, 32}, {64, 128}}}},
 
-    auto actual_Layer = level.GetVecOfRectsByNameOfObjsGroupAndLayer(
-        "Buildings_sprite", "Building_layer");
-    // std::vector<std::pair<sf::Rect<int>, sf::Vector2i>>
-    // std::map<int, std::pair<sf::Rect<int>, sf::Vector2i>>
-    std::vector<std::vector<std::pair<sf::Rect<int>, sf::Vector2i>>>
-        excepted_layer = {{
-                           {{256, 3808, 32, 32}, {32, 32}},
-                           {{288, 3808, 32, 32}, {64, 32}},
-                           {{320, 3808, 32, 32}, {96, 32}},
-                           {{256, 3840, 32, 32}, {32, 64}},
-                           {{288, 3840, 32, 32}, {64, 64}},
-                           {{320, 3840, 32, 32}, {96, 64}},
-                           {{256, 3872, 32, 32}, {32, 96}},
-                           {{288, 3872, 32, 32}, {64, 96}},
-                           {{320, 3872, 32, 32}, {96, 96}}}};
+        {{"1", "sprite", {105, 14, 46, 32}},
+         {"1", "body", {105, 34, 46, 13}},
+         {{{448, 320, 32, 32}, {96, 0}},
+          {{480, 320, 32, 32}, {128, 0}},
+          {{448, 352, 32, 32}, {96, 32}},
+          {{480, 352, 32, 32}, {128, 32}}}}};
+
     ASSERT_EQ(actual_Layer, excepted_layer);
   } catch (Exception &e) {
     std::cout << e.what();

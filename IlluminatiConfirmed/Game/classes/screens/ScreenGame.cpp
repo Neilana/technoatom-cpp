@@ -1,6 +1,6 @@
+#include <SFML/Graphics.hpp>
 #include "Box2D/Box2D.h"
 #include "SFMLDebugDraw.h"
-#include <SFML/Graphics.hpp>
 
 #include <exception>
 #include <iostream>
@@ -43,8 +43,7 @@ ScreenName ScreenGame::run(Game &game, sf::RenderWindow &window) {
     sf::Mouse::getPosition();
 
     while (window.pollEvent(event)) {
-      if (event.type == sf::Event::Closed)
-        window.close();
+      if (event.type == sf::Event::Closed) window.close();
 
       if (event.type == sf::Event::KeyPressed) {
         if (event.key.code == sf::Keyboard::Tab) {
@@ -80,8 +79,11 @@ ScreenName ScreenGame::run(Game &game, sf::RenderWindow &window) {
     if (Keyboard::isKeyPressed(Keyboard::Escape)) {
       return ScreenName::MainMenu;
     }
+
     game.updatePhysics(time);
+    window.clear();
     game.draw(window);
+
 
     static bool press = true;
     if (Keyboard::isKeyPressed(Keyboard::F1)) {

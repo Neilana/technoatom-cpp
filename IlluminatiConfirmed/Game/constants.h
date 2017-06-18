@@ -18,7 +18,13 @@ const float SCALE = 32.0;
 enum class Direction { Up, Down, Left, Right, Nothing };
 enum class ScreenName { MainMenu, ChoseCharacters, Game, Load, Save };
 
-const std::string MAP_FILE_1 = "../Game/resources/maps/map25x25_1.tmx";
+const std::string MAP__DIRECTORY = "../Game/resources/maps/";
+const std::string MAP_FILE = "test_ver3002.tmx";
+const std::string LAYER_GROUND = "Layer_Ground";
+const std::string LAYER_BUILDINGS = "Layer_Buildings";
+const std::string OBJECT_SPRITE = "Buildings_sprite";
+const std::string OBJECT_BODY = "Buildings_body";
+
 const std::string CHARACTERS_SPRITES_DIRECTORY =
     "../Game/resources/sprites/characters/";
 const std::string BULLETS_SPRITES_DIRECTORY =

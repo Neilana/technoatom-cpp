@@ -27,7 +27,8 @@ SOURCES += main.cpp \
     classes/characters/BaseCharacter.cpp \
     classes/characters/CharacterSouthPark.cpp \
     classes/characters/CharacterAlinasBoys.cpp \
-    classes/MyContactListener.cpp
+    classes/MyContactListener.cpp \
+    classes/Ground.cpp
 
 HEADERS += \
     classes/Level.h \
@@ -49,7 +50,8 @@ HEADERS += \
     classes/characters/BaseCharacter.h \
     classes/characters/CharacterSouthPark.h \
     classes/characters/CharacterAlinasBoys.h \
-    classes/MyContactListener.h
+    classes/MyContactListener.h \
+    classes/Ground.h
 
    # ForTestbedCharacter.h
 

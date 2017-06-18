@@ -8,8 +8,10 @@
 #include <string>
 #include <vector>
 
+#include "Base.h"
 #include "Bullet.h"
 #include "CharacterSouthPark.h"
+#include "ground.h"
 #include "Level.h"
 #include "constants.h"
 
@@ -17,8 +19,9 @@
 
 namespace IlluminatiConfirmed {
 class Game {
-public:
-  Level m_level;
+ public:
+  sf::Texture m_texture;
+  Ground m_ground;
   int m_currentHeroId;
   // b2World *m_world;
   b2World m_world;
@@ -29,16 +32,16 @@ public:
   std::list<std::shared_ptr<Bullet>> m_bullets;
   std::vector<std::shared_ptr<BaseCharacter>> m_heroes;
 
-  b2Body *playerBody;
+  std::vector<MapsStuff> m_vec_map;
 
   void buildBarriers(std::vector<Object> &walls);
 
-public:
+ public:
   Game(sf::RenderWindow &window);
-  void initNewGame(const std::string &mapFile, std::set<int> ids);
+  void initNewGame(const std::string &map_puth, const std::string &file,
+                   std::set<int> ids);
   void initCharacters(std::set<int> ids);
   void initPhysics();
-  // void LoadMap(std::vector<Object> &&vec, sf::Vector2i tileSize);
 
   void draw(sf::RenderWindow &window);
 

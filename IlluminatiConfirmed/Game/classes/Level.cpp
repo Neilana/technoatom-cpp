@@ -6,9 +6,7 @@
 
 #include "../Logger/Logger.h"
 
-using IlluminatiConfirmed::Object;
-using IlluminatiConfirmed::Layer;
-using IlluminatiConfirmed::Level;
+using namespace IlluminatiConfirmed;
 
 void Level::loadMapInfoFromFile(tinyxml2::XMLDocument &levelFile) {
   // Работаем с контейнером map
@@ -102,9 +100,7 @@ void Level::loadLayersFromFile(tinyxml2::XMLDocument &levelFile) {
           sub_rects_layer.insert(
               {cell,
                {sub_rects.at(sub_rect_to_use),
-                {x * m_tileWidth, y * m_tileHeight}}}); // position
-          // sub_rects_layer.push_back({sub_rects.at(sub_rect_to_use),
-          //                           {x * m_tileWidth, y * m_tileHeight}});
+                {x * m_tileWidth, y * m_tileHeight}}});  // position
         } else {
           LOG() << "Something wrong with tile element: "
                 << tileElement->Attribute("gid") << " on layer "
@@ -117,8 +113,7 @@ void Level::loadLayersFromFile(tinyxml2::XMLDocument &levelFile) {
       if (x >= m_width) {
         x = 0;
         y++;
-        if (y >= m_height)
-          y = 0;
+        if (y >= m_height) y = 0;
       }
       ++cell;
     }
@@ -139,8 +134,9 @@ void Level::loadObjectsFromFile(tinyxml2::XMLDocument &levelFile) {
   // Если есть слои объектов
   if (map->FirstChildElement("objectgroup") != NULL) {
     objectGroupElement = map->FirstChildElement("objectgroup");
-    std::string name_object_group = objectGroupElement->Attribute("name");
+
     while (objectGroupElement) {
+      std::string name_object_group = objectGroupElement->Attribute("name");
       // Контейнер <object>
       tinyxml2::XMLElement *objectElement;
       objectElement = objectGroupElement->FirstChildElement("object");
@@ -197,14 +193,13 @@ void Level::loadMapFromFile(const std::string &filename) {
     LOG() << "Loading level \"" << filename
           << "\" failed with message: " << levelFile.ErrorName() << "\n";
   }
-
-  loadMapInfoFromFile(levelFile); // загружаем основную инфу
-  loadLayersFromFile(levelFile);  // загружаем слои
-  loadObjectsFromFile(levelFile); // загружаем объекты
+  loadMapInfoFromFile(levelFile);  // загружаем основную инфу
+  loadLayersFromFile(levelFile);   // загружаем слои
+  loadObjectsFromFile(levelFile);  // загружаем объекты
 }
 
-const std::vector<Object> &
-Level::GetVecObjectsByNameOfGroup(const std::string &name) {
+const std::vector<Object> &Level::GetVecObjectsByNameOfGroup(
+    const std::string &name) {
   // Все объекты с заданным именем
   try {
     return m_objects_by_name_group.at(name);
@@ -217,8 +212,7 @@ Level::GetVecObjectsByNameOfGroup(const std::string &name) {
 
 const Layer &Level::GetLayerByName(const std::string &name) {
   for (auto &&it : m_layers) {
-    if (it.m_name == name)
-      return it;
+    if (it.m_name == name) return it;
   }
   throw EXCEPTION(std::string("Unknown layer ") + name, nullptr);
 }
@@ -228,25 +222,35 @@ sf::Vector2i Level::GetTileSize() {
 }
 
 IlluminatiConfirmed::MapInfo Level::GetMapInfo() {
-  return {{m_tileWidth, m_tileHeight},
+  return {m_name_of_tileset, {m_tileWidth, m_tileHeight},
           {m_width, m_height},
           m_firstTileId,
           m_columns,
           m_rows};
 }
 
-std::vector<std::vector<std::pair<sf::Rect<int>, sf::Vector2i>>>
-Level::GetVecOfRectsByNameOfObjsGroupAndLayer(const std::string &name_obj_gr,
-                                              const std::string &name_layer) {
-  auto vector_of_objs = GetVecObjectsByNameOfGroup(name_obj_gr);
+std::vector<Big_Object> Level::GetVecOfBigObjs(
+    const std::string &name_sprite_gr, const std::string &name_obj_gr,
+    const std::string &name_layer) {
+  auto vector_of_body = GetVecObjectsByNameOfGroup(name_sprite_gr);
+
+  auto vec_of_sprite = GetVecObjectsByNameOfGroup(name_obj_gr);
+
+  assert(vec_of_sprite.size() == vector_of_body.size());
+  if (vec_of_sprite.size() != vector_of_body.size())
+    throw EXCEPTION("Number of sprite objs not equal number of body objs.",
+                    nullptr);
 
   auto sub_rects = GetLayerByName(name_layer).m_sub_rects;
 
-  std::vector<std::vector<std::pair<sf::Rect<int>, sf::Vector2i>>>
-      vec_of_vecs_with_objs_on_layer;
+  // std::vector<std::vector<std::pair<sf::Rect<int>, sf::Vector2i>>>
+  //    vec_of_rects_for_draw_sprites;
 
-  for (auto &&it : vector_of_objs) {
-    auto rect = it.m_rect;
+  std::vector<Big_Object> vec_of_objs_with_rects_of_sprite_and_body;
+
+  int j = 0;
+  for (auto &&object_sprite : vector_of_body) {
+    auto rect = object_sprite.m_rect;
 
     sf::Vector2i vertex[] = {{rect.left, rect.top},
                              {rect.left + rect.width, rect.top},
@@ -262,7 +266,10 @@ Level::GetVecOfRectsByNameOfObjsGroupAndLayer(const std::string &name_obj_gr,
         vec_of_rects.push_back(sub_rects.at(j * m_width + i));
       }
     }
-    vec_of_vecs_with_objs_on_layer.push_back(std::move(vec_of_rects));
+    vec_of_objs_with_rects_of_sprite_and_body.push_back(
+        {object_sprite, vec_of_sprite.at(j), vec_of_rects});
+
+    ++j;
   }
-  return vec_of_vecs_with_objs_on_layer;
+  return vec_of_objs_with_rects_of_sprite_and_body;  // vec_of_rects_for_draw_sprites;
 }
