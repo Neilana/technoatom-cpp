@@ -20,8 +20,7 @@ SOURCES += main.cpp \
     classes/screens/ScreenChoseCharacters.cpp \
     classes/GameDatabase.cpp \
     classes/Base.cpp \
-    Level.t.cpp
-
+    Level.t.cpp \
     classes/screens/ScreenMenu.cpp \
     classes/screens/ScreenMenuLoad.cpp \
     classes/screens/ScreenMenuSave.cpp \
@@ -43,9 +42,7 @@ HEADERS += \
     classes/screens/ScreenMenuMain.h \
     classes/screens/ScreenChoseCharacters.h \
     classes/GameDatabase.h \
-
-    classes/Base.h
-
+    classes/Base.h \
     classes/screens/ScreenMenu.h \
     classes/screens/ScreenMenuLoad.h \
     classes/screens/ScreenMenuSave.h \

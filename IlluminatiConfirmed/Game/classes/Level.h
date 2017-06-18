@@ -1,7 +1,7 @@
 #pragma once
 
-#include <SFML/Graphics.hpp>
 #include "tinyxml2.h"
+#include <SFML/Graphics.hpp>
 
 #include <map>
 #include <string>
@@ -44,11 +44,11 @@ struct MapInfo {
 };
 
 class Level {
- public:
+public:
   void loadMapFromFile(const std::string &filename);
 
-  const std::vector<Object> &GetVecObjectsByNameOfGroup(
-      const std::string &name);
+  const std::vector<Object> &
+  GetVecObjectsByNameOfGroup(const std::string &name);
 
   const Layer &GetLayerByName(const std::string &name);
   std::vector<std::vector<std::pair<sf::Rect<int>, sf::Vector2i>>>
@@ -57,7 +57,7 @@ class Level {
   sf::Vector2i GetTileSize();
   MapInfo GetMapInfo();
 
- private:
+private:
   void loadMapInfoFromFile(tinyxml2::XMLDocument &levelFile);
   void loadLayersFromFile(tinyxml2::XMLDocument &levelFile);
   void loadObjectsFromFile(tinyxml2::XMLDocument &levelFile);

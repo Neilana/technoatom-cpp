@@ -101,7 +101,7 @@ void Game::draw(sf::RenderWindow &window) {
   window.clear();
 
   // рисуем карту
-  //m_level.Draw(window);
+  // m_level.Draw(window);
 
   // рисуем всех персонажей
   for (auto &&it : m_heroes)
@@ -119,17 +119,16 @@ void Game::initPhysics() {
   // sf::Vector2i tileSize = m_level.GetTileSize();
 
   // загружаем в Box2D стены
-  //std::vector<Object> walls = m_level.GetObjectsByType("Wall");
-  //buildBarriers(walls);
+  // std::vector<Object> walls = m_level.GetObjectsByType("Wall");
+  // buildBarriers(walls);
 
   // загружаем здания
-  //walls = m_level.GetObjectsByType("Building");
-  //buildBarriers(walls);
+  // walls = m_level.GetObjectsByType("Building");
+  // buildBarriers(walls);
 }
 
 void Game::updatePhysics() {
   m_world.Step(1 / 60.f, 8, 3);
-
 
   //  b2dJson json(false);
 

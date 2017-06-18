@@ -102,7 +102,7 @@ void Level::loadLayersFromFile(tinyxml2::XMLDocument &levelFile) {
           sub_rects_layer.insert(
               {cell,
                {sub_rects.at(sub_rect_to_use),
-                {x * m_tileWidth, y * m_tileHeight}}});  // position
+                {x * m_tileWidth, y * m_tileHeight}}}); // position
           // sub_rects_layer.push_back({sub_rects.at(sub_rect_to_use),
           //                           {x * m_tileWidth, y * m_tileHeight}});
         } else {
@@ -117,7 +117,8 @@ void Level::loadLayersFromFile(tinyxml2::XMLDocument &levelFile) {
       if (x >= m_width) {
         x = 0;
         y++;
-        if (y >= m_height) y = 0;
+        if (y >= m_height)
+          y = 0;
       }
       ++cell;
     }
@@ -197,13 +198,13 @@ void Level::loadMapFromFile(const std::string &filename) {
           << "\" failed with message: " << levelFile.ErrorName() << "\n";
   }
 
-  loadMapInfoFromFile(levelFile);  // загружаем основную инфу
-  loadLayersFromFile(levelFile);   // загружаем слои
-  loadObjectsFromFile(levelFile);  // загружаем объекты
+  loadMapInfoFromFile(levelFile); // загружаем основную инфу
+  loadLayersFromFile(levelFile);  // загружаем слои
+  loadObjectsFromFile(levelFile); // загружаем объекты
 }
 
-const std::vector<Object> &Level::GetVecObjectsByNameOfGroup(
-    const std::string &name) {
+const std::vector<Object> &
+Level::GetVecObjectsByNameOfGroup(const std::string &name) {
   // Все объекты с заданным именем
   try {
     return m_objects_by_name_group.at(name);
@@ -216,7 +217,8 @@ const std::vector<Object> &Level::GetVecObjectsByNameOfGroup(
 
 const Layer &Level::GetLayerByName(const std::string &name) {
   for (auto &&it : m_layers) {
-    if (it.m_name == name) return it;
+    if (it.m_name == name)
+      return it;
   }
   throw EXCEPTION(std::string("Unknown layer ") + name, nullptr);
 }
@@ -259,7 +261,6 @@ Level::GetVecOfRectsByNameOfObjsGroupAndLayer(const std::string &name_obj_gr,
            i <= int(vertex[1].x / m_tileWidth); ++i) {
         vec_of_rects.push_back(sub_rects.at(j * m_width + i));
       }
-
     }
     vec_of_vecs_with_objs_on_layer.push_back(std::move(vec_of_rects));
   }
