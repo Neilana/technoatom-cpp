@@ -6,6 +6,7 @@
 #include <map>
 #include <string>
 #include <vector>
+#include "../Logger/Logger.h"
 
 #define DEBUG_ON
 #if defined(DEBUG_ON)

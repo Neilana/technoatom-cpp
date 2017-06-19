@@ -24,15 +24,15 @@ class Game {
   Ground m_ground;
   int m_currentHeroId;
   // b2World *m_world;
-  b2World m_world;
-  inline b2World &getWorld() { return m_world; }
+  std::unique_ptr<b2World> m_world;
+  inline b2World &getWorld() { return *m_world; }
 
   // physics Box2D
   // std::unique_ptr<b2World> m_world;
   std::list<std::shared_ptr<Bullet>> m_bullets;
   std::vector<std::shared_ptr<BaseCharacter>> m_heroes;
 
-  std::vector<MapsStuff> m_vec_map;
+  std::vector<experimental::Building> m_vec_map;
 
   void buildBarriers(std::vector<Object> &walls);
 

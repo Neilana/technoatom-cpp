@@ -16,18 +16,20 @@ using namespace std;
 
 using namespace IlluminatiConfirmed;
 
-Game::Game(sf::RenderWindow &window) : m_world(b2Vec2(0.0f, 0.0f)) {
+Game::Game(sf::RenderWindow &window) {
   m_currentHeroId = 0;
 
+  m_world = std::make_unique<b2World>(b2Vec2({0.f, 0.f}));
+
   MyContactListener *listner = new MyContactListener;
-  //m_world.SetContactListener(listner);  //не работает, здания имеют другой
-                                        //базовый класс, крошится если оставить
-                                        //прежний
+  // m_world.SetContactListener(listner);  //не работает, здания имеют другой
+  //базовый класс, крошится если оставить
+  //прежний
   SFMLDebugDraw *debugDraw =
       new SFMLDebugDraw(window);  //утечка памяти, бокс не будет это удалять
   debugDraw->SetFlags(b2Draw::e_shapeBit + b2Draw::e_centerOfMassBit +
                       b2Draw::e_pairBit);
-  m_world.SetDebugDraw(debugDraw);
+  (*m_world).SetDebugDraw(debugDraw);
 }
 
 void Game::initNewGame(const std::string &map_puth, const std::string &file,
@@ -42,8 +44,13 @@ void Game::initNewGame(const std::string &map_puth, const std::string &file,
   auto big_objs =
       level.GetVecOfBigObjs(OBJECT_SPRITE, OBJECT_BODY, LAYER_BUILDINGS);
 
+  int j = 0;
   for (auto &&it : big_objs) {
-    m_vec_map.push_back(MapsStuff(m_texture, std::move(it), m_world));
+    if (j == 0) {
+      auto temp = experimental::Building(*m_world, m_texture, std::move(it));
+      m_vec_map.push_back(temp);
+    }
+    j = 1;
   }
   initCharacters(ids);  // загружаем персонажей
   initPhysics();
@@ -95,14 +102,14 @@ void Game::initCharacters(std::set<int> ids) {
       if (master == "Alina") {
         m_heroes.push_back(std::static_pointer_cast<BaseCharacter>(
             std::make_shared<CharacterAlinasBoys>(
-                m_world, CharacterSpriteInfo({fileName, width, height, width,
-                                              frames, 300, 300}),
+                *m_world, CharacterSpriteInfo({fileName, width, height, width,
+                                               frames, 300, 300}),
                 bulletsFile)));
       }
       if (master == "Anton") {
         m_heroes.push_back(std::static_pointer_cast<BaseCharacter>(
             std::make_shared<CharacterSouthPark>(
-                m_world,
+                *m_world,
                 CharacterSpriteInfo({fileName, width, height,
                                      DEFAULT_SPRITE_SIZE_X, frames, 300, 300}),
                 bulletsFile)));
@@ -143,7 +150,7 @@ void Game::initPhysics() {
 }
 
 void Game::updatePhysics(float time) {
-  m_world.Step(1 / 60.f, 8, 3);
+  m_world->Step(1 / 60.f, 8, 3);
 
   //  b2dJson json(false);
 
@@ -172,7 +179,7 @@ void Game::buildBarriers(std::vector<Object> &walls) {
     b2BodyDef myBodyDef;
     myBodyDef.type = b2_staticBody;
     myBodyDef.position.Set(0, 0);
-    b2Body *staticBody = m_world.CreateBody(&myBodyDef);
+    b2Body *staticBody = m_world->CreateBody(&myBodyDef);
 
     // add four walls to the static body
     polygonShape.SetAsBox(
@@ -191,13 +198,13 @@ void Game::buildBarriers(std::vector<Object> &walls) {
 }
 
 void Game::sendBullet(BaseCharacter *hero) {
-  std::shared_ptr<Bullet> bullet = hero->attack(m_world);
+  std::shared_ptr<Bullet> bullet = hero->attack(*m_world);
   m_bullets.push_back(bullet);
 }
 
 void Game::saveGame(const std::string &fileName) {
   b2dJson json;
-  json.writeToFile(&m_world, fileName.c_str());
+  json.writeToFile(m_world.get(), fileName.c_str());
 
   //  b2dJson json(false);
   //  std::string str = json.writeToString(&m_world);
@@ -211,8 +218,8 @@ void Game::saveGame(const std::string &fileName) {
 void Game::loadGame(const std::string &fileName) {
   std::string err;
   b2dJson json;
-  m_world = *(json.readFromFile(
+  m_world.reset((json.readFromFile(
       fileName.c_str(),
-      err));  // ыыыыы, оно почему-то заработало, но выглядит стрёмно
+      err)));  // ыыыыы, оно почему-то заработало, но выглядит стрёмно
   // updatePhysics();
 }
