@@ -44,7 +44,7 @@ ScreenName ScreenChoseCharacters::run(Game &game, sf::RenderWindow &window) {
 
       if (Keyboard::isKeyPressed(Keyboard::Return)) {
         ids.insert(m_characters[m_selectedCharId].get()->m_id);
-        game.initNewGame(MAP__DIRECTORY , MAP_FILE, ids);
+        game.initNewGame(MAP__DIRECTORY , MAP_FILE);
         return ScreenName::Game;
       }
 

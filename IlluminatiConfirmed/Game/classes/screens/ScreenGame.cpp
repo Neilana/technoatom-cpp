@@ -42,6 +42,8 @@ ScreenName ScreenGame::run(Game &game, sf::RenderWindow &window) {
     sf::Event event;
     sf::Mouse::getPosition();
 
+
+
     while (window.pollEvent(event)) {
       if (event.type == sf::Event::Closed) window.close();
 
@@ -51,8 +53,7 @@ ScreenName ScreenGame::run(Game &game, sf::RenderWindow &window) {
         }
         // если написать ниже - будет трэш, будет оооч много создаваться сразу
         if (event.key.code == sf::Keyboard::Space) {
-          game.sendBullet(currentHero.get());
-          // currentHero->attack();
+          // attack
         }
       }
     }
@@ -84,7 +85,6 @@ ScreenName ScreenGame::run(Game &game, sf::RenderWindow &window) {
     window.clear();
     game.draw(window);
 
-
     static bool press = true;
     if (Keyboard::isKeyPressed(Keyboard::F1)) {
       static int timeout;
@@ -96,7 +96,7 @@ ScreenName ScreenGame::run(Game &game, sf::RenderWindow &window) {
     }
     if (press) {
       std::strstream sstream;
-      sstream << std::fixed << "FPS: " << int(1.f / timeSf.asSeconds());
+      sstream << "FPS: " << int(1.f / timeSf.asSeconds());
       fpsCounter.setString(sstream.str());
       window.draw(fpsCounter);
       game.getWorld().DrawDebugData();

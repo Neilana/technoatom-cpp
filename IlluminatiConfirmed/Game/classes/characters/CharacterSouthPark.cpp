@@ -17,7 +17,7 @@ CharacterSouthPark::CharacterSouthPark(b2World &world,
     jd.lowerTranslation = 0.f;
     jd.upperTranslation = 0.6f;
     // jd.enableMotor = true;
-    jd.collideConnected = false;
+    jd.collideConnected = true;
     // jd.maxMotorForce = +10.f;
     // jd.motorSpeed = -100.f;
 

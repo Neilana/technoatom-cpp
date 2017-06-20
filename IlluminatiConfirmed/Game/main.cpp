@@ -66,7 +66,7 @@ int main() {
     window.create(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Level.h test");
     window.setFramerateLimit(60);
 
-    std::stringstream sstream;
+    //std::stringstream sstream;
     sf::Text fpsCounter;
     sf::Font mainFont;
     if (!mainFont.loadFromFile(FONT_FILE)) // Set path

@@ -7,7 +7,7 @@ namespace IlluminatiConfirmed {
 class Ground {
  public:
   Ground() {}
-  Ground(const sf::Texture &texture, const Layer &layer);
+  Ground(const sf::Texture *texture, const Layer &layer);
   void draw_ground(sf::RenderWindow &window);
 
  private:

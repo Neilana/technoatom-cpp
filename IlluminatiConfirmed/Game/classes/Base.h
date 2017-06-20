@@ -19,7 +19,9 @@ class BaseInterface {
       : m_b2_base(nullptr),
         m_b2_base_fixture(nullptr),
         m_type_base(type),
-        is_dead(false) {LOG() << "Create base " << int( m_type_base ) << std::endl;}
+        is_dead(false) {
+    LOG() << "Create base " << int(m_type_base) << std::endl;
+  }
   virtual void draw(sf::RenderWindow &window) = 0;
   virtual void move(b2Vec2 velocity, float deltaTime) = 0;
   virtual void contact(b2Fixture *B) = 0;
@@ -31,7 +33,8 @@ class BaseInterface {
   }
 
   virtual ~BaseInterface() {
-      LOG() << "Destroy base " << int( m_type_base ) << std::endl; }
+    LOG() << "Destroy base " << int(m_type_base) << std::endl;
+  }
 
  protected:
   b2Body *m_b2_base;
@@ -44,21 +47,21 @@ class BaseMapsStuff : public BaseInterface {
  public:
   enum TypeMap { BUILDING };  //мб какие то коины или жизни или оружее
   BaseMapsStuff(TypeMap type) : BaseInterface(MAPS_STUFF), m_type_map(type) {
-      LOG() << "Create BaseMapsStuff " << int( m_type_base ) << std::endl;
+    LOG() << "Create BaseMapsStuff " << int(m_type_base) << std::endl;
   }
   virtual void move(b2Vec2 velocity, float deltaTime) override = 0;
   virtual void draw(sf::RenderWindow &window) override = 0;
   virtual void contact(b2Fixture *B) override = 0;
   virtual void endContact(b2Fixture *B) override = 0;
   virtual ~BaseMapsStuff() {
-      LOG() << "Destroy BaseMapsStuff " << int( m_type_map ) << std::endl;
+    LOG() << "Destroy BaseMapsStuff " << int(m_type_map) << std::endl;
   }
   TypeMap m_type_map;
 };
 
 class Building : public BaseMapsStuff {
  public:
-  Building(b2World &world, const sf::Texture &texture, Big_Object &&big_obj)
+  Building(b2World *world, const sf::Texture *texture, Big_Object &&big_obj)
       : BaseMapsStuff(BUILDING) {
     {
       b2BodyDef bd;
@@ -67,7 +70,7 @@ class Building : public BaseMapsStuff {
                                        big_obj.body.m_rect.width / 2),
                       SfPointtoB2Point(big_obj.body.m_rect.top +
                                        big_obj.body.m_rect.height / 2));
-      m_b2_base = world.CreateBody(&bd);
+      m_b2_base = world->CreateBody(&bd);
 
       b2PolygonShape polygon;
       polygon.SetAsBox(SfPointtoB2Point(big_obj.body.m_rect.width / 2),
@@ -82,11 +85,11 @@ class Building : public BaseMapsStuff {
 
       m_b2_base_fixture = m_b2_base->CreateFixture(&fixture);
       m_b2_base_fixture->SetUserData(this);
-      LOG() << "Create building "  << std::endl;
+      LOG() << "Create building " << std::endl;
     }
 
     for (auto &&it : big_obj.rects_for_draw_sprites) {
-      sf::Sprite little_sprite = sf::Sprite(texture, it.first);
+      sf::Sprite little_sprite = sf::Sprite(*texture, it.first);
       little_sprite.setPosition(it.second.x, it.second.y);
 
       m_vec_sprite.push_back(std::move(little_sprite));
@@ -105,15 +108,14 @@ class Building : public BaseMapsStuff {
   virtual void endContact(b2Fixture *B) override {}
 
   ~Building() {
-      LOG() << "Destroy building "  << std::endl;
+    LOG() << "Destroy building " << std::endl;
       /*m_b2_base->GetWorld()->DestroyBody(m_b2_base);*/ }
 
- private:
-  std::vector<sf::Sprite> m_vec_sprite;
+     private:
+      std::vector<sf::Sprite> m_vec_sprite;
 };
 
 struct CharacterSpriteInfo {
-  sf::Texture texture;
   int width;
   int height;
   int size;
@@ -128,9 +130,9 @@ class BaseCharacter : public BaseInterface {
 
   //передавать лямбду, которая будет дергаться, когда персу необходимо будет
   //стрелять
-  BaseCharacter(TypeBaseCharacter type, b2World &world,
+  BaseCharacter(b2World *world, const sf::Texture *texture,
                 const CharacterSpriteInfo &sprite_data)
-      : BaseInterface(BaseInterface::CHARACTER), m_type_character(type) {
+      : BaseInterface(BaseInterface::CHARACTER) {
     {
       b2BodyDef bd;
       bd.fixedRotation = true;
@@ -138,7 +140,7 @@ class BaseCharacter : public BaseInterface {
       bd.position.Set(SfPointtoB2Point(sprite_data.x_position),
                       SfPointtoB2Point(sprite_data.y_position));
       bd.linearDamping = 1000.f;
-      m_b2_base = world.CreateBody(&bd);
+      m_b2_base = world->CreateBody(&bd);
 
       b2PolygonShape polygon;
       polygon.SetAsBox(0.5f, 0.1f);
@@ -160,7 +162,7 @@ class BaseCharacter : public BaseInterface {
                       SfPointtoB2Point(sprite_data.y_position));
       bd.linearDamping = 0.f;
       bd.fixedRotation = true;
-      m_b2_body = world.CreateBody(&bd);
+      m_b2_body = world->CreateBody(&bd);
 
       b2PolygonShape polygon;
       // polygon.SetAsBox(.5f, 1.f, {0.f, -1.f}, 0);
@@ -187,7 +189,7 @@ class BaseCharacter : public BaseInterface {
     m_frames = sprite_data.count_of_frames;
     m_direction = Direction::Down;
 
-    m_sprite.setTexture(sprite_data.texture);
+    m_sprite.setTexture(*texture);
     m_sprite.scale((float)sprite_data.size / sprite_data.width,
                    (float)sprite_data.size / sprite_data.height);
     m_sprite.setTextureRect({0, 0, sprite_data.height, sprite_data.width});
@@ -224,12 +226,14 @@ class BaseCharacter : public BaseInterface {
              left_rects.size()));
   }
 
-  virtual void draw(sf::RenderWindow &window) override = 0;
+  virtual void draw(sf::RenderWindow &window) override {
+    window.draw(m_sprite);
+  }
   virtual void move(b2Vec2 velocity, float deltaTime) override {
     static float currentFrame;
     currentFrame += 0.005 * deltaTime;
 
-    if ((int)currentFrame > m_frames - 1) currentFrame = 0;
+    if (int(currentFrame) > m_frames - 1) currentFrame = 0;
 
     m_direction = findDirectonByVelocity(velocity);
     m_sprite.setTextureRect(
@@ -241,8 +245,8 @@ class BaseCharacter : public BaseInterface {
 
     //для движения по диагонали перс должен поворачиваться
   }
-  virtual void contact(b2Fixture *B) override = 0;
-  virtual void endContact(b2Fixture *B) override = 0;
+  virtual void contact(b2Fixture *B) override {}
+  virtual void endContact(b2Fixture *B) override {}
   virtual ~BaseCharacter() {
     m_b2_base->GetWorld()->DestroyBody(m_b2_base);
     m_b2_body->GetWorld()->DestroyBody(m_b2_body);
@@ -275,16 +279,16 @@ class BaseCharacter : public BaseInterface {
 
   sf::Sprite m_sprite;
 
- private:
   TypeBaseCharacter m_type_character;
 };
 
 class CharacterSouthPark : public BaseCharacter {
  public:
-  CharacterSouthPark(b2World &world, const CharacterSpriteInfo &sprite_data)
-      : BaseCharacter(TypeBaseCharacter::CHARACTER_SOUTH_PARK, world,
-                      sprite_data) {
+  CharacterSouthPark(b2World *world, const sf::Texture *texture,
+                     const CharacterSpriteInfo &sprite_data)
+      : BaseCharacter(world, texture, sprite_data) {
     {
+      m_type_character = TypeBaseCharacter::CHARACTER_SOUTH_PARK;
       b2PrismaticJointDef jd;
       jd.bodyA = m_b2_base;
       jd.bodyB = m_b2_body;
@@ -300,7 +304,7 @@ class CharacterSouthPark : public BaseCharacter {
       // jd.motorSpeed = -100.f;
 
       m_b2_joint_prism =
-          static_cast<b2PrismaticJoint *>(world.CreateJoint(&jd));
+          static_cast<b2PrismaticJoint *>(world->CreateJoint(&jd));
       /*
       b2MotorJointDef mjd;
       mjd.Initialize(m_body, m_body_2);
@@ -313,7 +317,7 @@ class CharacterSouthPark : public BaseCharacter {
       mjd.Initialize(m_b2_body, m_b2_base);
       mjd.maxForce = 1000.0f;
       mjd.maxTorque = 0.0f;
-      m_b2_joint = static_cast<b2MotorJoint *>(world.CreateJoint(&mjd));
+      m_b2_joint = static_cast<b2MotorJoint *>(world->CreateJoint(&mjd));
 
       // m_joint = (b2MotorJoint*)world->CreateJoint(&mjd);
     }
@@ -341,7 +345,8 @@ class CharacterSouthPark : public BaseCharacter {
 
     // g_debugDraw.DrawPoint(linearOffset, 4.0f, b2Color(0.9f, 0.9f, 0.9f));
   }
-  void draw(sf::RenderWindow &window) override { BaseCharacter::draw(window); }
+  void draw(sf::RenderWindow &window) override {
+      m_sprite.setPosition(B2Vec2toSfVector2<float>(m_b2_body->GetPosition()));BaseCharacter::draw(window); }
   void contact(b2Fixture *B) override {
     LOG() << "I'am SouthParkBoys and I've begun the colliding with.. hz"
           << std::endl;
@@ -353,7 +358,7 @@ class CharacterSouthPark : public BaseCharacter {
           << std::endl;
     UNUSE(B);
   }
-  ~CharacterSouthPark() {}
+  ~CharacterSouthPark() { LOG() <<"YOUUURRR HAVE KILLED KYLLLEEE!!/n"; }
 
   b2MotorJoint *m_b2_joint;
   b2PrismaticJoint *m_b2_joint_prism;
@@ -381,9 +386,12 @@ class CharacterSouthPark : public BaseCharacter {
 
 class CharacterAlinasBoys : public BaseCharacter {
  public:
-  CharacterAlinasBoys(b2World &world, const CharacterSpriteInfo &sprite_data)
-      : BaseCharacter(TypeBaseCharacter::ALINAS_BOYS, world, sprite_data) {
+  CharacterAlinasBoys(b2World *world, const sf::Texture *texture,
+                      const CharacterSpriteInfo &sprite_data)
+      : BaseCharacter(world, texture,
+                      sprite_data) {
     {
+      m_type_character =  TypeBaseCharacter::ALINAS_BOYS;
       b2PrismaticJointDef jd;
       jd.bodyA = m_b2_base;
       jd.bodyB = m_b2_body;
@@ -395,7 +403,7 @@ class CharacterAlinasBoys : public BaseCharacter {
       jd.upperTranslation = 0.f;
       jd.collideConnected = false;
 
-      world.CreateJoint(&jd);
+      world->CreateJoint(&jd);
     }
     m_sprite.setPosition(B2Vec2toSfVector2<float>(m_b2_body->GetPosition()));
   }
