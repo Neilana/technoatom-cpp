@@ -27,10 +27,11 @@ ScreenName ScreenMenuLoad::run(Game &game, sf::RenderWindow &window) {
 
   window.display();
   game.loadGame("1.txt");
-
-  while (window.pollEvent(Event)) {
-    if (Keyboard::isKeyPressed(Keyboard::Escape)) {
-      return ScreenName::MainMenu;
+  while (window.isOpen()) {
+    while (window.pollEvent(Event)) {
+      if (Keyboard::isKeyPressed(Keyboard::Escape)) {
+        return ScreenName::MainMenu;
+      }
     }
   }
 

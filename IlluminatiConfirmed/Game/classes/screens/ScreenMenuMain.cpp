@@ -32,6 +32,7 @@ void ScreenMenuMain::initMenuOptions() {
 
   // 1
   y += deltaY;
+
   option.setColor(m_inactiveColor);
   option.setString("Continue");
   // option.setPosition(x, y);
@@ -96,7 +97,7 @@ ScreenName ScreenMenuMain::run(Game &game, sf::RenderWindow &window) {
     window.draw(it);
   window.display();
 
-  while (running) {
+  while (running && window.isOpen()) {
     // Verifying events
     while (window.pollEvent(Event)) {
       // Window closed
@@ -132,6 +133,7 @@ ScreenName ScreenMenuMain::run(Game &game, sf::RenderWindow &window) {
         default:
           break;
         }
+
         m_menuOptions[m_selectedOption].setColor(m_activeColor);
 
         // Clearing screen

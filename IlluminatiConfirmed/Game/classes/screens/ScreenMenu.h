@@ -10,7 +10,7 @@ class ScreenMenu : public Screen {
 protected:
   sf::Color m_inactiveColor;
   sf::Color m_activeColor;
-
+  sf::Color m_unavailibleColor;
   sf::Font m_font;
   // int m_fontSize;
   // float m_deltaY;
@@ -24,6 +24,7 @@ protected:
 public:
   ScreenMenu()
       : m_inactiveColor(sf::Color(118, 161, 113)),
-        m_activeColor(sf::Color(180, 231, 106)){};
+        m_activeColor(sf::Color(180, 231, 106)),
+        m_unavailibleColor(sf::Color(173, 193, 177)){};
 };
 }

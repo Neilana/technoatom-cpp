@@ -29,43 +29,55 @@ ScreenName ScreenChoseCharacters::run(Game &game, sf::RenderWindow &window) {
   window.clear();
   sf::RectangleShape rectangle;
   Clock clock;
-  std::set<int> ids;
-  while (running) {
+
+  while (running && window.isOpen()) {
 
     auto timeSf = clock.restart();
     auto time = timeSf.asMicroseconds();
     time = time / 800;
 
     while (window.pollEvent(event)) {
+      if (event.type == sf::Event::KeyPressed) {
+        if (Keyboard::isKeyPressed(Keyboard::Escape)) {
+          return ScreenName::MainMenu;
+        }
 
-      if (Keyboard::isKeyPressed(Keyboard::Escape)) {
-        return ScreenName::MainMenu;
-      }
+        if (Keyboard::isKeyPressed(Keyboard::Return) &&
+            m_chosedCharsIds.size() > 0) {
+          // m_chosedCharsIds.insert(m_characters[m_selectedCharId].get()->m_id);
+          game.initNewGame(MAP__DIRECTORY, MAP_FILE, m_chosedCharsIds, window);
 
-      if (Keyboard::isKeyPressed(Keyboard::Return)) {
-        ids.insert(m_characters[m_selectedCharId].get()->m_id);
-        game.initNewGame(MAP__DIRECTORY , MAP_FILE, ids);
-        return ScreenName::Game;
-      }
+          return ScreenName::Game;
+        }
 
-      if (Keyboard::isKeyPressed(Keyboard::Right)) {
-        m_characters[m_selectedCharId].get()->m_sprite.setOutlineColor(
-            sf::Color::Transparent);
-        m_selectedCharId++;
-        if (m_selectedCharId > m_characters.size() - 1)
-          m_selectedCharId = 0;
-        m_characters[m_selectedCharId].get()->m_sprite.setOutlineColor(
-            m_activeColor);
-      }
+        if (Keyboard::isKeyPressed(Keyboard::Right)) {
+          m_characters[m_selectedCharId].get()->m_sprite.setOutlineColor(
+              sf::Color::Transparent);
+          m_selectedCharId++;
+          if (m_selectedCharId > m_characters.size() - 1)
+            m_selectedCharId = 0;
+          m_characters[m_selectedCharId].get()->m_sprite.setOutlineColor(
+              m_activeColor);
+        }
 
-      if (Keyboard::isKeyPressed(Keyboard::Left)) {
-        m_characters[m_selectedCharId].get()->m_sprite.setOutlineColor(
-            sf::Color::Transparent);
-        m_selectedCharId--;
-        if (m_selectedCharId < 0)
-          m_selectedCharId = m_characters.size() - 1;
-        m_characters[m_selectedCharId].get()->m_sprite.setOutlineColor(
-            m_activeColor);
+        if (Keyboard::isKeyPressed(Keyboard::Left)) {
+          m_characters[m_selectedCharId].get()->m_sprite.setOutlineColor(
+              sf::Color::Transparent);
+          m_selectedCharId--;
+          if (m_selectedCharId < 0)
+            m_selectedCharId = m_characters.size() - 1;
+          m_characters[m_selectedCharId].get()->m_sprite.setOutlineColor(
+              m_activeColor);
+        }
+
+        if (Keyboard::isKeyPressed(Keyboard::Space)) {
+          if (m_chosedCharsIds.count(
+                  m_characters[m_selectedCharId].get()->m_id) > 0) {
+            m_chosedCharsIds.erase(m_characters[m_selectedCharId].get()->m_id);
+          } else if (m_chosedCharsIds.size() < TEAM_MEMBERS_COUNT) {
+            m_chosedCharsIds.insert(m_characters[m_selectedCharId].get()->m_id);
+          }
+        }
       }
     }
     float currentFrame;
@@ -75,6 +87,8 @@ ScreenName ScreenChoseCharacters::run(Game &game, sf::RenderWindow &window) {
 
     m_characters[m_selectedCharId].get()->m_sprite.setTextureRect(
         m_characters[m_selectedCharId].get()->frontRects[(int)currentFrame]);
+
+    setChosedCharacters(currentFrame);
 
     window.draw(m_backgroundSprite);
     window.draw(m_title);
@@ -118,5 +132,21 @@ void ScreenChoseCharacters::showCharacters() {
       x = startX, y += deltaY;
 
     qDebug() << query.value(1).toString();
+  }
+}
+
+void ScreenChoseCharacters::setChosedCharacters(float currentFrame) {
+  int newFrame = int(currentFrame);
+
+  for (auto &&it : m_characters) {
+    if (m_chosedCharsIds.count(it->m_id) > 0) {
+      it->m_sprite.setOutlineColor(m_inactiveColor);
+      newFrame = currentFrame;
+
+      if ((int)newFrame > it->m_frames - 1)
+        newFrame = 0;
+
+      it->m_sprite.setTextureRect(it->frontRects[newFrame]);
+    }
   }
 }

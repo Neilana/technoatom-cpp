@@ -25,9 +25,11 @@ ScreenName ScreenMenuSave::run(Game &game, sf::RenderWindow &window) {
 
   game.saveGame("1.txt");
   sf::Event Event;
-  while (window.pollEvent(Event)) {
-    if (Keyboard::isKeyPressed(Keyboard::Escape)) {
-      return ScreenName::MainMenu;
+  while (window.isOpen()) {
+    while (window.pollEvent(Event)) {
+      if (Keyboard::isKeyPressed(Keyboard::Escape)) {
+        return ScreenName::MainMenu;
+      }
     }
   }
 

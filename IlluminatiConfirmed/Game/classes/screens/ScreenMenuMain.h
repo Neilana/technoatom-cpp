@@ -23,6 +23,7 @@ private:
   std::vector<sf::Text> m_menuOptions;
 
   int m_selectedOption;
+  sf::Color m_unavailibleColor;
   std::map<int, ScreenName> m_screenNameByOption;
 
   // void initTitle();

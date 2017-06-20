@@ -11,7 +11,9 @@ private:
     sf::Texture m_texture;
     std::vector<sf::Rect<int>> frontRects;
     int m_frames;
+    int currentFrame;
     int m_id;
+    // enum class CharacterState { Chosed, Selected, NotSelected };
 
     AvailableCharacter(int id, const std::string &fileName, int width,
                        int height, int x, int y, int frames) {
@@ -30,6 +32,7 @@ private:
         frontRects.push_back({column * width, height * row++, width, height});
       }
       m_id = id;
+      currentFrame = 0;
     }
   };
   sf::Texture texture;
@@ -37,16 +40,18 @@ private:
   // std::map<int, int> m_selectedCharsId;
 
   int m_selectedCharId;
+  std::set<int> m_chosedCharsIds;
   // void initTitle();
   // void initBackground();
   // void initMenuOptions();
 
   void showCharacters();
+  void setChosedCharacters(float currentFrame);
 
 public:
   ScreenChoseCharacters();
 
   ScreenName run(IlluminatiConfirmed::Game &game, sf::RenderWindow &window);
-  ~ScreenChoseCharacters(){};
+  ~ScreenChoseCharacters() {}
 };
 }

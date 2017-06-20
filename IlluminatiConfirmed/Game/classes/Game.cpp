@@ -1,6 +1,6 @@
-#include <SFML/Graphics.hpp>
 #include "Box2D/Box2D.h"
 #include "SFMLDebugDraw.h"
+#include <SFML/Graphics.hpp>
 
 #include "b2dJson.h"
 
@@ -18,22 +18,26 @@ using namespace IlluminatiConfirmed;
 
 Game::Game(sf::RenderWindow &window) {
   m_currentHeroId = 0;
+  m_running = false;
+  //  m_world = std::make_unique<b2World>(b2Vec2({0.f, 0.f}));
 
-  m_world = std::make_unique<b2World>(b2Vec2({0.f, 0.f}));
-
-  MyContactListener *listner = new MyContactListener;
-  // m_world.SetContactListener(listner);  //не работает, здания имеют другой
-  //базовый класс, крошится если оставить
-  //прежний
-  SFMLDebugDraw *debugDraw =
-      new SFMLDebugDraw(window);  //утечка памяти, бокс не будет это удалять
-  debugDraw->SetFlags(b2Draw::e_shapeBit + b2Draw::e_centerOfMassBit +
-                      b2Draw::e_pairBit);
-  (*m_world).SetDebugDraw(debugDraw);
+  //  MyContactListener *listner = new MyContactListener;
+  //  // m_world.SetContactListener(listner);  //не работает, здания имеют
+  //  другой
+  //  //базовый класс, крошится если оставить
+  //  //прежний
+  //  SFMLDebugDraw *debugDraw =
+  //      new SFMLDebugDraw(window); //утечка памяти, бокс не будет это удалять
+  //  debugDraw->SetFlags(b2Draw::e_shapeBit + b2Draw::e_centerOfMassBit +
+  //                      b2Draw::e_pairBit);
+  //  (*m_world).SetDebugDraw(debugDraw);
 }
 
 void Game::initNewGame(const std::string &map_puth, const std::string &file,
-                       std::set<int> ids) {
+                       std::set<int> ids, sf::RenderWindow &window) {
+  m_world.release();
+  m_world = std::make_unique<b2World>(b2Vec2({0.f, 0.f}));
+  m_running = true;
   Level level;
 
   level.loadMapFromFile(map_puth + file);
@@ -52,7 +56,20 @@ void Game::initNewGame(const std::string &map_puth, const std::string &file,
     }
     j = 1;
   }
-  initCharacters(ids);  // загружаем персонажей
+  m_bullets.clear();
+  m_heroes.clear();
+
+  MyContactListener *listner = new MyContactListener;
+  // m_world.SetContactListener(listner);  //не работает, здания имеют другой
+  //базовый класс, крошится если оставить
+  //прежний
+  SFMLDebugDraw *debugDraw =
+      new SFMLDebugDraw(window); //утечка памяти, бокс не будет это удалять
+  debugDraw->SetFlags(b2Draw::e_shapeBit + b2Draw::e_centerOfMassBit +
+                      b2Draw::e_pairBit);
+  (*m_world).SetDebugDraw(debugDraw);
+
+  initCharacters(ids); // загружаем персонажей
   initPhysics();
 }
 
@@ -128,10 +145,12 @@ void Game::draw(sf::RenderWindow &window) {
   }
 
   // рисуем всех персонажей
-  for (auto &&it : m_heroes) it->draw(window);
+  for (auto &&it : m_heroes)
+    it->draw(window);
 
   // рисуем пули
-  for (auto &&it : m_bullets) it->draw(window);
+  for (auto &&it : m_bullets)
+    it->draw(window);
 
   // дебаг
   // m_world.Dump();
@@ -161,8 +180,10 @@ void Game::updatePhysics(float time) {
 
   // LOG() << err << std::endl;3
 
-  for (auto &&it : m_heroes) it->updatePhysics(time);
-  for (auto &&it : m_bullets) it->updatePhysics();
+  for (auto &&it : m_heroes)
+    it->updatePhysics(time);
+  for (auto &&it : m_bullets)
+    it->updatePhysics();
   m_bullets.remove_if([](auto &i) { return i->hasStopped(); });
 }
 
@@ -184,8 +205,7 @@ void Game::buildBarriers(std::vector<Object> &walls) {
     // add four walls to the static body
     polygonShape.SetAsBox(
         walls[i].m_rect.width / 64.0,
-        walls[i].m_rect.height /
-            64.0,  // 64 - потому что сначала мы делим на 2,
+        walls[i].m_rect.height / 64.0, // 64 - потому что сначала мы делим на 2,
         // чтобы получить половину ширины/высоты,
         // а затем делим на SCALE = 32
         SfVector2toB2Vec2(
@@ -220,6 +240,6 @@ void Game::loadGame(const std::string &fileName) {
   b2dJson json;
   m_world.reset((json.readFromFile(
       fileName.c_str(),
-      err)));  // ыыыыы, оно почему-то заработало, но выглядит стрёмно
+      err))); // ыыыыы, оно почему-то заработало, но выглядит стрёмно
   // updatePhysics();
 }

@@ -11,7 +11,7 @@
 #include "Base.h"
 #include "Bullet.h"
 #include "CharacterSouthPark.h"
-#include "ground.h"
+#include "Ground.h"
 #include "Level.h"
 #include "constants.h"
 
@@ -19,14 +19,14 @@
 
 namespace IlluminatiConfirmed {
 class Game {
- public:
+public:
   sf::Texture m_texture;
   Ground m_ground;
   int m_currentHeroId;
   // b2World *m_world;
   std::unique_ptr<b2World> m_world;
   inline b2World &getWorld() { return *m_world; }
-
+  bool m_running;
   // physics Box2D
   // std::unique_ptr<b2World> m_world;
   std::list<std::shared_ptr<Bullet>> m_bullets;
@@ -36,15 +36,15 @@ class Game {
 
   void buildBarriers(std::vector<Object> &walls);
 
- public:
+public:
   Game(sf::RenderWindow &window);
   void initNewGame(const std::string &map_puth, const std::string &file,
-                   std::set<int> ids);
+                   std::set<int> ids, sf::RenderWindow &window);
   void initCharacters(std::set<int> ids);
   void initPhysics();
 
   void draw(sf::RenderWindow &window);
-
+  bool isRunning() { return m_running; }
   std::shared_ptr<BaseCharacter> selectNextHero() {
     m_currentHeroId++;
     m_currentHeroId %= m_heroes.size();
