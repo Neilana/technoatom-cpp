@@ -19,7 +19,7 @@ enum class Direction { Up, Down, Left, Right, Nothing };
 enum class ScreenName { MainMenu, ChoseCharacters, Game, Load, Save };
 
 const std::string MAP__DIRECTORY = "../Game/resources/maps/";
-const std::string MAP_FILE = "test_ver3002_cut.tmx";
+const std::string MAP_FILE = "map1.tmx";
 const std::string LAYER_GROUND = "Layer_Ground";
 const std::string LAYER_BUILDINGS = "Layer_Buildings";
 const std::string OBJECT_SPRITE = "Buildings_sprite";

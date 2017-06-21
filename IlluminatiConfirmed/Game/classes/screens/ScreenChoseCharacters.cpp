@@ -37,6 +37,7 @@ ScreenName ScreenChoseCharacters::run(Game &game, sf::RenderWindow &window) {
     time = time / 800;
 
     while (window.pollEvent(event)) {
+
       if (event.type == sf::Event::KeyPressed) {
         if (Keyboard::isKeyPressed(Keyboard::Escape)) {
           return ScreenName::MainMenu;

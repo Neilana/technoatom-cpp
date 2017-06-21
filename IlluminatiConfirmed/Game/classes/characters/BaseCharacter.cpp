@@ -18,7 +18,7 @@ BaseCharacter::BaseCharacter(Type type, b2World &world,
     m_b2_base = world.CreateBody(&bd);
 
     b2PolygonShape polygon;
-    polygon.SetAsBox(0.5f, 0.1f);
+    polygon.SetAsBox(0.5f, 0.5f);
 
     b2FixtureDef fixture;
     fixture.friction = 1.f;
@@ -36,7 +36,7 @@ BaseCharacter::BaseCharacter(Type type, b2World &world,
     bd.position.Set(SfPointtoB2Point(sprite_data.x_position),
                     SfPointtoB2Point(sprite_data.y_position));
     bd.linearDamping = 0.f;
-    bd.fixedRotation = true;
+    bd.fixedRotation = false;
     m_b2_body = world.CreateBody(&bd);
 
     b2PolygonShape polygon;
