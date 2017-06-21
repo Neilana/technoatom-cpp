@@ -15,6 +15,7 @@
 #include "Factories.h"
 #include "ScreenChoseCharacters.h"
 #include "ScreenGame.h"
+#include "ScreenMenuChoseMap.h"
 #include "ScreenMenuLoad.h"
 #include "ScreenMenuMain.h"
 #include "ScreenMenuSave.h"
@@ -61,6 +62,10 @@ int main() {
     // save
     ScreenMenuSave screen4;
     screenNameToScreen[ScreenName::Save] = &screen4;
+
+    // chose
+    ScreenMenuChoseMap screen5;
+    screenNameToScreen[ScreenName::ChoseMap] = &screen5;
 
     sf::RenderWindow window;
     window.create(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Level.h test");

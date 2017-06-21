@@ -13,7 +13,6 @@ private:
     int m_frames;
     int currentFrame;
     int m_id;
-    // enum class CharacterState { Chosed, Selected, NotSelected };
 
     AvailableCharacter(int id, const std::string &fileName, int width,
                        int height, int x, int y, int frames) {
@@ -35,15 +34,10 @@ private:
       currentFrame = 0;
     }
   };
-  sf::Texture texture;
   std::vector<std::shared_ptr<AvailableCharacter>> m_characters;
-  // std::map<int, int> m_selectedCharsId;
 
   int m_selectedCharId;
   std::set<int> m_chosedCharsIds;
-  // void initTitle();
-  // void initBackground();
-  // void initMenuOptions();
 
   void showCharacters();
   void setChosedCharacters(float currentFrame);

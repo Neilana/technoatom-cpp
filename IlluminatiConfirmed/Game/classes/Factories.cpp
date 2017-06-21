@@ -21,7 +21,7 @@ FactoryObjects::create_map(const std::string &file, b2World *world) {
   Level level;
   level.loadMapFromFile(file);
 
-  auto p_texture = getTexture(std::string(MAP__DIRECTORY) +
+  auto p_texture = getTexture(std::string(MAP_DIRECTORY) +
                               level.GetMapInfo().m_name_of_tileset);
 
   std::shared_ptr<Ground> vec_of_graund;

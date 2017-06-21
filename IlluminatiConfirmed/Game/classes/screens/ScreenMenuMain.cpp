@@ -28,7 +28,7 @@ void ScreenMenuMain::initMenuOptions() {
   option.setPosition(sf::Vector2f(WINDOW_WIDTH / 2.0f, y));
 
   m_menuOptions.push_back(option);
-  m_screenNameByOption[0] = ScreenName::ChoseCharacters;
+  m_screenNameByOption[0] = ScreenName::ChoseMap;
 
   // 1
   y += deltaY;
@@ -40,6 +40,17 @@ void ScreenMenuMain::initMenuOptions() {
 
   m_menuOptions.push_back(option);
   m_screenNameByOption[1] = ScreenName::Game;
+
+  //  // 1+1
+  //  y += deltaY;
+
+  //  option.setColor(m_inactiveColor);
+  //  option.setString("Chose Map");
+  //  // option.setPosition(x, y);
+  //  option.setPosition(sf::Vector2f(WINDOW_WIDTH / 2.0f, y));
+
+  //  m_menuOptions.push_back(option);
+  //  m_screenNameByOption[2] = ScreenName::ChoseMap;
 
   // 2
   y += deltaY;

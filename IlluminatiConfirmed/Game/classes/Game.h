@@ -36,8 +36,7 @@ public:
 
 public:
   Game(sf::RenderWindow &window);
-  void initNewGame(const std::string &map_puth, const std::string &file,
-                   std::set<int> ids, sf::RenderWindow &window);
+  void initNewGame(std::set<int> ids, sf::RenderWindow &window);
   void initCharacters(std::set<int> ids);
   // void initNewGame(const std::string &map_puth, const std::string &file);
   void initObjects(std::set<int> ids);
@@ -51,6 +50,7 @@ public:
   void updatePhysics(float time);
   void saveGame(const std::string &fileName);
   void loadGame(const std::string &fileName);
+  void setMapFileName(const std::string &fileName);
   inline b2World &getWorld() { return *m_world; }
   std::shared_ptr<experimental::BaseCharacter> selectNextHero() {
 
@@ -63,6 +63,7 @@ private:
   std::map<std::string, std::shared_ptr<sf::Texture>> m_textures;
   std::shared_ptr<b2World> m_world;
   std::shared_ptr<Ground> m_ground;
+  std::string m_mapFileName;
   std::vector<std::shared_ptr<experimental::BaseInterface>> m_vector_of_objs;
 
   std::vector<std::shared_ptr<experimental::BaseCharacter>> m_heroes;

@@ -23,6 +23,7 @@ Game::Game(sf::RenderWindow &window) {
 
   m_currentHeroId = 0;
   m_running = false;
+  m_mapFileName = MAP_DIRECTORY + DEFAULT_MAP_FILE;
   //  m_world = std::make_unique<b2World>(b2Vec2({0.f, 0.f}));
 
   //  MyContactListener *listner = new MyContactListener;
@@ -86,8 +87,7 @@ Game::Game(sf::RenderWindow &window) {
 //   m_world->SetDebugDraw(debugDraw);
 // }
 
-void Game::initNewGame(const std::string &map_puth, const std::string &file,
-                       std::set<int> ids, sf::RenderWindow &window) {
+void Game::initNewGame(std::set<int> ids, sf::RenderWindow &window) {
 
   m_heroes.clear();
   m_ground.reset();
@@ -98,7 +98,7 @@ void Game::initNewGame(const std::string &map_puth, const std::string &file,
   m_running = true;
 
   auto ground_and_maps_stuff = experimental::FactoryObjects::create_map(
-      MAP__DIRECTORY + MAP_FILE, m_world.get());
+      MAP_DIRECTORY + m_mapFileName, m_world.get());
 
   // m_ground = ground_and_maps_stuff.first;
   m_ground = std::move(ground_and_maps_stuff.first);
@@ -194,3 +194,7 @@ void Game::updatePhysics(float time) {
 void Game::saveGame(const std::string &fileName) {}
 
 void Game::loadGame(const std::string &fileName) {}
+
+void Game::setMapFileName(const std::string &fileName) {
+  m_mapFileName = fileName;
+}

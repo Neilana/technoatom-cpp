@@ -30,7 +30,8 @@ SOURCES += main.cpp \
     classes/MyContactListener.cpp \
     classes/Ground.cpp \
     classes/Managers.cpp \
-    classes/Factories.cpp
+    classes/Factories.cpp \
+    classes/screens/ScreenMenuChoseMap.cpp
 
 HEADERS += \
     classes/Level.h \
@@ -55,7 +56,8 @@ HEADERS += \
     classes/MyContactListener.h \
     classes/Ground.h \
     classes/Managers.h \
-    classes/Factories.h
+    classes/Factories.h \
+    classes/screens/ScreenMenuChoseMap.h
 
    # ForTestbedCharacter.h
 

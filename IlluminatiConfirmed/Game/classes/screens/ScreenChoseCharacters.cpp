@@ -27,7 +27,7 @@ ScreenName ScreenChoseCharacters::run(Game &game, sf::RenderWindow &window) {
   bool running = true;
   sf::Event event;
   window.clear();
-  sf::RectangleShape rectangle;
+  // sf::RectangleShape rectangle;
   Clock clock;
 
   while (running && window.isOpen()) {
@@ -46,7 +46,7 @@ ScreenName ScreenChoseCharacters::run(Game &game, sf::RenderWindow &window) {
         if (Keyboard::isKeyPressed(Keyboard::Return) &&
             m_chosedCharsIds.size() > 0) {
           // m_chosedCharsIds.insert(m_characters[m_selectedCharId].get()->m_id);
-          game.initNewGame(MAP__DIRECTORY, MAP_FILE, m_chosedCharsIds, window);
+          game.initNewGame(m_chosedCharsIds, window);
 
           return ScreenName::Game;
         }
@@ -132,7 +132,7 @@ void ScreenChoseCharacters::showCharacters() {
     if (x > WINDOW_WIDTH - startX)
       x = startX, y += deltaY;
 
-    qDebug() << query.value(1).toString();
+    //  qDebug() << query.value(1).toString();
   }
 }
 
