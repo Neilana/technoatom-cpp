@@ -4,6 +4,8 @@ CONFIG += console c++14
 CONFIG -= app_bundle
 CONFIG += qt
 DEFINES += TIXML_USE_STL
+QMAKE_CXXFLAGS_WARN_ON += -Wno-unused-parameter
+QMAKE_CXXFLAGS_WARN_OFF -= -Wunused-parameter
 
 SOURCES += main.cpp \
     classes/Level.cpp \
@@ -24,13 +26,13 @@ SOURCES += main.cpp \
     classes/screens/ScreenMenu.cpp \
     classes/screens/ScreenMenuLoad.cpp \
     classes/screens/ScreenMenuSave.cpp \
-    classes/characters/BaseCharacter.cpp \
-    classes/characters/CharacterSouthPark.cpp \
-    classes/characters/CharacterAlinasBoys.cpp \
     classes/MyContactListener.cpp \
     classes/Ground.cpp \
-    classes/Managers.cpp \
     classes/Factories.cpp \
+    classes/Weapons.cpp \
+    classes/Event/Event.cpp \
+    classes/Event/EventListener.cpp \
+    classes/characters/character.cpp \
     classes/screens/ScreenMenuChoseMap.cpp
 
 HEADERS += \
@@ -50,20 +52,20 @@ HEADERS += \
     classes/screens/ScreenMenu.h \
     classes/screens/ScreenMenuLoad.h \
     classes/screens/ScreenMenuSave.h \
-    classes/characters/BaseCharacter.h \
-    classes/characters/CharacterSouthPark.h \
-    classes/characters/CharacterAlinasBoys.h \
     classes/MyContactListener.h \
     classes/Ground.h \
-    classes/Managers.h \
     classes/Factories.h \
-    classes/screens/ScreenMenuChoseMap.h
-
-   # ForTestbedCharacter.h
+    classes/Weapons.h \
+    classes/Event/Event.h \
+    classes/Event/EventListener.h \
+    classes/screens/ScreenMenuChoseMap.h \
+    classes/characters/Character.h
+    # ForTestbedCharacter.h
 
 INCLUDEPATH += classes/ \
   classes/screens \
-  classes/characters
+  classes/characters \
+  classes/Event
 
 LIBS += -L$$PWD/../../Libs/Box2D/Build/ -lBox2D
 INCLUDEPATH += $$PWD/../../Libs/Box2D/

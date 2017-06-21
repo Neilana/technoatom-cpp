@@ -1,6 +1,7 @@
 #include "MyContactListener.h"
-#include "BaseCharacter.h"
+#include "Character.h"
 using namespace IlluminatiConfirmed;
+using namespace experimental;
 
 void MyContactListener::BeginContact(b2Contact *contact) {
   void *user_data_A = contact->GetFixtureA()->GetUserData();

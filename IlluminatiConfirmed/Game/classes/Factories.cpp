@@ -47,7 +47,7 @@ FactoryObjects::create_character(int id, b2World *world) {
   static GenericObjectFactory<std::string, experimental::BaseCharacter,
                               b2World *, sf::Texture *,
                               experimental::CharacterSpriteInfo>
-      characters_factory = create_factory();
+      characters_factory = registrationTypesOfCharacters();
   //мб сюда стоит передвать эту мапу... хз где она в итоге должна храниться
   static std::map<std::string, std::shared_ptr<sf::Texture>> vec_of_textures;
 
@@ -70,14 +70,7 @@ FactoryObjects::create_character(int id, b2World *world) {
         std::shared_ptr<experimental::BaseInterface>(characters_factory.get(
             master)(world, p_texture.get(),
                     experimental::CharacterSpriteInfo(
-                        {width, height, size, frames, 300, 300})));
-
-    //    auto pers = std::static_pointer_cast<experimental::BaseInterface>(
-    //        std::make_shared<experimental::CharacterSouthPark>(
-    //            world, p_texture.get(), experimental::CharacterSpriteInfo(
-    //                                   {width, height, width, frames, 300,
-    //                                   300})));
-
+                        {width, height, width, frames, 300, 300})));
     return pers;
   }
   throw EXCEPTION("Something wrong", nullptr);
@@ -88,8 +81,8 @@ std::string FactoryObjects::getList() {
   return std::string();
 }
 
-std::shared_ptr<sf::Texture>
-FactoryObjects::getTexture(const std::string &file) {
+std::shared_ptr<sf::Texture> FactoryObjects::getTexture(
+    const std::string& file) {
   static std::map<std::string, std::shared_ptr<sf::Texture>> vec_of_textures;
   auto p_texture = std::make_shared<sf::Texture>();
   auto it = vec_of_textures.find(file);
