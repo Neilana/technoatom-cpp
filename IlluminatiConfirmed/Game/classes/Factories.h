@@ -8,9 +8,10 @@
 #include <map>
 
 #include "../../Exceptions/Exception.h"
-#include "Base.h"
+#include "Character.h"
 #include "Ground.h"
 #include "constants.h"
+#include "Base.h"
 
 namespace IlluminatiConfirmed {
 namespace experimental {
@@ -44,11 +45,13 @@ class FactoryObjects {
       const std::string& id, b2World* world);
 
   static std::string getList();
+  static std::shared_ptr<sf::Texture> getTexture(
+      const std::string& file);  //временно
 
  private:
   static GenericObjectFactory<std::string, BaseCharacter, b2World*,
                               sf::Texture*, CharacterSpriteInfo>
-  create_factory() {
+  registrationTypesOfCharacters() {
     GenericObjectFactory<std::string, BaseCharacter, b2World*, sf::Texture*,
                          CharacterSpriteInfo>
         characters_factory;
@@ -56,8 +59,6 @@ class FactoryObjects {
     characters_factory.add<CharacterAlinasBoys>("Alinas");
     return characters_factory;
   }
-
-  static std::shared_ptr<sf::Texture> getTexture(const std::string& file);
 };
 }
 }

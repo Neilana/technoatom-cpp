@@ -5,6 +5,7 @@
 #include <iostream>
 
 #include "../Logger/Logger.h"
+#include "constants.h"
 
 using namespace IlluminatiConfirmed;
 

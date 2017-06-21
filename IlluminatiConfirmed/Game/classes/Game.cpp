@@ -7,11 +7,11 @@
 
 #include <iostream>
 
-#include "CharacterAlinasBoys.h"
 #include "Factories.h"
 #include "Game.h"
 #include "GameDatabase.h"
 #include "MyContactListener.h"
+
 
 using namespace sf;
 using namespace std;
@@ -27,6 +27,12 @@ Game::Game(sf::RenderWindow &window) {
   debugDraw->SetFlags(b2Draw::e_shapeBit + b2Draw::e_centerOfMassBit +
                       b2Draw::e_pairBit);
   m_world->SetDebugDraw(debugDraw);
+
+  p_texture = std::make_shared<sf::Texture>();
+
+  p_texture->loadFromFile(
+      "E:/Git_ver3000/technoatom-cpp/IlluminatiConfirmed/Game/resources/"
+      "sprites/characters/Kyle.png");
 }
 
 void Game::initNewGame(const std::string &map_puth, const std::string &file) {
@@ -35,11 +41,60 @@ void Game::initNewGame(const std::string &map_puth, const std::string &file) {
 
   m_ground = std::move(ground_and_maps_stuff.first);
   //хз, мб надо присвоить, новая жи игра
-  m_vector_of_objs = ground_and_maps_stuff.second;
+
+  m_vector_of_objs.clear();
+  m_vector_of_objs.reserve(ground_and_maps_stuff.second.size() +
+                           m_heroes.size());
+  m_vector_of_objs.insert(m_vector_of_objs.end(),
+                          ground_and_maps_stuff.second.begin(),
+                          ground_and_maps_stuff.second.end());
+  m_vector_of_objs.insert(m_vector_of_objs.end(), m_heroes.begin(),
+                          m_heroes.end());
   auto hero =
-      experimental::FactoryObjects::create_character("13", m_world.get());
+      experimental::FactoryObjects::create_character("4", m_world.get());
   m_vector_of_objs.push_back(hero);
   m_heroes.push_back(static_pointer_cast<experimental::BaseCharacter>(hero));
+
+  auto hero2 = std::static_pointer_cast<experimental::BaseInterface>(
+      std::make_shared<experimental::CharacterSouthPark>(
+          m_world.get(), p_texture.get(),
+          experimental::CharacterSpriteInfo({192, 192, 192, 2, 300, 300})));
+  auto hero2Character = static_pointer_cast<experimental::BaseCharacter>(hero2);
+
+  sf::Texture *text_weapon = new sf::Texture();
+  LOG() << "Result: "
+        << text_weapon->loadFromFile(
+               "E:/Git_ver3000/technoatom-cpp/IlluminatiConfirmed/Game/"
+               "resources/sprites/bullets/ak.png")
+        << std::endl;
+
+  experimental::Weapon *weapon =
+      new experimental::Weapon(text_weapon,
+                               {experimental::TypeBullet::ROCKET,
+                                {0, 0, 604, 187},
+                                {0, 604, 729, 192},
+                                10,
+                                0.3f});
+experimental::ListnerWeapon  *listner_of_bullets_ =new experimental::ListnerWeapon(weapon, m_world.get(), &m_bullets, &m_vector_of_objs);
+  hero2Character->setWeapon(weapon);
+  m_vector_of_objs.push_back(hero2);
+
+  m_heroes.push_back(hero2Character);
+
+  {
+    //    p_texture_bullet = experimental::FactoryObjects::getTexture(
+    //        "E:/Git_ver3000/technoatom-cpp/IlluminatiConfirmed/Game/"
+    //        "resources/sprites/bullets/ak.png");
+
+    //    auto bullet = std::make_shared<experimental::Bullet>(
+    //        m_world.get(), p_texture_bullet.get(),
+    //        experimental::BulletInfo({{{0, 0, 604, 187}}, 0.1f, 10, 0.01f, 1,
+    //        1}));
+
+    //    bullet->setTransform({{2.f, 10.f}, {0.5, 0.5}});
+    //    m_bullets.push_back(bullet);
+    //    m_vector_of_objs.push_back(std::move(bullet));
+  }
 }
 
 void Game::initObjects(std::set<int> ids) {}
@@ -72,7 +127,7 @@ void Game::updatePhysics(float time) {
   m_world->Step(1 / 60.f, 8, 3);
   for (auto &&it : m_heroes)
     it->updatePhysics(time);  //я не понимаю зачем нужен этот метод)
-
+  for (auto &&it : m_bullets) it->move({0, 0}, time);
   //  static bool k = 1;
   //  if (k) {
   //    k = false;

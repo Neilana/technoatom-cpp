@@ -8,12 +8,7 @@
 #include <vector>
 #include "../Logger/Logger.h"
 
-#define DEBUG_ON
-#if defined(DEBUG_ON)
-#define LOG() std::cout
-#else
-#define LOG() LOGGER("level")
-#endif
+
 
 namespace IlluminatiConfirmed {
 struct Layer {

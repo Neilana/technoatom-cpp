@@ -53,7 +53,7 @@ ScreenName ScreenGame::run(Game &game, sf::RenderWindow &window) {
         }
         // если написать ниже - будет трэш, будет оооч много создаваться сразу
         if (event.key.code == sf::Keyboard::Space) {
-          // attack
+          currentHero->attack();
         }
       }
     }
@@ -77,9 +77,7 @@ ScreenName ScreenGame::run(Game &game, sf::RenderWindow &window) {
       currentHero->move(velocity, time);
     }
 
-    if (Keyboard::isKeyPressed(Keyboard::Escape)) {
-      return ScreenName::MainMenu;
-    }
+
 
     game.updatePhysics(time);
     window.clear();
@@ -102,7 +100,11 @@ ScreenName ScreenGame::run(Game &game, sf::RenderWindow &window) {
       game.getWorld().DrawDebugData();
     }
 
+
     window.display();
+    if (Keyboard::isKeyPressed(Keyboard::Escape)) {
+      return ScreenName::MainMenu;
+    }
   }
   return ScreenName::Game;
 }

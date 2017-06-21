@@ -24,8 +24,8 @@ FactoryObjects::create_map(const std::string& file, b2World* world) {
                               level.GetMapInfo().m_name_of_tileset);
 
   std::shared_ptr<Ground> vec_of_graund;
-  vec_of_graund =
-      std::make_shared<Ground>(p_texture.get(), level.GetLayerByName(LAYER_GROUND));
+  vec_of_graund = std::make_shared<Ground>(p_texture.get(),
+                                           level.GetLayerByName(LAYER_GROUND));
 
   std::vector<std::shared_ptr<experimental::BaseInterface>> p_vec_of_maps_stuff;
   auto big_objs =
@@ -45,7 +45,7 @@ std::shared_ptr<experimental::BaseInterface> FactoryObjects::create_character(
   static GenericObjectFactory<std::string, experimental::BaseCharacter,
                               b2World*, sf::Texture*,
                               experimental::CharacterSpriteInfo>
-      characters_factory = create_factory();
+      characters_factory = registrationTypesOfCharacters();
   //мб сюда стоит передвать эту мапу... хз где она в итоге должна храниться
   static std::map<std::string, std::shared_ptr<sf::Texture>> vec_of_textures;
 
@@ -63,16 +63,11 @@ std::shared_ptr<experimental::BaseInterface> FactoryObjects::create_character(
 
     auto p_texture = getTexture(fileName);
 
-    auto pers = std::shared_ptr<experimental::BaseInterface>(
-        characters_factory.get(master)(
-            world, p_texture.get(), experimental::CharacterSpriteInfo(
-                                   {width, height, width, frames, 300, 300})));
-
-//    auto pers = std::static_pointer_cast<experimental::BaseInterface>(
-//        std::make_shared<experimental::CharacterSouthPark>(
-//            world, p_texture.get(), experimental::CharacterSpriteInfo(
-//                                   {width, height, width, frames, 300, 300})));
-
+    auto pers =
+        std::shared_ptr<experimental::BaseInterface>(characters_factory.get(
+            master)(world, p_texture.get(),
+                    experimental::CharacterSpriteInfo(
+                        {width, height, width, frames, 300, 300})));
     return pers;
   }
   throw EXCEPTION("Something wrong", nullptr);
@@ -83,7 +78,8 @@ std::string FactoryObjects::getList() {
   return std::string();
 }
 
-std::shared_ptr<sf::Texture> FactoryObjects::getTexture(const std::string& file) {
+std::shared_ptr<sf::Texture> FactoryObjects::getTexture(
+    const std::string& file) {
   static std::map<std::string, std::shared_ptr<sf::Texture>> vec_of_textures;
   auto p_texture = std::make_shared<sf::Texture>();
   auto it = vec_of_textures.find(file);

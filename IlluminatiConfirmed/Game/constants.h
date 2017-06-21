@@ -3,12 +3,19 @@
 #include "SFML/Graphics.hpp"
 #include "math.h"
 
-#include <string>
+#include <iostream>
 
 #define UNUSE(var)                                                             \
   do {                                                                         \
     (void)var;                                                                 \
   } while (0);
+
+#define DEBUG_ON
+#if defined(DEBUG_ON)
+#define LOG() std::cout
+#else
+#define LOG() LOGGER("level")
+#endif
 
 const int WINDOW_HEIGHT = 800;
 const int WINDOW_WIDTH = 800;
@@ -45,6 +52,14 @@ template <typename T> b2Vec2 SfVector2toB2Vec2(const sf::Vector2<T> &vector) {
 
 template <typename T> sf::Vector2<T> B2Vec2toSfVector2(const b2Vec2 &vector) {
   return sf::Vector2<T>(vector.x * SCALE, vector.y * SCALE);
+}
+
+template <typename T> sf::Vector2<T> operator /(const sf::Vector2<T> &lhs, const sf::Vector2<T> &rhs) {
+  return sf::Vector2<T>(lhs.x / rhs.x, lhs.y / rhs.y);
+}
+
+template <typename T> sf::Vector2<T> operator *(const sf::Vector2<T> &lhs, const sf::Vector2<T> &rhs) {
+  return sf::Vector2<T>(lhs.x * rhs.x, lhs.y * rhs.y);
 }
 
 template <typename V1, typename V2>
