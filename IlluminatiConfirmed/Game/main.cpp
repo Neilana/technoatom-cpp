@@ -12,12 +12,12 @@
 #include "Game.h"
 #include "Level.h"
 
+#include "Factories.h"
 #include "ScreenChoseCharacters.h"
 #include "ScreenGame.h"
 #include "ScreenMenuLoad.h"
 #include "ScreenMenuMain.h"
 #include "ScreenMenuSave.h"
-
 #include "screens/Screen.h"
 //#include "constants.h"
 
@@ -66,7 +66,7 @@ int main() {
     window.create(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Level.h test");
     window.setFramerateLimit(60);
 
-    //std::stringstream sstream;
+    // std::stringstream sstream;
     sf::Text fpsCounter;
     sf::Font mainFont;
     if (!mainFont.loadFromFile(FONT_FILE)) // Set path
@@ -76,6 +76,7 @@ int main() {
     fpsCounter.setFont(mainFont);
     fpsCounter.setColor(sf::Color::White);
 
+    // experimental::FactoryObjects::create_factory();
     Game game(window);
     // game.initNewGame(MAP_FILE_1);
 
@@ -91,5 +92,4 @@ int main() {
   }
 
   return 0;
-
 }

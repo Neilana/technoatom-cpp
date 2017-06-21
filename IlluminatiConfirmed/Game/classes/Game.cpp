@@ -1,7 +1,7 @@
-#include <SFML/Graphics.hpp>
-#include <algorithm>
 #include "Box2D/Box2D.h"
 #include "SFMLDebugDraw.h"
+#include <SFML/Graphics.hpp>
+#include <algorithm>
 
 #include "b2dJson.h"
 
@@ -23,7 +23,7 @@ Game::Game(sf::RenderWindow &window) {
   MyContactListener *listner = new MyContactListener;
   // m_world->SetContactListener(listner);
   SFMLDebugDraw *debugDraw =
-      new SFMLDebugDraw(window);  //утечка памяти, бокс не будет это удалять
+      new SFMLDebugDraw(window); //утечка памяти, бокс не будет это удалять
   debugDraw->SetFlags(b2Draw::e_shapeBit + b2Draw::e_centerOfMassBit +
                       b2Draw::e_pairBit);
   m_world->SetDebugDraw(debugDraw);
@@ -36,8 +36,20 @@ void Game::initNewGame(const std::string &map_puth, const std::string &file) {
   m_ground = std::move(ground_and_maps_stuff.first);
   //хз, мб надо присвоить, новая жи игра
   m_vector_of_objs = ground_and_maps_stuff.second;
+
+  m_vector_of_objs.clear();
+  m_vector_of_objs.reserve(ground_and_maps_stuff.second.size() +
+                           m_heroes.size());
+  m_vector_of_objs.insert(m_vector_of_objs.end(),
+                          ground_and_maps_stuff.second.begin(),
+                          ground_and_maps_stuff.second.end());
+  m_vector_of_objs.insert(m_vector_of_objs.end(), m_heroes.begin(),
+                          m_heroes.end());
+
   auto hero =
       experimental::FactoryObjects::create_character("13", m_world.get());
+  //  auto hero = experimental::FactoryObjects::create_character("13",
+  //                                                             m_world.get());
   m_vector_of_objs.push_back(hero);
   m_heroes.push_back(static_pointer_cast<experimental::BaseCharacter>(hero));
 }
@@ -71,7 +83,7 @@ void Game::initPhysics() {
 void Game::updatePhysics(float time) {
   m_world->Step(1 / 60.f, 8, 3);
   for (auto &&it : m_heroes)
-    it->updatePhysics(time);  //я не понимаю зачем нужен этот метод)
+    it->updatePhysics(time); //я не понимаю зачем нужен этот метод)
 
   //  static bool k = 1;
   //  if (k) {

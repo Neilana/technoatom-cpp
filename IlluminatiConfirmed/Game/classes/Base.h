@@ -1,8 +1,8 @@
 #pragma once
 
+#include "Box2D/Box2D.h"
 #include <SFML/Graphics.hpp>
 #include <vector>
-#include "Box2D/Box2D.h"
 
 #include "Level.h"
 #include "constants.h"
@@ -12,13 +12,11 @@ namespace experimental {
 // enum class Type { CHARACTER_SOUTH_PARK, ALINAS_BOYS, BUILDING };
 
 class BaseInterface {
- public:
+public:
   enum TypeBase { MAPS_STUFF, CHARACTER, BULLET };
 
   BaseInterface(TypeBase type)
-      : m_b2_base(nullptr),
-        m_b2_base_fixture(nullptr),
-        m_type_base(type),
+      : m_b2_base(nullptr), m_b2_base_fixture(nullptr), m_type_base(type),
         is_dead(false) {
     LOG() << "Create base " << int(m_type_base) << std::endl;
   }
@@ -36,7 +34,7 @@ class BaseInterface {
     LOG() << "Destroy base " << int(m_type_base) << std::endl;
   }
 
- protected:
+protected:
   b2Body *m_b2_base;
   b2Fixture *m_b2_base_fixture;
   bool is_dead;
@@ -44,8 +42,8 @@ class BaseInterface {
 };
 
 class BaseMapsStuff : public BaseInterface {
- public:
-  enum TypeMap { BUILDING };  //мб какие то коины или жизни или оружее
+public:
+  enum TypeMap { BUILDING }; //мб какие то коины или жизни или оружее
   BaseMapsStuff(TypeMap type) : BaseInterface(MAPS_STUFF), m_type_map(type) {
     LOG() << "Create BaseMapsStuff " << int(m_type_base) << std::endl;
   }
@@ -60,7 +58,7 @@ class BaseMapsStuff : public BaseInterface {
 };
 
 class Building : public BaseMapsStuff {
- public:
+public:
   Building(b2World *world, const sf::Texture *texture, Big_Object &&big_obj)
       : BaseMapsStuff(BUILDING) {
     {
@@ -99,7 +97,8 @@ class Building : public BaseMapsStuff {
     // nothing
   }
   virtual void draw(sf::RenderWindow &window) override {
-    for (auto &&it : m_vec_sprite) window.draw(it);
+    for (auto &&it : m_vec_sprite)
+      window.draw(it);
   }
   virtual void contact(b2Fixture *B) override {
     //к примеру добавить дому хпшку и, когда она закончится, включать анимацию
@@ -111,7 +110,7 @@ class Building : public BaseMapsStuff {
     LOG() << "Destroy building " << std::endl;
       /*m_b2_base->GetWorld()->DestroyBody(m_b2_base);*/ }
 
-     private:
+    private:
       std::vector<sf::Sprite> m_vec_sprite;
 };
 
@@ -125,7 +124,7 @@ struct CharacterSpriteInfo {
 };
 
 class BaseCharacter : public BaseInterface {
- public:
+public:
   enum TypeBaseCharacter { CHARACTER_SOUTH_PARK, ALINAS_BOYS };
 
   //передавать лямбду, которая будет дергаться, когда персу необходимо будет
@@ -233,7 +232,8 @@ class BaseCharacter : public BaseInterface {
     static float currentFrame;
     currentFrame += 0.005 * deltaTime;
 
-    if (int(currentFrame) > m_frames - 1) currentFrame = 0;
+    if (int(currentFrame) > m_frames - 1)
+      currentFrame = 0;
 
     m_direction = findDirectonByVelocity(velocity);
     m_sprite.setTextureRect(
@@ -264,7 +264,7 @@ class BaseCharacter : public BaseInterface {
     // sprite.setRotation(m_body->GetAngle() * 180 / 3.14159265);
   }
 
- protected:
+protected:
   int m_frames;
   Direction m_direction;
   //  std::vector<sf::Rect<int>> front_rects;
@@ -272,7 +272,7 @@ class BaseCharacter : public BaseInterface {
   //  std::vector<sf::Rect<int>> left_rects;
   //  std::vector<sf::Rect<int>> right_rects;
   std::map<Direction, std::vector<sf::Rect<int>>>
-      m_directionRects;  // ыыыыыыы....
+      m_directionRects; // ыыыыыыы....
 
   b2Body *m_b2_body;
   b2Fixture *m_b2_body_fixture;
@@ -283,7 +283,7 @@ class BaseCharacter : public BaseInterface {
 };
 
 class CharacterSouthPark : public BaseCharacter {
- public:
+public:
   CharacterSouthPark(b2World *world, const sf::Texture *texture,
                      const CharacterSpriteInfo &sprite_data)
       : BaseCharacter(world, texture, sprite_data) {
@@ -329,7 +329,7 @@ class CharacterSouthPark : public BaseCharacter {
     static float m_time;
     static int dir = 1;
 
-    m_time += static_cast<float>(deltaTime / 150 * dir);  //скорость прыжков
+    m_time += static_cast<float>(deltaTime / 150 * dir); //скорость прыжков
     if ((m_time > m_b2_joint_prism->GetLowerLimit()) ||
         (m_b2_base->GetLinearVelocity().LengthSquared() > 0)) {
       if (m_time >= m_b2_joint_prism->GetUpperLimit()) {
@@ -346,7 +346,9 @@ class CharacterSouthPark : public BaseCharacter {
     // g_debugDraw.DrawPoint(linearOffset, 4.0f, b2Color(0.9f, 0.9f, 0.9f));
   }
   void draw(sf::RenderWindow &window) override {
-      m_sprite.setPosition(B2Vec2toSfVector2<float>(m_b2_body->GetPosition()));BaseCharacter::draw(window); }
+    m_sprite.setPosition(B2Vec2toSfVector2<float>(m_b2_body->GetPosition()));
+    BaseCharacter::draw(window);
+  }
   void contact(b2Fixture *B) override {
     LOG() << "I'am SouthParkBoys and I've begun the colliding with.. hz"
           << std::endl;
@@ -358,7 +360,7 @@ class CharacterSouthPark : public BaseCharacter {
           << std::endl;
     UNUSE(B);
   }
-  ~CharacterSouthPark() { LOG() <<"YOUUURRR HAVE KILLED KYLLLEEE!!/n"; }
+  ~CharacterSouthPark() { LOG() << "YOUUURRR HAVE KILLED KYLLLEEE!!/n"; }
 
   b2MotorJoint *m_b2_joint;
   b2PrismaticJoint *m_b2_joint_prism;
@@ -368,7 +370,7 @@ class CharacterSouthPark : public BaseCharacter {
     static float m_time;
     static int dir = 1;
 
-    m_time += static_cast<float>(deltaTime / 150 * dir);  //скорость прыжков
+    m_time += static_cast<float>(deltaTime / 150 * dir); //скорость прыжков
     if ((m_time > m_b2_joint_prism->GetLowerLimit()) ||
         (m_b2_base->GetLinearVelocity().LengthSquared() > 0)) {
       if (m_time >= m_b2_joint_prism->GetUpperLimit()) {
@@ -385,13 +387,12 @@ class CharacterSouthPark : public BaseCharacter {
 };
 
 class CharacterAlinasBoys : public BaseCharacter {
- public:
+public:
   CharacterAlinasBoys(b2World *world, const sf::Texture *texture,
                       const CharacterSpriteInfo &sprite_data)
-      : BaseCharacter(world, texture,
-                      sprite_data) {
+      : BaseCharacter(world, texture, sprite_data) {
     {
-      m_type_character =  TypeBaseCharacter::ALINAS_BOYS;
+      m_type_character = TypeBaseCharacter::ALINAS_BOYS;
       b2PrismaticJointDef jd;
       jd.bodyA = m_b2_base;
       jd.bodyB = m_b2_body;
