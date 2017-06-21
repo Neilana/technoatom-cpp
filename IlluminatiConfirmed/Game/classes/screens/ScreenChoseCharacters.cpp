@@ -40,7 +40,7 @@ ScreenName ScreenChoseCharacters::run(Game &game, sf::RenderWindow &window) {
 
       if (event.type == sf::Event::KeyPressed) {
         if (Keyboard::isKeyPressed(Keyboard::Escape)) {
-          return ScreenName::MainMenu;
+          return ScreenName::ChoseMap;
         }
 
         if (Keyboard::isKeyPressed(Keyboard::Return) &&
