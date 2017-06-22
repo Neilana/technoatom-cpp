@@ -5,17 +5,19 @@
 
 namespace IlluminatiConfirmed {
 class ScreenChoseCharacters : public ScreenMenu {
-private:
+ private:
   struct AvailableCharacter {
     sf::RectangleShape m_sprite;
     sf::Texture m_texture;
     std::vector<sf::Rect<int>> frontRects;
     int m_frames;
     int currentFrame;
+    std::string m_name;
     int m_id;
 
-    AvailableCharacter(int id, const std::string &fileName, int width,
-                       int height, int x, int y, int frames) {
+    AvailableCharacter(int id, const std::string &fileName,
+                       const std::string &name, int width, int height, int x,
+                       int y, int frames) {
       m_sprite.setSize(
           sf::Vector2f(DEFAULT_SPRITE_SIZE_X, DEFAULT_SPRITE_SIZE_Y));
       m_texture.loadFromFile(fileName);
@@ -32,6 +34,7 @@ private:
       }
       m_id = id;
       currentFrame = 0;
+      m_name = name;
     }
   };
   std::vector<std::shared_ptr<AvailableCharacter>> m_characters;
@@ -42,7 +45,7 @@ private:
   void showCharacters();
   void setChosedCharacters(float currentFrame);
 
-public:
+ public:
   ScreenChoseCharacters();
 
   ScreenName run(IlluminatiConfirmed::Game &game, sf::RenderWindow &window);

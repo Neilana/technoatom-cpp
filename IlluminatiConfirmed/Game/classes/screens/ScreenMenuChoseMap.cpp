@@ -1,9 +1,9 @@
 
 #include "ScreenMenuChoseMap.h"
-#include "GameDatabase.h"
-#include "constants.h"
 #include <SFML/Graphics.hpp>
 #include <string>
+#include "GameDatabase.h"
+#include "constants.h"
 
 using namespace sf;
 using namespace std;
@@ -29,8 +29,9 @@ ScreenName ScreenMenuChoseMap::run(Game &game, sf::RenderWindow &window) {
   // Drawing
   window.draw(m_backgroundSprite);
   window.draw(m_title);
+  for (auto &&it : m_maps) window.draw(it->m_sprite);
+  //  window.display();
 
-  window.display();
   while (window.isOpen()) {
     while (window.pollEvent(event)) {
       if (event.type == sf::Event::KeyPressed) {
@@ -40,6 +41,12 @@ ScreenName ScreenMenuChoseMap::run(Game &game, sf::RenderWindow &window) {
         if (Keyboard::isKeyPressed(Keyboard::Return)) {
           game.setMapFileName(m_maps[m_selectedMapId].get()->m_fileName);
 
+          // reset
+          m_selectedMapId = 0;
+          for (auto &&it : m_maps)
+            it.get()->m_sprite.setOutlineColor(sf::Color::Transparent);
+          m_maps[m_selectedMapId].get()->m_sprite.setOutlineColor(
+              m_activeColor);
           return ScreenName::ChoseCharacters;
         }
 
@@ -47,8 +54,7 @@ ScreenName ScreenMenuChoseMap::run(Game &game, sf::RenderWindow &window) {
           m_maps[m_selectedMapId].get()->m_sprite.setOutlineColor(
               sf::Color::Transparent);
           m_selectedMapId++;
-          if (m_selectedMapId > m_maps.size() - 1)
-            m_selectedMapId = 0;
+          if (m_selectedMapId > m_maps.size() - 1) m_selectedMapId = 0;
           m_maps[m_selectedMapId].get()->m_sprite.setOutlineColor(
               m_activeColor);
         }
@@ -57,8 +63,7 @@ ScreenName ScreenMenuChoseMap::run(Game &game, sf::RenderWindow &window) {
           m_maps[m_selectedMapId].get()->m_sprite.setOutlineColor(
               sf::Color::Transparent);
           m_selectedMapId--;
-          if (m_selectedMapId < 0)
-            m_selectedMapId = m_maps.size() - 1;
+          if (m_selectedMapId < 0) m_selectedMapId = m_maps.size() - 1;
           m_maps[m_selectedMapId].get()->m_sprite.setOutlineColor(
               m_activeColor);
         }
@@ -66,8 +71,26 @@ ScreenName ScreenMenuChoseMap::run(Game &game, sf::RenderWindow &window) {
       window.clear();
       window.draw(m_backgroundSprite);
       window.draw(m_title);
-      for (auto &&it : m_maps)
+
+      // имя выбранной карты
+      sf::Text m_name;
+      m_name.setFont(m_font);
+      m_name.setCharacterSize(40);
+      m_name.setString(m_maps[m_selectedMapId]->m_name);
+      // m_name.setPosition(
+      m_name.setColor(m_activeColor);
+
+      // center text
+      sf::FloatRect textRect = m_name.getLocalBounds();
+      m_name.setOrigin(textRect.left + textRect.width / 2.0f,
+                       textRect.top + textRect.height / 2.0f);
+      m_name.setPosition(sf::Vector2f(WINDOW_WIDTH / 2.0f, 90));
+
+      window.draw(m_name);
+
+      for (auto &&it : m_maps) {
         window.draw(it->m_sprite);
+      }
 
       window.display();
     }
@@ -78,13 +101,13 @@ ScreenName ScreenMenuChoseMap::run(Game &game, sf::RenderWindow &window) {
 
 void ScreenMenuChoseMap::showMaps() {
   float startX = 140;
-  float startY = 100;
+  float startY = 130;
 
   float x = startX;
   float y = startY;
 
   float deltaX = 40;
-  float deltaY = MAP_SPRITE_SIZE + 10;
+  float deltaY = MAP_SPRITE_SIZE + 40;
 
   GameDatabase db = GameDatabase::getInstance();
   QSqlQuery query;
@@ -104,8 +127,7 @@ void ScreenMenuChoseMap::showMaps() {
     m_maps.push_back(std::move(bufMap));
 
     x += MAP_SPRITE_SIZE + deltaX;
-    if (x > WINDOW_WIDTH - startX)
-      x = startX, y += deltaY;
+    if (x > WINDOW_WIDTH - startX) x = startX, y += deltaY;
 
     //  qDebug() << query.value(1).toString();
   }
