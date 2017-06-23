@@ -38,15 +38,37 @@ class Bullet : public BaseInterface {
 
   virtual void contact(b2Fixture *B);
   virtual void endContact(b2Fixture *B);
+  virtual ~Bullet() {}
 
  private:
   BulletInfo m_info;
-  b2Body *m_b2_center;
-  b2Fixture *m_b2_center_fixture;
-  b2MotorJoint *m_b2_joint;
-  float m_angle;
 
   sf::Sprite m_sprite;
 };
+
+//class Bullet : public BaseInterface {
+// public:
+//  Bullet(b2World *world, sf::Texture *texture, BulletInfo &&info);
+//  void setTransform(BulletSets &&sets);
+
+//  virtual void draw(sf::RenderWindow &window);
+
+//  virtual void move(b2Vec2 velocity, float deltaTime);
+
+//  virtual void contact(b2Fixture *B);
+//  virtual void endContact(b2Fixture *B);
+//  virtual ~Bullet() {}
+
+// private:
+//  BulletInfo m_info;
+//  b2Body *m_b2_center;
+//  b2Fixture *m_b2_center_fixture;
+//  b2MotorJoint *m_b2_joint;
+//  float m_angle;
+
+//  sf::Sprite m_sprite;
+//};
+
+
 }
 }

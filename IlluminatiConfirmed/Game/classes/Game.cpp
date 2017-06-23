@@ -12,7 +12,6 @@
 #include "GameDatabase.h"
 #include "MyContactListener.h"
 
-
 using namespace sf;
 using namespace std;
 
@@ -20,7 +19,7 @@ using namespace IlluminatiConfirmed;
 
 Game::Game(sf::RenderWindow &window) {
   m_world = std::make_shared<b2World>(b2Vec2({0.f, 0.f}));
-  MyContactListener *listner = new MyContactListener;
+  //MyContactListener *listner = new MyContactListener;
   // m_world->SetContactListener(listner);
   SFMLDebugDraw *debugDraw =
       new SFMLDebugDraw(window);  //утечка памяти, бокс не будет это удалять
@@ -33,6 +32,8 @@ Game::Game(sf::RenderWindow &window) {
   p_texture->loadFromFile(
       "E:/Git_ver3000/technoatom-cpp/IlluminatiConfirmed/Game/resources/"
       "sprites/characters/Kyle.png");
+  listner_of_bullets =
+      experimental::ListnerWeapon(m_world.get(), &m_bullets, &m_vector_of_objs);
 }
 
 void Game::initNewGame(const std::string &map_puth, const std::string &file) {
@@ -72,10 +73,10 @@ void Game::initNewGame(const std::string &map_puth, const std::string &file) {
       new experimental::Weapon(text_weapon,
                                {experimental::TypeBullet::ROCKET,
                                 {0, 0, 604, 187},
-                                {0, 604, 729, 192},
+                                {607, 0, 727, 187},
                                 10,
                                 0.3f});
-experimental::ListnerWeapon  *listner_of_bullets_ =new experimental::ListnerWeapon(weapon, m_world.get(), &m_bullets, &m_vector_of_objs);
+  listner_of_bullets.addWeapon(weapon);
   hero2Character->setWeapon(weapon);
   m_vector_of_objs.push_back(hero2);
 

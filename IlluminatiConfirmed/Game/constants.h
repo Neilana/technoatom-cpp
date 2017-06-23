@@ -5,9 +5,9 @@
 
 #include <iostream>
 
-#define UNUSE(var)                                                             \
-  do {                                                                         \
-    (void)var;                                                                 \
+#define UNUSE(var) \
+  do {             \
+    (void)var;     \
   } while (0);
 
 #define DEBUG_ON
@@ -46,26 +46,43 @@ const int DEFAULT_SPRITE_SIZE_X = 64;
 const int DEFAULT_SPRITE_SIZE_Y = 64;
 const int TEAM_MEMBERS_COUNT = 2;
 
-template <typename T> b2Vec2 SfVector2toB2Vec2(const sf::Vector2<T> &vector) {
+template <typename T>
+b2Vec2 SfVector2toB2Vec2(const sf::Vector2<T> &vector) {
   return b2Vec2(vector.x / SCALE, vector.y / SCALE);
 }
 
-template <typename T> sf::Vector2<T> B2Vec2toSfVector2(const b2Vec2 &vector) {
+template <typename T>
+sf::Vector2<T> B2Vec2toSfVector2(const b2Vec2 &vector) {
   return sf::Vector2<T>(vector.x * SCALE, vector.y * SCALE);
 }
 
-template <typename T> sf::Vector2<T> operator /(const sf::Vector2<T> &lhs, const sf::Vector2<T> &rhs) {
+template <typename T>
+sf::Vector2<T> operator/(const sf::Vector2<T> &lhs, const sf::Vector2<T> &rhs) {
   return sf::Vector2<T>(lhs.x / rhs.x, lhs.y / rhs.y);
 }
 
-template <typename T> sf::Vector2<T> operator *(const sf::Vector2<T> &lhs, const sf::Vector2<T> &rhs) {
+template <typename T>
+sf::Vector2<T> operator*(const sf::Vector2<T> &lhs, const sf::Vector2<T> &rhs) {
   return sf::Vector2<T>(lhs.x * rhs.x, lhs.y * rhs.y);
+}
+
+template <typename T>
+sf::Vector2<T> operator+(const sf::Vector2<T> &lhs, const sf::Vector2<T> &rhs) {
+  return sf::Vector2<T>(lhs.x + rhs.x, lhs.y + rhs.y);
 }
 
 template <typename V1, typename V2>
 float RadBetweenVectors(const V1 &v1, const V2 &v2) {
   return static_cast<float>(atan2(v2.y - v1.y, v2.x - v1.x));
 }
+
+// template <typename LHS, typename RHS>
+// float RadBetweenVectors(const LHS &lhs, const RHS &rhs) {
+//  auto dot = lhs.x * rhs.x + lhs.y * lhs.y;
+//  auto mod_lhs = sqrtf(lhs.x * lhs.x + lhs.y * lhs.y);
+//  auto mod_rhs = sqrtf(rhs.x * rhs.x + rhs.y * rhs.y);
+//  return dot / (mod_lhs * mod_rhs);
+//}
 
 inline float SfPointtoB2Point(float point) { return point / SCALE; }
 
@@ -85,14 +102,18 @@ inline b2Vec2 getFixtureWorldPosition(const b2Fixture *fixture) {
 
 inline Direction findDirectonByVelocity(b2Vec2 &vector) {
   // Direction dir = Direction::Up;
-  if (vector.y > 0.0)
-    return Direction::Down;
-  if (vector.y < 0.0)
-    return Direction::Up;
+  if (vector.y > 0.0) return Direction::Down;
+  if (vector.y < 0.0) return Direction::Up;
 
-  if (vector.x > 0.0)
-    return Direction::Right;
-  if (vector.x < 0.0)
-    return Direction::Left;
+  if (vector.x > 0.0) return Direction::Right;
+  if (vector.x < 0.0) return Direction::Left;
   return Direction::Down;
 }
+
+template <typename type>
+std::ostream &operator<<(std::ostream &stream, const sf::Vector2<type> &vec) {
+  stream << vec.x << " : " << vec.y;
+  return stream;
+}
+
+std::ostream &operator<<(std::ostream &stream, const b2Vec2 &vec);

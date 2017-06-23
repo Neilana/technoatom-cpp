@@ -42,8 +42,6 @@ ScreenName ScreenGame::run(Game &game, sf::RenderWindow &window) {
     sf::Event event;
     sf::Mouse::getPosition();
 
-
-
     while (window.pollEvent(event)) {
       if (event.type == sf::Event::Closed) window.close();
 
@@ -52,32 +50,33 @@ ScreenName ScreenGame::run(Game &game, sf::RenderWindow &window) {
           currentHero = game.selectNextHero();
         }
         // если написать ниже - будет трэш, будет оооч много создаваться сразу
-        if (event.key.code == sf::Keyboard::Space) {
+      }
+      if (event.type == sf::Event::MouseButtonPressed) {
+        if (event.mouseButton.button == sf::Mouse::Left) {
           currentHero->attack();
         }
       }
     }
+
     b2Vec2 velocity = {0.f, 0.f};
-    if (Keyboard::isKeyPressed(Keyboard::Left)) {
+    if (Keyboard::isKeyPressed(Keyboard::A)) {
       velocity += b2Vec2({-1.f, 0.f});
     }
-    if (Keyboard::isKeyPressed(Keyboard::Right)) {
+    if (Keyboard::isKeyPressed(Keyboard::D)) {
       // currentHero->move(Direction::Right, time);
       velocity += b2Vec2({+1.f, 0.f});
     }
-    if (Keyboard::isKeyPressed(Keyboard::Up)) {
+    if (Keyboard::isKeyPressed(Keyboard::W)) {
       // currentHero->move(Direction::Up, time);
       velocity += b2Vec2({0.f, -1.f});
     }
-    if (Keyboard::isKeyPressed(Keyboard::Down)) {
+    if (Keyboard::isKeyPressed(Keyboard::S)) {
       // currentHero->move(Direction::Down, time);
       velocity += b2Vec2({0.f, +1.f});
     }
     if (velocity.Length() > 0.0) {
       currentHero->move(velocity, time);
     }
-
-
 
     game.updatePhysics(time);
     window.clear();
@@ -99,7 +98,6 @@ ScreenName ScreenGame::run(Game &game, sf::RenderWindow &window) {
       window.draw(fpsCounter);
       game.getWorld().DrawDebugData();
     }
-
 
     window.display();
     if (Keyboard::isKeyPressed(Keyboard::Escape)) {
