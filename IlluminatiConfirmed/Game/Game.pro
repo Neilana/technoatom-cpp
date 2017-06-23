@@ -29,12 +29,12 @@ SOURCES += main.cpp \
     classes/MyContactListener.cpp \
     classes/Ground.cpp \
     classes/Event/EventListener.cpp \
-    classes/characters/character.cpp \
-    classes/constants.cpp
+    classes/constants.cpp \
     classes/Event/Event.cpp \
     classes/Weapons.cpp \
     classes/Factories.cpp \
     classes/screens/ScreenMenuChoseMap.cpp \
+    classes/characters/Сharacter.cpp
 
 HEADERS += \
     classes/Level.h \

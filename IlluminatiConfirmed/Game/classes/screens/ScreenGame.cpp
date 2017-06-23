@@ -63,18 +63,22 @@ ScreenName ScreenGame::run(Game &game, sf::RenderWindow &window) {
     }
 
     b2Vec2 velocity = {0.f, 0.f};
-    if (Keyboard::isKeyPressed(Keyboard::A)) {
+    if (Keyboard::isKeyPressed(Keyboard::A) ||
+        Keyboard::isKeyPressed(Keyboard::Left)) {
       velocity += b2Vec2({-1.f, 0.f});
     }
-    if (Keyboard::isKeyPressed(Keyboard::D)) {
+    if (Keyboard::isKeyPressed(Keyboard::D) ||
+        Keyboard::isKeyPressed(Keyboard::Right)) {
       // currentHero->move(Direction::Right, time);
       velocity += b2Vec2({+1.f, 0.f});
     }
-    if (Keyboard::isKeyPressed(Keyboard::W)) {
+    if (Keyboard::isKeyPressed(Keyboard::W) ||
+        Keyboard::isKeyPressed(Keyboard::Up)) {
       // currentHero->move(Direction::Up, time);
       velocity += b2Vec2({0.f, -1.f});
     }
-    if (Keyboard::isKeyPressed(Keyboard::S)) {
+    if (Keyboard::isKeyPressed(Keyboard::S) ||
+        Keyboard::isKeyPressed(Keyboard::Down)) {
       // currentHero->move(Direction::Down, time);
       velocity += b2Vec2({0.f, +1.f});
     }

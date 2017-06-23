@@ -4,7 +4,8 @@
 IlluminatiConfirmed::experimental::BaseCharacter::BaseCharacter(
     b2World *world, const sf::Texture *texture,
     const IlluminatiConfirmed::experimental::CharacterSpriteInfo &sprite_data)
-    : BaseInterface(BaseInterface::CHARACTER), m_weapon(nullptr), m_height(sprite_data.height) {
+    : BaseInterface(BaseInterface::CHARACTER), m_weapon(nullptr),
+      m_height(sprite_data.height) {
   LOG() << "Create Character \n";
   {
     b2BodyDef bd;
@@ -63,8 +64,8 @@ IlluminatiConfirmed::experimental::BaseCharacter::BaseCharacter(
   m_direction = Direction::Down;
 
   m_sprite.setTexture(*texture);
-  m_sprite.scale(float(sprite_data.size / sprite_data.width),
-                 float(sprite_data.size / sprite_data.height));
+  m_sprite.scale((float)sprite_data.size / sprite_data.width,
+                 (float)sprite_data.size / sprite_data.height);
   m_sprite.setTextureRect({0, 0, sprite_data.height, sprite_data.width});
   m_sprite.setOrigin(m_sprite.getTextureRect().width / 2.f,
                      m_sprite.getTextureRect().height);
@@ -101,7 +102,12 @@ IlluminatiConfirmed::experimental::BaseCharacter::BaseCharacter(
 
 void IlluminatiConfirmed::experimental::BaseCharacter::draw(
     sf::RenderWindow &window) {
-  auto pos_of_weapon = B2Vec2toSfVector2<float>(getFixtureWorldPosition(m_b2_body_fixture));
+  m_sprite.setPosition(B2Vec2toSfVector2<float>(m_b2_body->GetPosition()));
+  window.draw(m_sprite);
+
+  // !!!!!!!!!!!
+  auto pos_of_weapon =
+      B2Vec2toSfVector2<float>(getFixtureWorldPosition(m_b2_body_fixture));
   //мол на 20 пр ниже, чем центр фикстуры
   pos_of_weapon.y = pos_of_weapon.y + 0.3f * m_height;
 
@@ -111,11 +117,13 @@ void IlluminatiConfirmed::experimental::BaseCharacter::draw(
   m_sprite.setPosition(B2Vec2toSfVector2<float>(m_b2_body->GetPosition()));
 
   if (m_direction == Direction::Up) {
-    if (m_weapon) m_weapon->draw(window);
-    window.draw(m_sprite);
+    if (m_weapon)
+      m_weapon->draw(window);
+
   } else {
     window.draw(m_sprite);
-    if (m_weapon) m_weapon->draw(window);
+    if (m_weapon)
+      m_weapon->draw(window);
   }
 }
 
@@ -129,10 +137,11 @@ void IlluminatiConfirmed::experimental::BaseCharacter::move(b2Vec2 velocity,
   //        RadBetweenVectors(m_body->GetPosition(),
   // SfVector2toB2Vec2(sf::Mouse::getPosition(window))));
 
-  // sprite.setPosition(FromBox2DtoPixel(m_body->GetPosition().x),
-  //                   FromBox2DtoPixel(m_body->GetPosition().y));
+  // m_sprite.setPosition(FromBox2DtoPixel(m_body->GetPosition().x),
+  //                    FromBox2DtoPixel(m_body->GetPosition().y));
 
-  if (int(currentFrame) > m_frames - 1) currentFrame = 0;
+  if (int(currentFrame) > m_frames - 1)
+    currentFrame = 0;
 
   m_direction = findDirectonByVelocity(velocity);
   m_sprite.setTextureRect(m_directionRects[m_direction].at((int)currentFrame));
@@ -151,21 +160,25 @@ void IlluminatiConfirmed::experimental::BaseCharacter::endContact(
 
 void IlluminatiConfirmed::experimental::BaseCharacter::setWeapon(
     IlluminatiConfirmed::experimental::Weapon *weapon) {
-  if (m_weapon) delete m_weapon;
+  if (m_weapon)
+    delete m_weapon;
   m_weapon = weapon;
 }
 
 void IlluminatiConfirmed::experimental::BaseCharacter::moveWeapon(
     const sf::Vector2f &pos, float rot) {
-  if (m_weapon) m_weapon->setPositionRotation(pos, rot);
+  if (m_weapon)
+    m_weapon->setPositionRotation(pos, rot);
 }
 
 void IlluminatiConfirmed::experimental::BaseCharacter::attack() {
-  if (m_weapon) m_weapon->attack();
+  if (m_weapon)
+    m_weapon->attack();
 }
 
 IlluminatiConfirmed::experimental::BaseCharacter::~BaseCharacter() {
-  if (m_weapon) delete m_weapon;
+  if (m_weapon)
+    delete m_weapon;
   m_b2_body->GetWorld()->DestroyBody(m_b2_body);
 }
 
@@ -222,7 +235,7 @@ void IlluminatiConfirmed::experimental::CharacterSouthPark::move(
   static float m_time;
   static int dir = 1;
 
-  m_time += static_cast<float>(deltaTime / 150 * dir);  //скорость прыжков
+  m_time += static_cast<float>(deltaTime / 150 * dir); //скорость прыжков
   if ((m_time > m_b2_joint_prism->GetLowerLimit()) ||
       (m_b2_base->GetLinearVelocity().LengthSquared() > 0)) {
     if (m_time >= m_b2_joint_prism->GetUpperLimit()) {
@@ -269,7 +282,7 @@ void IlluminatiConfirmed::experimental::CharacterSouthPark::updatePhysics(
   static float m_time;
   static int dir = 1;
 
-  m_time += static_cast<float>(deltaTime / 150 * dir);  //скорость прыжков
+  m_time += static_cast<float>(deltaTime / 150 * dir); //скорость прыжков
   if ((m_time > m_b2_joint_prism->GetLowerLimit()) ||
       (m_b2_base->GetLinearVelocity().LengthSquared() > 0)) {
     if (m_time >= m_b2_joint_prism->GetUpperLimit()) {

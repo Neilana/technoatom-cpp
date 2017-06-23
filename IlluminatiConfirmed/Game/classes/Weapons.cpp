@@ -25,7 +25,7 @@ void IlluminatiConfirmed::experimental::Weapon::setPositionRotation(
 
   // LOG() << "flip before: " << flip_check;
 
-  if (((rotation < 90) && (rotation > -90)) && flip_check.y < 0) {  // degrees
+  if (((rotation < 90) && (rotation > -90)) && flip_check.y < 0) { // degrees
 
     m_sprite.setScale(flip_check.x, -flip_check.y);
   } else if (((rotation > 90) || (rotation < -90)) && flip_check.y > 0)
@@ -74,10 +74,10 @@ IlluminatiConfirmed::experimental::ListnerWeapon::ListnerWeapon()
 
 IlluminatiConfirmed::experimental::ListnerWeapon::ListnerWeapon(
     b2World *world,
-    std::vector<std::shared_ptr<IlluminatiConfirmed::experimental::Bullet> >
+    std::vector<std::shared_ptr<IlluminatiConfirmed::experimental::Bullet>>
         *bullets,
     std::vector<
-        std::shared_ptr<IlluminatiConfirmed::experimental::BaseInterface> >
+        std::shared_ptr<IlluminatiConfirmed::experimental::BaseInterface>>
         *objs)
     : m_world(world), m_bullets(bullets), m_objs(objs) {
   // syncVal(class_->event_create_bullet.createSyncValue());
@@ -100,8 +100,7 @@ void IlluminatiConfirmed::experimental::ListnerWeapon::pushBullet(
   //каждая пулька запрос к бд, мы же performance freak
   if (m_objs != nullptr && m_bullets != nullptr && m_world != nullptr) {
     auto texture = experimental::FactoryObjects::getTexture(
-        "E:/Git_ver3000/technoatom-cpp/IlluminatiConfirmed/Game/"
-        "resources/sprites/bullets/ak.png");
+        BULLETS_SPRITES_DIRECTORY + "ak.png");
 
     auto bullet = std::make_shared<experimental::Bullet>(
         m_world, texture.get(),

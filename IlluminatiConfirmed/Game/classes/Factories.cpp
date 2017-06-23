@@ -3,17 +3,17 @@
 using namespace IlluminatiConfirmed;
 using namespace experimental;
 
-GenericObjectFactory<std::string, BaseCharacter, b2World *, sf::Texture *,
-                     CharacterSpriteInfo>
-FactoryObjects::create_factory() {
-  GenericObjectFactory<std::string, BaseCharacter, b2World *, sf::Texture *,
-                       CharacterSpriteInfo>
-      characters_factory;
+// GenericObjectFactory<std::string, BaseCharacter, b2World *, sf::Texture *,
+//                     CharacterSpriteInfo>
+// FactoryObjects::create_factory() {
+//  GenericObjectFactory<std::string, BaseCharacter, b2World *, sf::Texture *,
+//                       CharacterSpriteInfo>
+//      characters_factory;
 
-  characters_factory.add<CharacterSouthPark>("Park");
-  characters_factory.add<CharacterAlinasBoys>("Alinas");
-  return characters_factory;
-}
+//  characters_factory.add<CharacterSouthPark>("Park");
+//  characters_factory.add<CharacterAlinasBoys>("Alinas");
+//  return characters_factory;
+//}
 
 std::pair<std::shared_ptr<Ground>,
           std::vector<std::shared_ptr<experimental::BaseInterface>>>
@@ -70,7 +70,7 @@ FactoryObjects::create_character(int id, b2World *world) {
         std::shared_ptr<experimental::BaseInterface>(characters_factory.get(
             master)(world, p_texture.get(),
                     experimental::CharacterSpriteInfo(
-                        {width, height, width, frames, 300, 300})));
+                        {width, height, size, frames, 300, 300})));
     return pers;
   }
   throw EXCEPTION("Something wrong", nullptr);
@@ -81,8 +81,8 @@ std::string FactoryObjects::getList() {
   return std::string();
 }
 
-std::shared_ptr<sf::Texture> FactoryObjects::getTexture(
-    const std::string& file) {
+std::shared_ptr<sf::Texture>
+FactoryObjects::getTexture(const std::string &file) {
   static std::map<std::string, std::shared_ptr<sf::Texture>> vec_of_textures;
   auto p_texture = std::make_shared<sf::Texture>();
   auto it = vec_of_textures.find(file);

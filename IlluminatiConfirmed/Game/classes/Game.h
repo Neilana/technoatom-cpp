@@ -10,11 +10,11 @@
 
 #include "Base.h"
 #include "Bullet.h"
-#include "Level.h"
-#include "constants.h"
-#include "Ground.h"
 #include "Character.h"
+#include "Ground.h"
+#include "Level.h"
 #include "Weapons.h"
+#include "constants.h"
 
 // using IlluminatiConfirmed::Character;
 
@@ -29,7 +29,7 @@ public:
   bool m_running;
   // physics Box2D
   // std::unique_ptr<b2World> m_world;
-  std::list<std::shared_ptr<Bullet>> m_bullets;
+  // std::list<std::shared_ptr<Bullet>> m_bullets;
 
   std::vector<experimental::Building> m_vec_map;
 
@@ -59,11 +59,6 @@ public:
     return m_heroes[m_currentHeroId];
   }
 
-    m_currentHeroId++;
-    m_currentHeroId %= m_heroes.size();
-    return m_heroes[m_currentHeroId];
-  }
-
 private:
   std::map<std::string, std::shared_ptr<sf::Texture>> m_textures;
   std::shared_ptr<b2World> m_world;
@@ -75,7 +70,7 @@ private:
   experimental::ListnerWeapon listner_of_bullets;
 
   std::shared_ptr<sf::Texture> p_texture;
-   std::shared_ptr<sf::Texture> p_texture_bullet;
+  std::shared_ptr<sf::Texture> p_texture_bullet;
   int m_currentHeroId;
   int a;
 };
