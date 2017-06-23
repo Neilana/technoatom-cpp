@@ -28,12 +28,13 @@ SOURCES += main.cpp \
     classes/screens/ScreenMenuSave.cpp \
     classes/MyContactListener.cpp \
     classes/Ground.cpp \
-    classes/Factories.cpp \
-    classes/Weapons.cpp \
-    classes/Event/Event.cpp \
     classes/Event/EventListener.cpp \
-    classes/screens/ScreenMenuChoseMap.cpp \
+    classes/characters/character.cpp \
     classes/constants.cpp
+    classes/Event/Event.cpp \
+    classes/Weapons.cpp \
+    classes/Factories.cpp \
+    classes/screens/ScreenMenuChoseMap.cpp \
 
 HEADERS += \
     classes/Level.h \

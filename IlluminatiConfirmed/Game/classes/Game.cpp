@@ -28,6 +28,7 @@ Game::Game(sf::RenderWindow &window) {
   debugDraw->SetFlags(b2Draw::e_shapeBit + b2Draw::e_centerOfMassBit +
                       b2Draw::e_pairBit);
   m_world->SetDebugDraw(debugDraw);
+      "E:/Git_ver3000/technoatom-cpp/IlluminatiConfirmed/Game/resources/"
   m_running = false;
   m_mapFileName = MAP_DIRECTORY + DEFAULT_MAP_FILE;
 }

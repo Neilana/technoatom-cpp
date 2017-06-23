@@ -54,10 +54,10 @@ public:
   void setMapFileName(const std::string &fileName);
   inline b2World &getWorld() { return *m_world; }
   std::shared_ptr<experimental::BaseCharacter> selectNextHero() {
-      m_currentHeroId++;
-      m_currentHeroId %= m_heroes.size();
-      return m_heroes[m_currentHeroId];
-    }
+    m_currentHeroId++;
+    m_currentHeroId %= m_heroes.size();
+    return m_heroes[m_currentHeroId];
+  }
 
     m_currentHeroId++;
     m_currentHeroId %= m_heroes.size();
