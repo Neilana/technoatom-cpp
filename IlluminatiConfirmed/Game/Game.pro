@@ -32,8 +32,8 @@ SOURCES += main.cpp \
     classes/Weapons.cpp \
     classes/Event/Event.cpp \
     classes/Event/EventListener.cpp \
-    classes/characters/character.cpp \
-    classes/screens/ScreenMenuChoseMap.cpp
+    classes/screens/ScreenMenuChoseMap.cpp \
+    classes/constants.cpp
 
 HEADERS += \
     classes/Level.h \

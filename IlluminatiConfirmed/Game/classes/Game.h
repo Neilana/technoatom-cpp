@@ -72,7 +72,7 @@ private:
   std::vector<std::shared_ptr<experimental::BaseInterface>> m_vector_of_objs;
   std::vector<std::shared_ptr<experimental::BaseCharacter>> m_heroes;
   std::vector<std::shared_ptr<experimental::Bullet>> m_bullets;
-  //experimental::ListnerWeapon listner_of_bullets_;
+  experimental::ListnerWeapon listner_of_bullets;
 
   std::shared_ptr<sf::Texture> p_texture;
    std::shared_ptr<sf::Texture> p_texture_bullet;
