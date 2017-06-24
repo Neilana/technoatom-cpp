@@ -25,6 +25,7 @@ class SpriteInterface {
 struct BulletSetsInfo {
   BulletSets sets;
   TypeBullet type;
+  BaseCharacter *whose;
 };
 
 class Weapon {
@@ -33,7 +34,7 @@ class Weapon {
 
   void setPositionRotation(const sf::Vector2f &pos, float rotation);
 
-  void attack();
+  void attack(BaseCharacter *who);
 
   void draw(sf::RenderWindow &window);
 

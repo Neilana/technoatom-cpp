@@ -1,8 +1,12 @@
+#include <QCoreApplication>
+#include <QtConcurrent>
+#include <QObject>
+
 #include "Box2D/Box2D.h"
 #include "SFMLDebugDraw.h"
 
-#include "gtest/gtest.h"
 #include <SFML/Graphics.hpp>
+#include "gtest/gtest.h"
 
 #include <exception>
 #include <iostream>
@@ -37,64 +41,79 @@ using namespace IlluminatiConfirmed;
 //      return RUN_ALL_TESTS();
 // }
 
-int main() {
-  try {
-    GameDatabase db = GameDatabase::getInstance();
+class BigWhile : public QObject {
+ public:
+  void run() {
+    try {
+      GameDatabase db = GameDatabase::getInstance();
 
-    std::map<ScreenName, Screen *> screenNameToScreen;
+      std::map<ScreenName, Screen *> screenNameToScreen;
 
-    // menu = 0
-    ScreenMenuMain screen0;
-    screenNameToScreen[ScreenName::MainMenu] = &screen0;
+      // menu = 0
+      ScreenMenuMain screen0;
+      screenNameToScreen[ScreenName::MainMenu] = &screen0;
 
-    // new game = 1
-    ScreenChoseCharacters screen1;
-    screenNameToScreen[ScreenName::ChoseCharacters] = &screen1;
+      // new game = 1
+      ScreenChoseCharacters screen1;
+      screenNameToScreen[ScreenName::ChoseCharacters] = &screen1;
 
-    // game = 1
-    ScreenGame screen2;
-    screenNameToScreen[ScreenName::Game] = &screen2;
+      // game = 1
+      ScreenGame screen2;
+      screenNameToScreen[ScreenName::Game] = &screen2;
 
-    // load
-    ScreenMenuLoad screen3;
-    screenNameToScreen[ScreenName::Load] = &screen3;
+      // load
+      ScreenMenuLoad screen3;
+      screenNameToScreen[ScreenName::Load] = &screen3;
 
-    // save
-    ScreenMenuSave screen4;
-    screenNameToScreen[ScreenName::Save] = &screen4;
+      // save
+      ScreenMenuSave screen4;
+      screenNameToScreen[ScreenName::Save] = &screen4;
 
-    // chose
-    ScreenMenuChoseMap screen5;
-    screenNameToScreen[ScreenName::ChoseMap] = &screen5;
+      // chose
+      ScreenMenuChoseMap screen5;
+      screenNameToScreen[ScreenName::ChoseMap] = &screen5;
 
-    sf::RenderWindow window;
-    window.create(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Level.h test");
-    window.setFramerateLimit(60);
+      sf::RenderWindow window;
+      window.create(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Level.h test");
+      window.setFramerateLimit(60);
 
-    // std::stringstream sstream;
-    sf::Text fpsCounter;
-    sf::Font mainFont;
-    if (!mainFont.loadFromFile(FONT_FILE)) // Set path
-                                           // to your
-                                           // font
-      throw EXCEPTION("I can't open file with font.", nullptr);
-    fpsCounter.setFont(mainFont);
-    fpsCounter.setColor(sf::Color::White);
+      // std::stringstream sstream;
+      sf::Text fpsCounter;
+      sf::Font mainFont;
+      if (!mainFont.loadFromFile(FONT_FILE))  // Set path
+                                              // to your
+                                              // font
+        throw EXCEPTION("I can't open file with font.", nullptr);
+      fpsCounter.setFont(mainFont);
+      fpsCounter.setColor(sf::Color::White);
 
-    // experimental::FactoryObjects::create_factory();
-    Game game(window);
-    // game.initNewGame(MAP_FILE_1);
+      // experimental::FactoryObjects::create_factory();
+      Game game(window);
+      // game.initNewGame(MAP_FILE_1);
 
-    Clock clock;
+      Clock clock;
 
-    // while (screenName != ScreenName::Exit) {
-    ScreenName screenName = ScreenName::MainMenu;
-    while (window.isOpen()) {
-      screenName = screenNameToScreen[screenName]->run(game, window);
+      // while (screenName != ScreenName::Exit) {
+      ScreenName screenName = ScreenName::MainMenu;
+      while (window.isOpen()) {
+        screenName = screenNameToScreen[screenName]->run(game, window);
+      }
+    } catch (IlluminatiConfirmed::Exception &e) {
+      std::cout << e.what();
     }
-  } catch (IlluminatiConfirmed::Exception &e) {
-    std::cout << e.what();
+      throw;
   }
+  virtual ~BigWhile() {}
+};
 
-  return 0;
+int main(int argc, char *argv[]) {
+  QCoreApplication a(argc, argv);
+  BigWhile game;
+
+  QtConcurrent::run(&game,&BigWhile::run);
+
+  game.run();
+
+  a.exec();
+  return a.exec();
 }

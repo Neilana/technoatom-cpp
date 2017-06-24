@@ -4,7 +4,8 @@
 IlluminatiConfirmed::experimental::BaseCharacter::BaseCharacter(
     b2World *world, const sf::Texture *texture,
     const IlluminatiConfirmed::experimental::CharacterSpriteInfo &sprite_data)
-    : BaseInterface(BaseInterface::CHARACTER), m_weapon(nullptr),
+    : BaseInterface(BaseInterface::CHARACTER),
+      m_weapon(nullptr),
       m_height(sprite_data.height) {
   LOG() << "Create Character \n";
   {
@@ -117,13 +118,11 @@ void IlluminatiConfirmed::experimental::BaseCharacter::draw(
   m_sprite.setPosition(B2Vec2toSfVector2<float>(m_b2_body->GetPosition()));
 
   if (m_direction == Direction::Up) {
-    if (m_weapon)
-      m_weapon->draw(window);
+    if (m_weapon) m_weapon->draw(window);
 
   } else {
     window.draw(m_sprite);
-    if (m_weapon)
-      m_weapon->draw(window);
+    if (m_weapon) m_weapon->draw(window);
   }
 }
 
@@ -140,8 +139,7 @@ void IlluminatiConfirmed::experimental::BaseCharacter::move(b2Vec2 velocity,
   // m_sprite.setPosition(FromBox2DtoPixel(m_body->GetPosition().x),
   //                    FromBox2DtoPixel(m_body->GetPosition().y));
 
-  if (int(currentFrame) > m_frames - 1)
-    currentFrame = 0;
+  if (int(currentFrame) > m_frames - 1) currentFrame = 0;
 
   m_direction = findDirectonByVelocity(velocity);
   m_sprite.setTextureRect(m_directionRects[m_direction].at((int)currentFrame));
@@ -153,32 +151,29 @@ void IlluminatiConfirmed::experimental::BaseCharacter::move(b2Vec2 velocity,
   //для движения по диагонали перс должен поворачиваться
 }
 
-void IlluminatiConfirmed::experimental::BaseCharacter::contact(b2Fixture *B) {}
+void IlluminatiConfirmed::experimental::BaseCharacter::contact(
+    BaseInterface *B) {}
 
 void IlluminatiConfirmed::experimental::BaseCharacter::endContact(
-    b2Fixture *B) {}
+    BaseInterface *B) {}
 
 void IlluminatiConfirmed::experimental::BaseCharacter::setWeapon(
     IlluminatiConfirmed::experimental::Weapon *weapon) {
-  if (m_weapon)
-    delete m_weapon;
+  if (m_weapon) delete m_weapon;
   m_weapon = weapon;
 }
 
 void IlluminatiConfirmed::experimental::BaseCharacter::moveWeapon(
     const sf::Vector2f &pos, float rot) {
-  if (m_weapon)
-    m_weapon->setPositionRotation(pos, rot);
+  if (m_weapon) m_weapon->setPositionRotation(pos, rot);
 }
 
 void IlluminatiConfirmed::experimental::BaseCharacter::attack() {
-  if (m_weapon)
-    m_weapon->attack();
+  if (m_weapon) m_weapon->attack(this);
 }
 
 IlluminatiConfirmed::experimental::BaseCharacter::~BaseCharacter() {
-  if (m_weapon)
-    delete m_weapon;
+  if (m_weapon) delete m_weapon;
   m_b2_body->GetWorld()->DestroyBody(m_b2_body);
 }
 
@@ -235,7 +230,7 @@ void IlluminatiConfirmed::experimental::CharacterSouthPark::move(
   static float m_time;
   static int dir = 1;
 
-  m_time += static_cast<float>(deltaTime / 150 * dir); //скорость прыжков
+  m_time += static_cast<float>(deltaTime / 150 * dir);  //скорость прыжков
   if ((m_time > m_b2_joint_prism->GetLowerLimit()) ||
       (m_b2_base->GetLinearVelocity().LengthSquared() > 0)) {
     if (m_time >= m_b2_joint_prism->GetUpperLimit()) {
@@ -258,7 +253,7 @@ void IlluminatiConfirmed::experimental::CharacterSouthPark::draw(
 }
 
 void IlluminatiConfirmed::experimental::CharacterSouthPark::contact(
-    b2Fixture *B) {
+    BaseInterface *B) {
   LOG() << "I'am SouthParkBoys and I've begun the colliding with.. hz"
         << std::endl;
   UNUSE(B);
@@ -266,7 +261,7 @@ void IlluminatiConfirmed::experimental::CharacterSouthPark::contact(
 }
 
 void IlluminatiConfirmed::experimental::CharacterSouthPark::endContact(
-    b2Fixture *B) {
+    BaseInterface *B) {
   LOG() << "I'am SouthParkBoys and I've dune the colliding with.. hz"
         << std::endl;
   UNUSE(B);
@@ -282,7 +277,7 @@ void IlluminatiConfirmed::experimental::CharacterSouthPark::updatePhysics(
   static float m_time;
   static int dir = 1;
 
-  m_time += static_cast<float>(deltaTime / 150 * dir); //скорость прыжков
+  m_time += static_cast<float>(deltaTime / 150 * dir);  //скорость прыжков
   if ((m_time > m_b2_joint_prism->GetLowerLimit()) ||
       (m_b2_base->GetLinearVelocity().LengthSquared() > 0)) {
     if (m_time >= m_b2_joint_prism->GetUpperLimit()) {
@@ -330,13 +325,13 @@ void IlluminatiConfirmed::experimental::CharacterAlinasBoys::draw(
 }
 
 void IlluminatiConfirmed::experimental::CharacterAlinasBoys::contact(
-    b2Fixture *B) {
+    BaseInterface *B) {
   LOG() << "I'am AlinasBoys and I've begun the colliding with.. hz"
         << std::endl;
 }
 
 void IlluminatiConfirmed::experimental::CharacterAlinasBoys::endContact(
-    b2Fixture *B) {
+    BaseInterface *B) {
   LOG() << "I'am AlinasBoys and I've done the colliding with.. hz" << std::endl;
 }
 

@@ -40,8 +40,8 @@ class BaseCharacter : public BaseInterface {
 
   virtual void draw(sf::RenderWindow &window) override;
   virtual void move(b2Vec2 velocity, float deltaTime) override;
-  virtual void contact(b2Fixture *B) override;
-  virtual void endContact(b2Fixture *B) override;
+  virtual void contact(BaseInterface *B) override;
+  virtual void endContact(BaseInterface *B) override;
 
   void setWeapon(Weapon *weapon);
   void moveWeapon(const sf::Vector2f &pos, float rot);
@@ -83,8 +83,8 @@ class CharacterSouthPark : public BaseCharacter {
                      const CharacterSpriteInfo &sprite_data);
   void move(b2Vec2 velocity, float deltaTime) override;
   void draw(sf::RenderWindow &window) override;
-  void contact(b2Fixture *B) override;
-  void endContact(b2Fixture *B) override;
+  void contact(BaseInterface *B) override;
+  void endContact(BaseInterface *B) override;
   ~CharacterSouthPark();
 
   b2MotorJoint *m_b2_joint;
@@ -100,8 +100,8 @@ class CharacterAlinasBoys : public BaseCharacter {
 
   void move(b2Vec2 velocity, float deltaTime) override;
   void draw(sf::RenderWindow &window) override;
-  void contact(b2Fixture *B) override;
-  void endContact(b2Fixture *B) override;
+  void contact(BaseInterface *B) override;
+  void endContact(BaseInterface *B) override;
   ~CharacterAlinasBoys();
 };
 }

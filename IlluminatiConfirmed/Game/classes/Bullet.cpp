@@ -1,9 +1,11 @@
 #include "Bullet.h"
 
 IlluminatiConfirmed::experimental::Bullet::Bullet(
-    b2World *world, sf::Texture *texture,
+    b2World *world, sf::Texture *texture, SoundPackPuth &&pack,
     IlluminatiConfirmed::experimental::BulletInfo &&info)
-    : BaseInterface(TypeBase::BULLET), m_info(std::move(info)) {
+    : BaseInterface(TypeBase::BULLET),
+      m_info(std::move(info)),
+      m_sound_pack(std::move(pack)) {
   static int count = 0;
 
   LOG() << "Create bullet #" << count++ << std::endl;
@@ -48,9 +50,9 @@ IlluminatiConfirmed::experimental::Bullet::Bullet(
 
 void IlluminatiConfirmed::experimental::Bullet::setTransform(
     IlluminatiConfirmed::experimental::BulletSets &&sets) {
-  LOG() << "Dir1 " << sets.dir << std::endl;
+  // LOG() << "Dir1 " << sets.dir << std::endl;
   sets.dir.Normalize();
-  LOG() << "Dir2 " << sets.dir << std::endl;
+  // LOG() << "Dir2 " << sets.dir << std::endl;
   // sets.dir.y *= -1.f;
 
   static auto getAngle = [](auto &&lhs, auto &&rhs) {
@@ -62,9 +64,9 @@ void IlluminatiConfirmed::experimental::Bullet::setTransform(
 
   m_b2_base->SetTransform(sets.position, atanf(sets.dir.y / sets.dir.x));
   sets.dir *= m_info.velocity;
-  LOG() << "Dir3 " << sets.dir << std::endl;
+  // LOG() << "Dir3 " << sets.dir << std::endl;
   m_b2_base->SetLinearVelocity(sets.dir);
-  LOG() << "Dir4 " << sets.dir << std::endl;
+  // LOG() << "Dir4 " << sets.dir << std::endl;
 }
 
 void IlluminatiConfirmed::experimental::Bullet::draw(sf::RenderWindow &window) {
@@ -82,9 +84,15 @@ void IlluminatiConfirmed::experimental::Bullet::draw(sf::RenderWindow &window) {
 void IlluminatiConfirmed::experimental::Bullet::move(b2Vec2 velocity,
                                                      float deltaTime) {}
 
-void IlluminatiConfirmed::experimental::Bullet::contact(b2Fixture *B) {}
+void IlluminatiConfirmed::experimental::Bullet::contact(BaseInterface *B) {
+  if (B->getTypeBase() == TypeBase::MAPS_STUFF) {
+    m_sound_pack.hitting_building.play();
+  }
+}
 
-void IlluminatiConfirmed::experimental::Bullet::endContact(b2Fixture *B) {}
+void IlluminatiConfirmed::experimental::Bullet::endContact(BaseInterface *B) {}
+
+void IlluminatiConfirmed::experimental::Bullet::playHit() {}
 
 // IlluminatiConfirmed::experimental::Bullet::Bullet(b2World *world, sf::Texture
 // *texture, IlluminatiConfirmed::experimental::BulletInfo &&info)

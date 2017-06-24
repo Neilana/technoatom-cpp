@@ -5,26 +5,37 @@ using namespace experimental;
 
 void MyContactListener::BeginContact(b2Contact *contact) {
   void *user_data_A = contact->GetFixtureA()->GetUserData();
-  if (user_data_A)
-    static_cast<BaseCharacter *>(user_data_A)->contact(contact->GetFixtureB());
-  void *user_data_B = contact->GetFixtureA()->GetUserData();
-  if (user_data_B)
-    static_cast<BaseCharacter *>(user_data_B)->contact(contact->GetFixtureB());
-  // if (Type::CHARACTER_SOUTH_PARK ==
-  //    static_cast<BaseCharacter*>(user_data)->getType()) {
-  //    static_cast<BaseCharacter*>(user_data)->getType()
+  void *user_data_B = contact->GetFixtureB()->GetUserData();
+  if (user_data_A && user_data_B) {
+    static_cast<BaseInterface *>(user_data_A)
+        ->contact(static_cast<BaseInterface *>(user_data_B));
+    static_cast<BaseInterface *>(user_data_B)
+        ->contact(static_cast<BaseInterface *>(user_data_A));
+  } else
+    throw EXCEPTION("User data have nullptr ", nullptr);
+
+  //  if (user_data_A)
+  //    static_cast<BaseCharacter
+  //    *>(user_data_A)->contact(contact->GetFixtureB());
+  //  void *user_data_B = contact->GetFixtureA()->GetUserData();
+  //  if (user_data_B)
+  //    static_cast<BaseCharacter
+  //    *>(user_data_B)->contact(contact->GetFixtureB());
+  //  // if (Type::CHARACTER_SOUTH_PARK ==
+  //  //    static_cast<BaseCharacter*>(user_data)->getType()) {
+  //  //    static_cast<BaseCharacter*>(user_data)->getType()
   // };
 }
 
 void MyContactListener::EndContact(b2Contact *contact) {
-  void *user_data_A = contact->GetFixtureA()->GetUserData();
-  if (user_data_A)
-    static_cast<BaseCharacter *>(user_data_A)
-        ->endContact(contact->GetFixtureB());
-  void *user_data_B = contact->GetFixtureA()->GetUserData();
-  if (user_data_B)
-    static_cast<BaseCharacter *>(user_data_B)
-        ->endContact(contact->GetFixtureB());
+  //  void *user_data_A = contact->GetFixtureA()->GetUserData();
+  //  if (user_data_A)
+  //    static_cast<BaseCharacter *>(user_data_A)
+  //        ->endContact(contact->GetFixtureB());
+  //  void *user_data_B = contact->GetFixtureA()->GetUserData();
+  //  if (user_data_B)
+  //    static_cast<BaseCharacter *>(user_data_B)
+  //        ->endContact(contact->GetFixtureB());
 }
 
 void MyContactListener::PreSolve(b2Contact *contact,

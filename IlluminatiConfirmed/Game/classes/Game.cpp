@@ -21,8 +21,8 @@ using namespace IlluminatiConfirmed;
 Game::Game(sf::RenderWindow &window) {
 
   m_world = std::make_shared<b2World>(b2Vec2({0.f, 0.f}));
-  // MyContactListener *listner = new MyContactListener;
-  // m_world->SetContactListener(listner);
+  MyContactListener *listner = new MyContactListener;
+  (*m_world).SetContactListener(listner);
   SFMLDebugDraw *debugDraw =
       new SFMLDebugDraw(window); //утечка памяти, бокс не будет это удалять
   debugDraw->SetFlags(b2Draw::e_shapeBit + b2Draw::e_centerOfMassBit +
@@ -166,7 +166,7 @@ void Game::initNewGame(std::set<int> ids, sf::RenderWindow &window) {
   }
 
   MyContactListener *listner = new MyContactListener;
-  // m_world.SetContactListener(listner);  //не работает, здания имеют другой
+  m_world->SetContactListener(listner);  //не работает, здания имеют другой
   //базовый класс, крошится если оставить
   //прежний
   SFMLDebugDraw *debugDraw =

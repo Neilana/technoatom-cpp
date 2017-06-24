@@ -1,5 +1,7 @@
 #include "Weapons.h"
 
+#include <QSound>
+
 IlluminatiConfirmed::experimental::Weapon::Weapon(
     sf::Texture *texture,
     const IlluminatiConfirmed::experimental::WeaponInfo &info)
@@ -25,7 +27,7 @@ void IlluminatiConfirmed::experimental::Weapon::setPositionRotation(
 
   // LOG() << "flip before: " << flip_check;
 
-  if (((rotation < 90) && (rotation > -90)) && flip_check.y < 0) { // degrees
+  if (((rotation < 90) && (rotation > -90)) && flip_check.y < 0) {  // degrees
 
     m_sprite.setScale(flip_check.x, -flip_check.y);
   } else if (((rotation > 90) || (rotation < -90)) && flip_check.y > 0)
@@ -36,7 +38,7 @@ void IlluminatiConfirmed::experimental::Weapon::setPositionRotation(
   m_sprite.setRotation(rotation);
 }
 
-void IlluminatiConfirmed::experimental::Weapon::attack() {
+void IlluminatiConfirmed::experimental::Weapon::attack(BaseCharacter *who) {
   if (m_number_of_cartridge > 0) {
     --m_number_of_cartridge;
     m_sprite.setTextureRect(m_rect_with_weapon_fire);
@@ -54,9 +56,11 @@ void IlluminatiConfirmed::experimental::Weapon::attack() {
 
     auto dir_ = b2Vec2(cosf(a / 180 * b2_pi), sinf(a / 180 * b2_pi));
 
-    LOG() << "Pos after: " << pos << std::endl;
+    // LOG() << "Pos after: " << pos << std::endl;
     event_create_bullet.notifyListeners(
-        {{{SfVector2toB2Vec2(pos)}, {SfVector2toB2Vec2(dir)}}, m_type_bullet});
+        {{{SfVector2toB2Vec2(pos)}, {SfVector2toB2Vec2(dir)}},
+         m_type_bullet,
+         who});
   }
 }
 
@@ -102,8 +106,12 @@ void IlluminatiConfirmed::experimental::ListnerWeapon::pushBullet(
     auto texture = experimental::FactoryObjects::getTexture(
         BULLETS_SPRITES_DIRECTORY + "ak.png");
 
+    SoundPackPuth pack;
+    pack.hitting_building = SOUNDS_DIRECTORY + std::string("flying_bullet.wav");
+    pack.flying = SOUNDS_DIRECTORY + std::string("hit_building_bullet.wav");
+
     auto bullet = std::make_shared<experimental::Bullet>(
-        m_world, texture.get(),
+        m_world, texture.get(), std::move(pack),
         experimental::BulletInfo({{{0, 0, 604, 187}}, 0.1f, 10, 1.f, 1, 1}));
     bullet->setTransform(std::move(bullet_sets.sets));
 

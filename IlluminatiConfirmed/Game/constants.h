@@ -39,6 +39,9 @@ const std::string CHARACTERS_SPRITES_DIRECTORY =
 const std::string BULLETS_SPRITES_DIRECTORY =
     "../Game/resources/sprites/bullets/";
 
+const std::string SOUNDS_DIRECTORY =
+    "../Game/resources/sound/";
+
 const std::string FONT_FILE =
     "../Game/resources/fonts/Franchise-Bold-hinted.ttf";
 const std::string MENU_BACKGROUND_FILE =

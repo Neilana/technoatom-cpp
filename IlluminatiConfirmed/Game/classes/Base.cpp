@@ -66,12 +66,12 @@ void Building::draw(sf::RenderWindow &window) {
   for (auto &&it : m_vec_sprite) window.draw(it);
 }
 
-void Building::contact(b2Fixture *B) {
+void Building::contact(BaseInterface *B) {
   //к примеру добавить дому хпшку и, когда она закончится, включать анимацию
   //взрыва перед смертью
 }
 
-void Building::endContact(b2Fixture *B) {}
+void Building::endContact(BaseInterface *B) {}
 
 Building::~Building() {
   LOG() << "Destroy building " << std::endl;

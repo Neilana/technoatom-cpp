@@ -1,4 +1,4 @@
-QT += core gui sql
+QT += core gui sql multimedia concurrent
 TEMPLATE = app
 CONFIG += console c++14
 CONFIG -= app_bundle
@@ -34,7 +34,7 @@ SOURCES += main.cpp \
     classes/Weapons.cpp \
     classes/Factories.cpp \
     classes/screens/ScreenMenuChoseMap.cpp \
-    classes/characters/Сharacter.cpp
+    classes/characters/Character.cpp
 
 HEADERS += \
     classes/Level.h \
@@ -60,7 +60,8 @@ HEADERS += \
     classes/Event/Event.h \
     classes/Event/EventListener.h \
     classes/screens/ScreenMenuChoseMap.h \
-    classes/characters/Character.h
+    classes/characters/Character.h \
+    classes/bigwhile.h
     # ForTestbedCharacter.h
 
 INCLUDEPATH += classes/ \
