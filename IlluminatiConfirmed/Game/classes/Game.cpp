@@ -98,7 +98,7 @@ void Game::initNewGame(std::set<int> ids, sf::RenderWindow &window) {
   listner_of_bullets =
       experimental::ListnerWeapon(m_world.get(), &m_bullets, &m_vector_of_objs);
 
-  auto ground_and_maps_stuff = experimental::FactoryObjects::create_map(
+  auto ground_and_maps_stuff = experimental::FactoryObjects::Instance(). create_map(
       MAP_DIRECTORY + m_mapFileName, m_world.get());
 
   // m_ground = ground_and_maps_stuff.first;
@@ -181,7 +181,7 @@ void Game::initObjects(std::set<int> ids) {}
 void Game::initCharacters(std::set<int> ids) {
   for (auto it : ids) {
     auto hero =
-        experimental::FactoryObjects::create_character(it, m_world.get());
+        experimental::FactoryObjects::Instance().create_character(it, m_world.get());
 
     //  auto hero = experimental::FactoryObjects::create_character("13",
     //                                                             m_world.get());

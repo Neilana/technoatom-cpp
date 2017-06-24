@@ -1,7 +1,7 @@
 #include "Bullet.h"
 
 IlluminatiConfirmed::experimental::Bullet::Bullet(
-    b2World *world, sf::Texture *texture, SoundPackPuth &&pack,
+    b2World *world, sf::Texture *texture, SoundPack &&pack,
     IlluminatiConfirmed::experimental::BulletInfo &&info)
     : BaseInterface(TypeBase::BULLET),
       m_info(std::move(info)),
@@ -86,7 +86,7 @@ void IlluminatiConfirmed::experimental::Bullet::move(b2Vec2 velocity,
 
 void IlluminatiConfirmed::experimental::Bullet::contact(BaseInterface *B) {
   if (B->getTypeBase() == TypeBase::MAPS_STUFF) {
-    m_sound_pack.hitting_building.play();
+    m_sound_pack.hitting_building->play();
   }
 }
 

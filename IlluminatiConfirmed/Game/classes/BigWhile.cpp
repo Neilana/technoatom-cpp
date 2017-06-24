@@ -11,8 +11,8 @@
 
 #include <exception>
 #include <iostream>
-#include <vector>
 #include <memory>
+#include <vector>
 
 #include "../Exceptions/Exception.h"
 #include "Game.h"
@@ -35,28 +35,35 @@ BigWhile::BigWhile(QObject *parent) : QObject(parent) {
     // GameDatabase db = GameDatabase::getInstance();
 
     // menu = 0
-    auto screen0 = std::static_pointer_cast<IlluminatiConfirmed::Screen> (std::make_shared<ScreenMenuMain>());
-    m_screenNameToScreen.insert( {ScreenName::MainMenu, std::move(screen0)});
+    auto screen0 = std::static_pointer_cast<IlluminatiConfirmed::Screen>(
+        std::make_shared<ScreenMenuMain>());
+    m_screenNameToScreen.insert({ScreenName::MainMenu, std::move(screen0)});
 
     // new game = 1
-    auto screen1 = std::static_pointer_cast<IlluminatiConfirmed::Screen> (std::make_shared<ScreenChoseCharacters>());
-    m_screenNameToScreen.insert( {ScreenName::ChoseCharacters, std::move(screen1)});
+    auto screen1 = std::static_pointer_cast<IlluminatiConfirmed::Screen>(
+        std::make_shared<ScreenChoseCharacters>());
+    m_screenNameToScreen.insert(
+        {ScreenName::ChoseCharacters, std::move(screen1)});
 
     // game = 1
-    auto screen2 = std::static_pointer_cast<IlluminatiConfirmed::Screen> (std::make_shared<ScreenGame>());
-    m_screenNameToScreen.insert( {ScreenName::Game, std::move(screen2)});
+    auto screen2 = std::static_pointer_cast<IlluminatiConfirmed::Screen>(
+        std::make_shared<ScreenGame>());
+    m_screenNameToScreen.insert({ScreenName::Game, std::move(screen2)});
 
     // load
-    auto screen3 = std::static_pointer_cast<IlluminatiConfirmed::Screen> (std::make_shared<ScreenMenuLoad>());
-    m_screenNameToScreen.insert( {ScreenName::Load, std::move(screen3)});
+    auto screen3 = std::static_pointer_cast<IlluminatiConfirmed::Screen>(
+        std::make_shared<ScreenMenuLoad>());
+    m_screenNameToScreen.insert({ScreenName::Load, std::move(screen3)});
 
     // save
-    auto screen4 = std::static_pointer_cast<IlluminatiConfirmed::Screen> (std::make_shared<ScreenMenuSave>());
-    m_screenNameToScreen.insert( {ScreenName::Save, std::move(screen4)});
+    auto screen4 = std::static_pointer_cast<IlluminatiConfirmed::Screen>(
+        std::make_shared<ScreenMenuSave>());
+    m_screenNameToScreen.insert({ScreenName::Save, std::move(screen4)});
 
     // chose
-    auto screen5 = std::static_pointer_cast<IlluminatiConfirmed::Screen> (std::make_shared<ScreenMenuChoseMap>());
-    m_screenNameToScreen.insert( {ScreenName::ChoseMap, std::move(screen5)});
+    auto screen5 = std::static_pointer_cast<IlluminatiConfirmed::Screen>(
+        std::make_shared<ScreenMenuChoseMap>());
+    m_screenNameToScreen.insert({ScreenName::ChoseMap, std::move(screen5)});
 
     m_window.create(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Level.h test");
     // m_window.setFramerateLimit(60);
@@ -83,7 +90,8 @@ BigWhile::BigWhile(QObject *parent) : QObject(parent) {
 void BigWhile::process() {
   try {
     if (m_window.isOpen()) {
-      m_screenName = m_screenNameToScreen.at(m_screenName)->run(*m_game, m_window);
+      m_screenName =
+          m_screenNameToScreen.at(m_screenName)->run(*m_game, m_window);
     } else
       emit finished();
   } catch (IlluminatiConfirmed::Exception &e) {

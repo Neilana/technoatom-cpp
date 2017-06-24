@@ -28,25 +28,16 @@ struct BulletSets {
   b2Vec2 dir;
 };
 
-struct SoundPackPuth {
-  std::string hitting_building;
-  std::string flying;
+struct SoundPack {
+  std::shared_ptr<QSound> hitting_building;
+  std::shared_ptr<QSound> flying;
 };
 
 enum class TypeBullet { ROCKET, little_bullet };
 
 class Bullet : public BaseInterface {
-  struct SoundPack {
-    SoundPack(SoundPackPuth &&puths)
-        : hitting_building(QString::fromStdString(puths.hitting_building)),
-          flying(QString::fromStdString(puths.flying)) {}
-
-    QSound hitting_building;
-    QSound flying;
-  };
-
  public:
-  Bullet(b2World *world, sf::Texture *texture, SoundPackPuth &&pack,
+  Bullet(b2World *world, sf::Texture *texture, SoundPack &&pack,
          BulletInfo &&info);
   void setTransform(BulletSets &&sets);
   virtual void draw(sf::RenderWindow &window) override;

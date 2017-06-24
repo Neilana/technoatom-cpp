@@ -103,12 +103,16 @@ void IlluminatiConfirmed::experimental::ListnerWeapon::pushBullet(
   //здесь некая фабрика пулек, причем настройки должны кэшироваться, иначе
   //каждая пулька запрос к бд, мы же performance freak
   if (m_objs != nullptr && m_bullets != nullptr && m_world != nullptr) {
-    auto texture = experimental::FactoryObjects::getTexture(
+    auto texture = experimental::FactoryObjects::Instance().getTexture(
         BULLETS_SPRITES_DIRECTORY + "ak.png");
 
-    SoundPackPuth pack;
-    pack.hitting_building = SOUNDS_DIRECTORY + std::string("flying_bullet.wav");
-    pack.flying = SOUNDS_DIRECTORY + std::string("hit_building_bullet.wav");
+    auto p_hitting_building = experimental::FactoryObjects::Instance().getSound(
+        SOUNDS_DIRECTORY + std::string("hit_building_bullet.wav"));
+    auto p_flying = experimental::FactoryObjects::Instance().getSound(
+        SOUNDS_DIRECTORY + std::string("flying_bullet.wav"));
+    SoundPack pack;
+    pack.hitting_building = std::move(p_hitting_building);
+    pack.flying = std::move(p_flying);
 
     auto bullet = std::make_shared<experimental::Bullet>(
         m_world, texture.get(), std::move(pack),
