@@ -34,7 +34,8 @@ SOURCES += main.cpp \
     classes/Weapons.cpp \
     classes/Factories.cpp \
     classes/screens/ScreenMenuChoseMap.cpp \
-    classes/characters/Character.cpp
+    classes/characters/Character.cpp \
+    classes/BigWhile.cpp
 
 HEADERS += \
     classes/Level.h \
@@ -61,7 +62,7 @@ HEADERS += \
     classes/Event/EventListener.h \
     classes/screens/ScreenMenuChoseMap.h \
     classes/characters/Character.h \
-    classes/bigwhile.h
+    classes/BigWhile.h
     # ForTestbedCharacter.h
 
 INCLUDEPATH += classes/ \
