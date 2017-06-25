@@ -1,6 +1,6 @@
+#include <SFML/Graphics.hpp>
 #include "Box2D/Box2D.h"
 #include "SFMLDebugDraw.h"
-#include <SFML/Graphics.hpp>
 
 #include <algorithm>
 
@@ -19,12 +19,11 @@ using namespace std;
 using namespace IlluminatiConfirmed;
 
 Game::Game(sf::RenderWindow &window) {
-
   m_world = std::make_shared<b2World>(b2Vec2({0.f, 0.f}));
   MyContactListener *listner = new MyContactListener;
   (*m_world).SetContactListener(listner);
   SFMLDebugDraw *debugDraw =
-      new SFMLDebugDraw(window); //утечка памяти, бокс не будет это удалять
+      new SFMLDebugDraw(window);  //утечка памяти, бокс не будет это удалять
   debugDraw->SetFlags(b2Draw::e_shapeBit + b2Draw::e_centerOfMassBit +
                       b2Draw::e_pairBit);
   m_world->SetDebugDraw(debugDraw);
@@ -86,7 +85,6 @@ Game::Game(sf::RenderWindow &window) {
 // }
 
 void Game::initNewGame(std::set<int> ids, sf::RenderWindow &window) {
-
   m_heroes.clear();
   m_ground.reset();
   m_vector_of_objs.clear();
@@ -94,12 +92,11 @@ void Game::initNewGame(std::set<int> ids, sf::RenderWindow &window) {
   m_world.reset();
   m_world = std::make_unique<b2World>(b2Vec2({0.f, 0.f}));
   m_running = true;
+  listner_of_bullets.setPointers(m_world.get(), &m_bullets, &m_vector_of_objs);
 
-  listner_of_bullets =
-      experimental::ListnerWeapon(m_world.get(), &m_bullets, &m_vector_of_objs);
-
-  auto ground_and_maps_stuff = experimental::FactoryObjects::Instance(). create_map(
-      MAP_DIRECTORY + m_mapFileName, m_world.get());
+  auto ground_and_maps_stuff =
+      experimental::FactoryObjects::Instance().create_map(
+          MAP_DIRECTORY + m_mapFileName, m_world.get());
 
   // m_ground = ground_and_maps_stuff.first;
   m_ground = std::move(ground_and_maps_stuff.first);
@@ -170,7 +167,7 @@ void Game::initNewGame(std::set<int> ids, sf::RenderWindow &window) {
   //базовый класс, крошится если оставить
   //прежний
   SFMLDebugDraw *debugDraw =
-      new SFMLDebugDraw(window); //утечка памяти, бокс не будет это удалять
+      new SFMLDebugDraw(window);  //утечка памяти, бокс не будет это удалять
   debugDraw->SetFlags(b2Draw::e_shapeBit + b2Draw::e_centerOfMassBit +
                       b2Draw::e_pairBit);
   (*m_world).SetDebugDraw(debugDraw);
@@ -180,8 +177,8 @@ void Game::initObjects(std::set<int> ids) {}
 
 void Game::initCharacters(std::set<int> ids) {
   for (auto it : ids) {
-    auto hero =
-        experimental::FactoryObjects::Instance().create_character(it, m_world.get());
+    auto hero = experimental::FactoryObjects::Instance().create_character(
+        it, m_world.get());
 
     //  auto hero = experimental::FactoryObjects::create_character("13",
     //                                                             m_world.get());
@@ -199,7 +196,7 @@ void Game::initCharacters(std::set<int> ids) {
                                   {0, 0, 604, 187},
                                   {607, 0, 727, 187},
                                   10,
-                                  0.3f});
+                                  0.1f});
     listner_of_bullets.addWeapon(weapon);
     hero2Character->setWeapon(weapon);
 
@@ -226,7 +223,18 @@ void Game::draw(sf::RenderWindow &window) {
   //   for (auto &&it : m_bullets)
   //     it->draw(window);
   // =======
+
+  auto deleteEverythingDead = [](auto &vector) {
+    vector.erase(std::remove_if(vector.begin(), vector.end(),
+                                [](auto it) -> bool { return it->isDead(); }),
+                 vector.end());
+  };
+
   m_ground->draw_ground(window);
+
+  deleteEverythingDead(m_vector_of_objs);
+  deleteEverythingDead(m_heroes);
+  deleteEverythingDead(m_bullets);
 
   std::sort(m_vector_of_objs.begin(), m_vector_of_objs.end(),
             [](auto &&lhs, auto &&rhs) { return lhs->getY() < rhs->getY(); });
@@ -252,9 +260,8 @@ void Game::initPhysics() {
 void Game::updatePhysics(float time) {
   m_world->Step(1 / 60.f, 8, 3);
   for (auto &&it : m_heroes)
-    it->updatePhysics(time); //я не понимаю зачем нужен этот метод)
-  for (auto &&it : m_bullets)
-    it->move({0, 0}, time);
+    it->updatePhysics(time);  //я не понимаю зачем нужен этот метод)
+  for (auto &&it : m_bullets) it->move({0, 0}, time);
   //  static bool k = 1;
   //  if (k) {
   //    k = false;

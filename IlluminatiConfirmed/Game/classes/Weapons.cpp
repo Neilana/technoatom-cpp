@@ -8,7 +8,8 @@ IlluminatiConfirmed::experimental::Weapon::Weapon(
     : m_number_of_cartridge(info.number_of_cartridge),
       m_rect_with_weapon(info.rect_with_weapon),
       m_rect_with_weapon_fire(info.rect_with_weapon_fire),
-      m_type_bullet(info.bullet_type) {
+      m_type_bullet(info.bullet_type),
+      m_whose(nullptr) {
   m_sprite.setTexture(*texture);
   m_sprite.setTextureRect(info.rect_with_weapon);
   m_sprite.setScale(info.scale, info.scale);
@@ -19,25 +20,21 @@ IlluminatiConfirmed::experimental::Weapon::Weapon(
 
 void IlluminatiConfirmed::experimental::Weapon::setPositionRotation(
     const sf::Vector2f &pos, float rotation) {
-  // LOG() << "os Weapon: " << pos.x << " " << pos.y  << std::endl;
   m_sprite.setPosition(pos);
-  // LOG() << "Rotate Weapon: " << rotation;
-
   auto flip_check = m_sprite.getScale();
 
-  // LOG() << "flip before: " << flip_check;
-
   if (((rotation < 90) && (rotation > -90)) && flip_check.y < 0) {  // degrees
-
     m_sprite.setScale(flip_check.x, -flip_check.y);
   } else if (((rotation > 90) || (rotation < -90)) && flip_check.y > 0)
     m_sprite.setScale(flip_check.x, -flip_check.y);
-
-  // LOG() << " after: " << rotation <<std::endl;
-  // LOG() << "flip after: " << flip_check << std::endl;
   m_sprite.setRotation(rotation);
 }
-
+/*
+void IlluminatiConfirmed::experimental::Weapon::setWhose(
+    IlluminatiConfirmed::experimental::BaseCharacter *who) {
+  m_whose = who;
+}
+*/
 void IlluminatiConfirmed::experimental::Weapon::attack(BaseCharacter *who) {
   if (m_number_of_cartridge > 0) {
     --m_number_of_cartridge;
@@ -46,10 +43,12 @@ void IlluminatiConfirmed::experimental::Weapon::attack(BaseCharacter *who) {
 
     auto a = m_sprite.getRotation();
     auto pos = m_sprite.getPosition();
+    auto scale = m_sprite.getScale().x;
+    if (scale < 0) scale *= -1.f;
 
-    auto dir =
-        sf::Vector2f(m_rect_with_weapon.width * cosf(a / 180 * b2_pi) / 4.f,
-                     m_rect_with_weapon.width * sinf(a / 180 * b2_pi) / 4.f);
+    auto dir = sf::Vector2f(
+        m_rect_with_weapon.width * scale * cosf(a / 180 * b2_pi) / 4.f,
+        m_rect_with_weapon.width * scale * sinf(a / 180 * b2_pi) / 4.f);
 
     pos.x += dir.x;
     pos.y += dir.y;
@@ -76,15 +75,16 @@ void IlluminatiConfirmed::experimental::Weapon::draw(sf::RenderWindow &window) {
 IlluminatiConfirmed::experimental::ListnerWeapon::ListnerWeapon()
     : m_world(nullptr), m_bullets(nullptr), m_objs(nullptr) {}
 
-IlluminatiConfirmed::experimental::ListnerWeapon::ListnerWeapon(
+void IlluminatiConfirmed::experimental::ListnerWeapon::setPointers(
     b2World *world,
     std::vector<std::shared_ptr<IlluminatiConfirmed::experimental::Bullet>>
         *bullets,
     std::vector<
         std::shared_ptr<IlluminatiConfirmed::experimental::BaseInterface>>
-        *objs)
-    : m_world(world), m_bullets(bullets), m_objs(objs) {
-  // syncVal(class_->event_create_bullet.createSyncValue());
+        *objs) {
+  m_world = world;
+  m_bullets = bullets;
+  m_objs = objs;
 }
 
 void IlluminatiConfirmed::experimental::ListnerWeapon::addWeapon(
@@ -116,7 +116,7 @@ void IlluminatiConfirmed::experimental::ListnerWeapon::pushBullet(
 
     auto bullet = std::make_shared<experimental::Bullet>(
         m_world, texture.get(), std::move(pack),
-        experimental::BulletInfo({{{0, 0, 604, 187}}, 0.1f, 10, 1.f, 1, 1}));
+        experimental::BulletInfo({{{0, 0, 604, 187}}, bullet_sets.whose, 0.1f, 10, 1.f, 1, 1}));
     bullet->setTransform(std::move(bullet_sets.sets));
 
     m_objs->push_back(bullet);

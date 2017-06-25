@@ -1,12 +1,14 @@
 #include "Character.h"
 #include "Weapons.h"
 
+#define SCALE_FOR_BODY 0.6f
+
 IlluminatiConfirmed::experimental::BaseCharacter::BaseCharacter(
     b2World *world, const sf::Texture *texture,
     const IlluminatiConfirmed::experimental::CharacterSpriteInfo &sprite_data)
     : BaseInterface(BaseInterface::CHARACTER),
       m_weapon(nullptr),
-      m_height(sprite_data.height) {
+      m_height(sprite_data.size) {
   LOG() << "Create Character \n";
   {
     b2BodyDef bd;
@@ -18,7 +20,8 @@ IlluminatiConfirmed::experimental::BaseCharacter::BaseCharacter(
     m_b2_base = world->CreateBody(&bd);
 
     b2PolygonShape polygon;
-    polygon.SetAsBox(0.5f, 0.1f);
+    polygon.SetAsBox(SfPointtoB2Point(sprite_data.size / 2.0) * SCALE_FOR_BODY,
+                     0.1f);
 
     b2FixtureDef fixture;
     fixture.friction = 1.f;
@@ -42,9 +45,9 @@ IlluminatiConfirmed::experimental::BaseCharacter::BaseCharacter(
     b2PolygonShape polygon;
     // polygon.SetAsBox(.5f, 1.f, {0.f, -1.f}, 0);
 
-    polygon.SetAsBox(SfPointtoB2Point(sprite_data.size / 2.0),
-                     SfPointtoB2Point(sprite_data.size / 2.0),
-                     {0, -SfPointtoB2Point(sprite_data.size / 2.0)}, 0);
+    polygon.SetAsBox(SfPointtoB2Point(sprite_data.size / 2.0f) * SCALE_FOR_BODY,
+                     SfPointtoB2Point(sprite_data.size / 2.0f),
+                     {0, -SfPointtoB2Point(sprite_data.size / 2.0f)}, 0);
 
     b2FixtureDef fixture;
     fixture.friction = 0.f;
@@ -104,7 +107,7 @@ IlluminatiConfirmed::experimental::BaseCharacter::BaseCharacter(
 void IlluminatiConfirmed::experimental::BaseCharacter::draw(
     sf::RenderWindow &window) {
   m_sprite.setPosition(B2Vec2toSfVector2<float>(m_b2_body->GetPosition()));
-  window.draw(m_sprite);
+  // window.draw(m_sprite);
 
   // !!!!!!!!!!!
   auto pos_of_weapon =
@@ -119,7 +122,7 @@ void IlluminatiConfirmed::experimental::BaseCharacter::draw(
 
   if (m_direction == Direction::Up) {
     if (m_weapon) m_weapon->draw(window);
-
+    window.draw(m_sprite);
   } else {
     window.draw(m_sprite);
     if (m_weapon) m_weapon->draw(window);
@@ -152,7 +155,15 @@ void IlluminatiConfirmed::experimental::BaseCharacter::move(b2Vec2 velocity,
 }
 
 void IlluminatiConfirmed::experimental::BaseCharacter::contact(
-    BaseInterface *B) {}
+    BaseInterface *B) {
+  if (B->getTypeBase() == TypeBase::BULLET) {
+    if (static_cast<experimental::Bullet *>(B)->whose() != this) {
+      is_dead = true;
+    }
+
+    // m_sound_pack.hitting_building->play();
+  }
+}
 
 void IlluminatiConfirmed::experimental::BaseCharacter::endContact(
     BaseInterface *B) {}
@@ -254,6 +265,7 @@ void IlluminatiConfirmed::experimental::CharacterSouthPark::draw(
 
 void IlluminatiConfirmed::experimental::CharacterSouthPark::contact(
     BaseInterface *B) {
+  BaseCharacter::contact(B);
   LOG() << "I'am SouthParkBoys and I've begun the colliding with.. hz"
         << std::endl;
   UNUSE(B);
@@ -326,6 +338,8 @@ void IlluminatiConfirmed::experimental::CharacterAlinasBoys::draw(
 
 void IlluminatiConfirmed::experimental::CharacterAlinasBoys::contact(
     BaseInterface *B) {
+  BaseCharacter::contact(B);
+
   LOG() << "I'am AlinasBoys and I've begun the colliding with.. hz"
         << std::endl;
 }

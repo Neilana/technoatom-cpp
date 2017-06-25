@@ -87,14 +87,22 @@ void IlluminatiConfirmed::experimental::Bullet::move(b2Vec2 velocity,
 void IlluminatiConfirmed::experimental::Bullet::contact(BaseInterface *B) {
   if (B->getTypeBase() == TypeBase::MAPS_STUFF) {
     m_sound_pack.hitting_building->play();
-  }
+    is_dead = true;
+  } else if (B->getTypeBase() == TypeBase::CHARACTER)
+    if (B != whose()) is_dead = true;
 }
 
 void IlluminatiConfirmed::experimental::Bullet::endContact(BaseInterface *B) {}
 
 void IlluminatiConfirmed::experimental::Bullet::playHit() {}
 
-// IlluminatiConfirmed::experimental::Bullet::Bullet(b2World *world, sf::Texture
+IlluminatiConfirmed::experimental::BaseCharacter *
+IlluminatiConfirmed::experimental::Bullet::whose() const {
+  return m_info.whose;
+}
+
+// IlluminatiConfirmed::experimental::Bullet::Bullet(b2World *world,
+// sf::Texture
 // *texture, IlluminatiConfirmed::experimental::BulletInfo &&info)
 //    : BaseInterface(TypeBase::BULLET), m_b2_center(nullptr) {
 //    LOG() << "Create bullet \n";
@@ -133,7 +141,8 @@ void IlluminatiConfirmed::experimental::Bullet::playHit() {}
 //        m_b2_base = world->CreateBody(&bd);
 
 //        b2PolygonShape polygon;
-//        // 0.7 - где то читал, что физические размеры должны быть чуть меньше
+//        // 0.7 - где то читал, что физические размеры должны быть чуть
+//        меньше
 //        // спрайта)
 //        polygon.SetAsBox(
 //                    SfPointtoB2Point(info.scale *

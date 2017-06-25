@@ -10,12 +10,14 @@
 
 #include "Base.h"
 #include "constants.h"
+#include "Character.h"
 
 namespace IlluminatiConfirmed {
 namespace experimental {
 
 struct BulletInfo {
   std::vector<sf::Rect<int>> vec_of_rects_with_bullet;
+  BaseCharacter *whose;
   float scale;
   int damage;
   float velocity;
@@ -45,8 +47,9 @@ class Bullet : public BaseInterface {
   virtual void contact(BaseInterface *B) override;
   virtual void endContact(BaseInterface *B) override;
   virtual void playHit();
+  BaseCharacter *whose() const;
 
-  virtual ~Bullet() {}
+  virtual ~Bullet() { LOG() << "destroy bullet " << std::endl; }
 
  private:
   BulletInfo m_info;

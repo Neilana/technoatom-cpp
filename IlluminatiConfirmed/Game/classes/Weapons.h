@@ -33,12 +33,15 @@ class Weapon {
   Weapon(sf::Texture *texture, const WeaponInfo &info);
 
   void setPositionRotation(const sf::Vector2f &pos, float rotation);
+  //void setWhose(BaseCharacter * who);
 
   void attack(BaseCharacter *who);
 
   void draw(sf::RenderWindow &window);
 
   Event<BulletSetsInfo> event_create_bullet;
+
+  virtual ~Weapon() {}
 
  private:
   sf::Sprite m_sprite;
@@ -47,12 +50,14 @@ class Weapon {
   sf::Rect<int> m_rect_with_weapon_fire;
   int m_time;
   TypeBullet m_type_bullet;
+  BaseCharacter *m_whose;
 };
 
 class ListnerWeapon {
  public:
   ListnerWeapon();
-  ListnerWeapon(
+
+  void setPointers(
       b2World *world,
       std::vector<std::shared_ptr<experimental::Bullet>> *bullets,
       std::vector<std::shared_ptr<experimental::BaseInterface>> *objs);

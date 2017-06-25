@@ -66,7 +66,7 @@ BigWhile::BigWhile(QObject *parent) : QObject(parent) {
     m_screenNameToScreen.insert({ScreenName::ChoseMap, std::move(screen5)});
 
     m_window.create(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Level.h test");
-    // m_window.setFramerateLimit(60);
+     m_window.setFramerateLimit(60);
 
     // std::stringstream sstream;
     sf::Text fpsCounter;
