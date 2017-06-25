@@ -1,5 +1,6 @@
 #pragma once
 
+#include <SFML/Audio.hpp>
 #include <vector>
 
 #include <QSound>
@@ -9,8 +10,8 @@
 #include "SFML/Graphics.hpp"
 
 #include "Base.h"
-#include "constants.h"
 #include "Character.h"
+#include "constants.h"
 
 namespace IlluminatiConfirmed {
 namespace experimental {
@@ -30,15 +31,27 @@ struct BulletSets {
   b2Vec2 dir;
 };
 
-struct SoundPack {
-  std::shared_ptr<QSound> hitting_building;
-  std::shared_ptr<QSound> flying;
+template <class PlaySound>
+struct SoundPackTBullet {
+  std::shared_ptr<PlaySound> hitting_building;
+  std::shared_ptr<PlaySound> flying;
+};
+
+template <>
+struct SoundPackTBullet<sf::Sound> {
+  SoundPackTBullet(std::shared_ptr<sf::SoundBuffer> &&hit,
+                   std::shared_ptr<sf::SoundBuffer> &&fly)
+      : hitting_building(std::make_shared<sf::Sound>(*(hit.get()))),
+        flying(std::make_shared<sf::Sound>(*(fly.get()))) {}
+  std::shared_ptr<sf::Sound> hitting_building;
+  std::shared_ptr<sf::Sound> flying;
 };
 
 enum class TypeBullet { ROCKET, little_bullet };
 
 class Bullet : public BaseInterface {
  public:
+  using SoundPack = SoundPackTBullet<IlluminatiPlaySound>;
   Bullet(b2World *world, sf::Texture *texture, SoundPack &&pack,
          BulletInfo &&info);
   void setTransform(BulletSets &&sets);

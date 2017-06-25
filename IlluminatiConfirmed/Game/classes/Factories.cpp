@@ -68,26 +68,10 @@ std::string FactoryObjects::getList() {
 
 std::shared_ptr<sf::Texture> FactoryObjects::getTexture(
     const std::string &file) {
-  auto p_texture = std::make_shared<sf::Texture>();
-  auto it = m_vec_of_textures.find(file);
-
-  if (it == m_vec_of_textures.end()) {
-    if (!p_texture->loadFromFile(file))
-      EXCEPTION(std::string("Resorce hasn't opened, puth: ") + file, nullptr);
-
-    m_vec_of_textures.insert({std::move(file), p_texture});
-  } else
-    p_texture = (*it).second;
-  return p_texture;
+  return m_textures.getResource(file);
 }
 
-std::shared_ptr<QSound> FactoryObjects::getSound(const std::string &file) {
-  std::shared_ptr<QSound> p_sound;
-  auto it = m_vec_of_sounds.find(file);
-  if (it == m_vec_of_sounds.end()) {
-    p_sound = std::make_shared<QSound>(QString::fromStdString(file));
-    m_vec_of_sounds.insert({std::move(file), p_sound});
-  } else
-    p_sound = (*it).second;
-  return p_sound;
+std::shared_ptr<IlluminatiSound> FactoryObjects::getSound(
+    const std::string &file) {
+  return m_sounds.getResource(file);
 }

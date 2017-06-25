@@ -110,13 +110,13 @@ void IlluminatiConfirmed::experimental::ListnerWeapon::pushBullet(
         SOUNDS_DIRECTORY + std::string("hit_building_bullet.wav"));
     auto p_flying = experimental::FactoryObjects::Instance().getSound(
         SOUNDS_DIRECTORY + std::string("flying_bullet.wav"));
-    SoundPack pack;
-    pack.hitting_building = std::move(p_hitting_building);
-    pack.flying = std::move(p_flying);
+    Bullet::SoundPack pack(
+        {std::move(p_hitting_building), std::move(p_flying)});
 
     auto bullet = std::make_shared<experimental::Bullet>(
         m_world, texture.get(), std::move(pack),
-        experimental::BulletInfo({{{0, 0, 604, 187}}, bullet_sets.whose, 0.1f, 10, 1.f, 1, 1}));
+        experimental::BulletInfo(
+            {{{0, 0, 604, 187}}, bullet_sets.whose, 0.1f, 10, 1.f, 1, 1}));
     bullet->setTransform(std::move(bullet_sets.sets));
 
     m_objs->push_back(bullet);

@@ -45,6 +45,8 @@ using namespace IlluminatiConfirmed;
 // }
 
 int main(int argc, char* argv[]) {
+  IlluminatiConfirmed::experimental::FactoryObjects::Instance();
+
   QCoreApplication a(argc, argv);
   auto main_thread = QCoreApplication::instance()->thread();
 
@@ -59,7 +61,7 @@ int main(int argc, char* argv[]) {
                    SLOT(deleteLater()));
 
   QTimer timer;
-  timer.setInterval(17);  // Задаем интервал таймера
+  timer.setInterval(2);  // Задаем интервал таймера
   QObject::connect(
       &timer, SIGNAL(timeout()), big_while,
       SLOT(process()));  // Подключаем сигнал таймера к нашему слоту

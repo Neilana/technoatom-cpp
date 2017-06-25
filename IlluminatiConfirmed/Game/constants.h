@@ -39,8 +39,7 @@ const std::string CHARACTERS_SPRITES_DIRECTORY =
 const std::string BULLETS_SPRITES_DIRECTORY =
     "../Game/resources/sprites/bullets/";
 
-const std::string SOUNDS_DIRECTORY =
-    "../Game/resources/sound/";
+const std::string SOUNDS_DIRECTORY = "../Game/resources/sound/";
 
 const std::string FONT_FILE =
     "../Game/resources/fonts/Franchise-Bold-hinted.ttf";
@@ -122,3 +121,14 @@ std::ostream &operator<<(std::ostream &stream, const sf::Vector2<type> &vec) {
 }
 
 std::ostream &operator<<(std::ostream &stream, const b2Vec2 &vec);
+
+#define SFML_SOUND
+#ifdef SFML_SOUND
+#include "SFML/Audio.hpp"
+using IlluminatiPlaySound = sf::Sound;
+using IlluminatiSound = sf::SoundBuffer;
+#else
+#include <QSound>
+using IlluminatiPlaySound = QSound;
+using IlluminatiSound = QSound;
+#endif
