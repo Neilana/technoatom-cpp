@@ -88,6 +88,7 @@ void Game::initNewGame(std::set<int> ids, sf::RenderWindow &window) {
   m_heroes.clear();
   m_ground.reset();
   m_vector_of_objs.clear();
+  m_bullets.clear();
 
   m_world.reset();
   m_world = std::make_unique<b2World>(b2Vec2({0.f, 0.f}));
@@ -185,18 +186,28 @@ void Game::initCharacters(std::set<int> ids) {
 
     auto hero2Character =
         static_pointer_cast<experimental::BaseCharacter>(hero);
-    sf::Texture *text_weapon = new sf::Texture();
-    LOG() << "Result: "
-          << text_weapon->loadFromFile(BULLETS_SPRITES_DIRECTORY + "ak.png")
-          << std::endl;
 
-    experimental::Weapon *weapon =
-        new experimental::Weapon(text_weapon,
-                                 {experimental::TypeBullet::ROCKET,
-                                  {0, 0, 604, 187},
-                                  {607, 0, 727, 187},
-                                  10,
-                                  0.1f});
+    std::shared_ptr<sf::Texture> p_weapon_text;
+    static bool type;
+    experimental::Weapon *weapon;
+    if (type) {
+        p_weapon_text = experimental::FactoryObjects::Instance().getTexture(
+                BULLETS_SPRITES_DIRECTORY + std::string("bazooka.png"));
+      weapon = new experimental::Weapon(
+          p_weapon_text.get(),
+          {experimental::TypeBullet::ROCKET, {0, 0, 900, 362}, 4, 10, 0.09f});
+    } else {
+        p_weapon_text = experimental::FactoryObjects::Instance().getTexture(
+                BULLETS_SPRITES_DIRECTORY + std::string("ak.png"));
+      weapon =
+          new experimental::Weapon(p_weapon_text.get(),
+                                   {experimental::TypeBullet::little_bullet,
+                                    {0, 0, 663, 187},
+                                    2,
+                                    10,
+                                    0.1f});
+    }
+    type = !type;
     listner_of_bullets.addWeapon(weapon);
     hero2Character->setWeapon(weapon);
 

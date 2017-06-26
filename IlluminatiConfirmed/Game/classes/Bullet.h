@@ -49,12 +49,12 @@ struct SoundPackTBullet<sf::Sound> {
 
 enum class TypeBullet { ROCKET, little_bullet };
 
-class Bullet : public BaseInterface {
+class BulletInterface : public BaseInterface {
  public:
   using SoundPack = SoundPackTBullet<IlluminatiPlaySound>;
-  Bullet(b2World *world, sf::Texture *texture, SoundPack &&pack,
-         BulletInfo &&info);
-  void setTransform(BulletSets &&sets);
+  BulletInterface(b2World *world, sf::Texture *texture, SoundPack &&pack,
+                  BulletInfo &&info);
+  virtual void setTransform(BulletSets &&sets);
   virtual void draw(sf::RenderWindow &window) override;
   virtual void move(b2Vec2 velocity, float deltaTime) override;
   virtual void contact(BaseInterface *B) override;
@@ -62,11 +62,44 @@ class Bullet : public BaseInterface {
   virtual void playHit();
   BaseCharacter *whose() const;
 
-  virtual ~Bullet() { LOG() << "destroy bullet " << std::endl; }
+  virtual ~BulletInterface() { LOG() << "destroy bullet " << std::endl; }
 
- private:
+ protected:
   BulletInfo m_info;
   SoundPack m_sound_pack;
+  sf::Sprite m_sprite;
+  TypeBullet m_type_bullet;
+};
+
+class LittleBullet : public BulletInterface {
+ public:
+  LittleBullet(b2World *world, sf::Texture *texture, SoundPack &&pack,
+               BulletInfo &&info);
+  ~LittleBullet();
+};
+
+class Rocket : public BulletInterface {
+ public:
+  Rocket(b2World *world, sf::Texture *texture, SoundPack &&pack,
+         BulletInfo &&info);
+  virtual void move(b2Vec2 velocity, float deltaTime) override;
+
+  virtual void draw(sf::RenderWindow &window) override;
+  virtual void contact(BaseInterface *B) override;
+  virtual void endContact(BaseInterface *B) override;
+  virtual void playHit() override;
+  virtual void setTransform(BulletSets &&sets) override;
+
+  virtual ~Rocket();
+
+ private:
+  b2Body *m_b2_center;
+  b2Fixture *m_b2_center_fixture;
+  b2MotorJoint *m_b2_joint;
+  float m_time;
+  int dir = 1;
+  float m_angle = 1;
+  int dir_angle = -1;
 
   sf::Sprite m_sprite;
 };

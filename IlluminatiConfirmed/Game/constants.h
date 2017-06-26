@@ -48,7 +48,7 @@ const std::string MENU_BACKGROUND_FILE =
 
 const int DEFAULT_SPRITE_SIZE_X = 64;
 const int DEFAULT_SPRITE_SIZE_Y = 64;
-const int TEAM_MEMBERS_COUNT = 2;
+const int TEAM_MEMBERS_COUNT = 6;
 
 template <typename T>
 b2Vec2 SfVector2toB2Vec2(const sf::Vector2<T> &vector) {
@@ -122,7 +122,7 @@ std::ostream &operator<<(std::ostream &stream, const sf::Vector2<type> &vec) {
 
 std::ostream &operator<<(std::ostream &stream, const b2Vec2 &vec);
 
-#define SFML_SOUND
+//#define SFML_SOUND
 #ifdef SFML_SOUND
 #include "SFML/Audio.hpp"
 using IlluminatiPlaySound = sf::Sound;

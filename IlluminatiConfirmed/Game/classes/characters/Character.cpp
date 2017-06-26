@@ -157,7 +157,7 @@ void IlluminatiConfirmed::experimental::BaseCharacter::move(b2Vec2 velocity,
 void IlluminatiConfirmed::experimental::BaseCharacter::contact(
     BaseInterface *B) {
   if (B->getTypeBase() == TypeBase::BULLET) {
-    if (static_cast<experimental::Bullet *>(B)->whose() != this) {
+    if (static_cast<experimental::BulletInterface *>(B)->whose() != this) {
       is_dead = true;
     }
 

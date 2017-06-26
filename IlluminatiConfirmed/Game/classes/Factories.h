@@ -34,7 +34,7 @@ std::shared_ptr<TSound> Resource<TSound>::getResource(const std::string &file) {
 
   if (it == m_vec_of_resources.end()) {
     if (!p_source->loadFromFile(file))
-      EXCEPTION(std::string("Texture hasn't opened, puth: ") + file, nullptr);
+      EXCEPTION(std::string("Resource hasn't opened, puth: ") + file, nullptr);
 
     m_vec_of_resources.insert({std::move(file), p_source});
   } else

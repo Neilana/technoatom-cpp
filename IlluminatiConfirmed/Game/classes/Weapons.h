@@ -12,8 +12,8 @@ namespace experimental {
 
 struct WeaponInfo {
   TypeBullet bullet_type;
-  sf::Rect<int> rect_with_weapon;
-  sf::Rect<int> rect_with_weapon_fire;
+  sf::Rect<int> rect_weapon;
+  int count_of_rect;
   int number_of_cartridge;  // damage в пульке
   float scale;
 };
@@ -33,7 +33,7 @@ class Weapon {
   Weapon(sf::Texture *texture, const WeaponInfo &info);
 
   void setPositionRotation(const sf::Vector2f &pos, float rotation);
-  //void setWhose(BaseCharacter * who);
+  // void setWhose(BaseCharacter * who);
 
   void attack(BaseCharacter *who);
 
@@ -44,11 +44,19 @@ class Weapon {
   virtual ~Weapon() {}
 
  private:
+  struct TimeAnimation {
+    int time;
+    int start_time;
+    int count;
+  };
+
+  void initTimeAnimation();
   sf::Sprite m_sprite;
   int m_number_of_cartridge;
-  sf::Rect<int> m_rect_with_weapon;
-  sf::Rect<int> m_rect_with_weapon_fire;
-  int m_time;
+
+  std::vector<sf::Rect<int>> m_rects_weapon;
+
+  TimeAnimation m_animation;
   TypeBullet m_type_bullet;
   BaseCharacter *m_whose;
 };
@@ -59,7 +67,7 @@ class ListnerWeapon {
 
   void setPointers(
       b2World *world,
-      std::vector<std::shared_ptr<experimental::Bullet>> *bullets,
+      std::vector<std::shared_ptr<experimental::BulletInterface>> *bullets,
       std::vector<std::shared_ptr<experimental::BaseInterface>> *objs);
 
   void addWeapon(Weapon *class_);
@@ -71,7 +79,7 @@ class ListnerWeapon {
 
  private:
   b2World *m_world;
-  std::vector<std::shared_ptr<experimental::Bullet>> *m_bullets;
+  std::vector<std::shared_ptr<experimental::BulletInterface>> *m_bullets;
   std::vector<std::shared_ptr<experimental::BaseInterface>> *m_objs;
 };
 }
