@@ -57,8 +57,16 @@ ScreenName ScreenGame::run(Game &game, sf::RenderWindow &window) {
         if (event.key.code == sf::Keyboard::Space) {
           currentHero1->attack();
         }
-        if (event.key.code == sf::Keyboard::RAlt) {
+        if (event.key.code == sf::Keyboard::Numpad0) {
           currentHero2->attack();
+        }
+
+        if (event.key.code == sf::Keyboard::RControl) {
+          game.setNewWeapon(currentHero2);
+        }
+
+        if (event.key.code == sf::Keyboard::LControl) {
+          game.setNewWeapon(currentHero1);
         }
       }
       //      if (event.type == sf::Event::MouseButtonPressed) {
@@ -112,7 +120,7 @@ ScreenName ScreenGame::run(Game &game, sf::RenderWindow &window) {
     if (Keyboard::isKeyPressed(Keyboard::Numpad6)) {
       angle1 -= 2.5f;
     }
-    currentHero1->setAngleOfWeapon(angle1);
+    currentHero2->setAngleOfWeapon(angle1);
     static float angle2 = 0;
     if (Keyboard::isKeyPressed(Keyboard::Left)) {
       angle2 += 2.5f;
@@ -120,7 +128,7 @@ ScreenName ScreenGame::run(Game &game, sf::RenderWindow &window) {
     if (Keyboard::isKeyPressed(Keyboard::Right)) {
       angle2 -= 2.5f;
     }
-    currentHero2->setAngleOfWeapon(angle2);
+    currentHero1->setAngleOfWeapon(angle2);
 
     game.updatePhysics(time);
     window.clear();

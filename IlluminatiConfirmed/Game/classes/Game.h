@@ -52,6 +52,8 @@ class Game {
     return m_heroes[m_currentHeroId];
   }
 
+  void setNewWeapon(const  std::shared_ptr<experimental::BaseCharacter> & hero);
+
  private:
   std::map<std::string, std::shared_ptr<sf::Texture>> m_textures;
   std::shared_ptr<b2World> m_world;

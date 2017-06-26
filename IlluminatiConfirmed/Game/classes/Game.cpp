@@ -146,3 +146,21 @@ void Game::loadGame(const std::string &fileName) {}
 void Game::setMapFileName(const std::string &fileName) {
   m_mapFileName = fileName;
 }
+
+void Game::setNewWeapon(const std::shared_ptr<experimental::BaseCharacter> &hero) {
+    std::unique_ptr<experimental::Weapon> weapon;
+    static bool type;
+    if (type)
+        weapon = experimental::FactoryObjects::FactoryObjects::Instance()
+                .create_weapon(experimental::WeaponType::AK);
+    else
+        weapon = experimental::FactoryObjects::FactoryObjects::Instance()
+                .create_weapon(experimental::WeaponType::BAZOOKA);
+    type = !type;
+
+    QObject::connect(weapon.get(), &experimental::Weapon::create_bullet,
+                     &listner_of_bullets,
+                     &experimental::ListnerWeapon::pushBullet);
+
+    hero->setWeapon(std::move(weapon));
+}
