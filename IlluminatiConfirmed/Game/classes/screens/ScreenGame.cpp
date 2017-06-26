@@ -1,6 +1,6 @@
+#include <SFML/Graphics.hpp>
 #include "Box2D/Box2D.h"
 #include "SFMLDebugDraw.h"
-#include <SFML/Graphics.hpp>
 
 #include <exception>
 #include <iostream>
@@ -23,14 +23,16 @@ using namespace IlluminatiConfirmed;
 ScreenGame::ScreenGame() {}
 
 ScreenName ScreenGame::run(Game &game, sf::RenderWindow &window) {
-  if (!game.isRunning())
-    return ScreenName::MainMenu;
+  if (!game.isRunning()) return ScreenName::MainMenu;
 
   Clock clock;
   bool running = true;
-  auto currentHero = game.selectNextHero();
+  auto currentHero1 = game.selectNextHero();
+  auto currentHero2 = game.selectNextHero();
 
   while (game.isRunning() && window.isOpen()) {
+    if (currentHero1->isDead() || currentHero2->isDead())
+      return ScreenName::MainMenu;
     auto timeSf = clock.restart();
     auto time = timeSf.asMicroseconds();
     time = time / 800;
@@ -46,45 +48,79 @@ ScreenName ScreenGame::run(Game &game, sf::RenderWindow &window) {
     sf::Mouse::getPosition();
 
     while (window.pollEvent(event)) {
-      if (event.type == sf::Event::Closed)
-        window.close();
+      if (event.type == sf::Event::Closed) window.close();
 
       if (event.type == sf::Event::KeyPressed) {
-        if (event.key.code == sf::Keyboard::Tab) {
-          currentHero = game.selectNextHero();
+        //        if (event.key.code == sf::Keyboard::Tab) {
+        //          currentHero = game.selectNextHero();
+        //        }
+        if (event.key.code == sf::Keyboard::Space) {
+          currentHero1->attack();
         }
-        // если написать ниже - будет трэш, будет оооч много создаваться сразу
-      }
-      if (event.type == sf::Event::MouseButtonPressed) {
-        if (event.mouseButton.button == sf::Mouse::Left) {
-          currentHero->attack();
+        if (event.key.code == sf::Keyboard::RAlt) {
+          currentHero2->attack();
         }
       }
+      //      if (event.type == sf::Event::MouseButtonPressed) {
+      //        if (event.mouseButton.button == sf::Mouse::Left) {
+      //          currentHero->attack();
+      //        }
+      //      }
     }
 
-    b2Vec2 velocity = {0.f, 0.f};
-    if (Keyboard::isKeyPressed(Keyboard::A) ||
-        Keyboard::isKeyPressed(Keyboard::Left)) {
-      velocity += b2Vec2({-1.f, 0.f});
+    b2Vec2 velocity1 = {0.f, 0.f};
+    if (Keyboard::isKeyPressed(Keyboard::A)) {
+      velocity1 += b2Vec2({-1.f, 0.f});
     }
-    if (Keyboard::isKeyPressed(Keyboard::D) ||
-        Keyboard::isKeyPressed(Keyboard::Right)) {
+    if (Keyboard::isKeyPressed(Keyboard::D)) {
       // currentHero->move(Direction::Right, time);
-      velocity += b2Vec2({+1.f, 0.f});
+      velocity1 += b2Vec2({+1.f, 0.f});
     }
-    if (Keyboard::isKeyPressed(Keyboard::W) ||
-        Keyboard::isKeyPressed(Keyboard::Up)) {
+    if (Keyboard::isKeyPressed(Keyboard::W)) {
       // currentHero->move(Direction::Up, time);
-      velocity += b2Vec2({0.f, -1.f});
+      velocity1 += b2Vec2({0.f, -1.f});
     }
-    if (Keyboard::isKeyPressed(Keyboard::S) ||
-        Keyboard::isKeyPressed(Keyboard::Down)) {
+    if (Keyboard::isKeyPressed(Keyboard::S)) {
       // currentHero->move(Direction::Down, time);
-      velocity += b2Vec2({0.f, +1.f});
+      velocity1 += b2Vec2({0.f, +1.f});
     }
-    if (velocity.Length() > 0.0) {
-      currentHero->move(velocity, time);
+    if (velocity1.Length() > 0.0) {
+      currentHero1->move(velocity1, time);
     }
+
+    b2Vec2 velocity2 = {0.f, 0.f};
+    if (Keyboard::isKeyPressed(Keyboard::F)) {
+      velocity2 += b2Vec2({-1.f, 0.f});
+    }
+    if (Keyboard::isKeyPressed(Keyboard::H)) {
+      velocity2 += b2Vec2({+1.f, 0.f});
+    }
+    if (Keyboard::isKeyPressed(Keyboard::T)) {
+      velocity2 += b2Vec2({0.f, -1.f});
+    }
+    if (Keyboard::isKeyPressed(Keyboard::G)) {
+      velocity2 += b2Vec2({0.f, +1.f});
+    }
+    if (velocity2.Length() > 0.0) {
+      currentHero2->move(velocity2, time);
+    }
+
+    static float angle1 = 0;
+    if (Keyboard::isKeyPressed(Keyboard::Numpad4)) {
+      angle1 += 2.5f;
+    }
+    if (Keyboard::isKeyPressed(Keyboard::Numpad6)) {
+      angle1 -= 2.5f;
+    }
+    currentHero1->setAngleOfWeapon(angle1);
+    static float angle2 = 0;
+    if (Keyboard::isKeyPressed(Keyboard::Left)) {
+      angle2 += 2.5f;
+    }
+    if (Keyboard::isKeyPressed(Keyboard::Right)) {
+      angle2 -= 2.5f;
+    }
+    currentHero2->setAngleOfWeapon(angle2);
 
     game.updatePhysics(time);
     window.clear();

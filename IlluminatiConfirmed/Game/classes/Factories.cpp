@@ -46,14 +46,36 @@ std::shared_ptr<experimental::BaseInterface> FactoryObjects::create_character(
     std::string master = query.value(7).toString().toStdString();
     int size = query.value(8).toInt();
 
-    auto p_texture = Instance().getTexture(fileName);
+    if (master == "Park") {
+      auto killed = experimental::FactoryObjects::Instance().getSound(
+          SOUNDS_DIRECTORY + std::string("killed_kyle.wav"));
 
-    auto pers =
-        std::shared_ptr<experimental::BaseInterface>(characters_factory.get(
-            master)(world, p_texture.get(),
-                    experimental::CharacterSpriteInfo(
-                        {width, height, size, frames, 300, 300})));
-    return pers;
+      BaseCharacter::SoundPack pack({std::move(killed)});
+
+      auto p_texture = Instance().getTexture(fileName);
+
+      auto pers =
+          std::shared_ptr<experimental::BaseInterface>(characters_factory.get(
+              master)(world, p_texture.get(),
+                      experimental::CharacterSpriteInfo(
+                          {width, height, size, frames, 300, 300}),
+                      std::move(pack)));
+      return pers;
+    } else {
+      std::shared_ptr<IlluminatiSound> killed;
+
+      BaseCharacter::SoundPack pack({std::move(killed)});
+
+      auto p_texture = Instance().getTexture(fileName);
+
+      auto pers =
+          std::shared_ptr<experimental::BaseInterface>(characters_factory.get(
+              master)(world, p_texture.get(),
+                      experimental::CharacterSpriteInfo(
+                          {width, height, size, frames, 300, 300}),
+                      std::move(pack)));
+      return pers;
+    }
   }
   throw EXCEPTION("Something wrong", nullptr);
 }
@@ -62,36 +84,46 @@ std::shared_ptr<BulletInterface> FactoryObjects::create_bullet(
     experimental::TypeBullet type, b2World *world, BaseCharacter *whose) {
   static auto bullets_factory = registrationTypesOfBullets();
 
-  auto p_hitting_building = experimental::FactoryObjects::Instance().getSound(
-      SOUNDS_DIRECTORY + std::string("hit_building_bullet.wav"));
-  auto p_flying = experimental::FactoryObjects::Instance().getSound(
-      SOUNDS_DIRECTORY + std::string("flying_bullet.wav"));
-  BulletInterface::SoundPack pack(
-      {std::move(p_hitting_building), std::move(p_flying)});
+
 
   std::shared_ptr<experimental::BulletInterface> bullet;
 
   if (type == TypeBullet::little_bullet) {
+      auto p_hitting_building = experimental::FactoryObjects::Instance().getSound(
+          SOUNDS_DIRECTORY + std::string("hit_building_bullet.wav"));
+      auto p_flying = experimental::FactoryObjects::Instance().getSound(
+          SOUNDS_DIRECTORY + std::string("flying_bullet.wav"));
+      BulletInterface::SoundPack pack(
+          {std::move(p_hitting_building), std::move(p_flying)});
+
     auto texture = experimental::FactoryObjects::Instance().getTexture(
         BULLETS_SPRITES_DIRECTORY + "ak.png");
     bullet = std::shared_ptr<experimental::BulletInterface>(bullets_factory.get(
         "little")(world, texture.get(), std::move(pack),
                   experimental::BulletInfo(
-                      {{{0, 0, 604, 187}}, whose, 0.1f, 10, 1.f, 1, 1})));
+                      {{{0, 0, 604, 187}}, whose, 0.1f, 10, 7.f, 1, 1})));
   } else if (type == TypeBullet::ROCKET) {
+
+      auto p_hitting_building = experimental::FactoryObjects::Instance().getSound(
+          SOUNDS_DIRECTORY + std::string("expl_rocket.wav"));
+      auto p_flying = experimental::FactoryObjects::Instance().getSound(
+          SOUNDS_DIRECTORY + std::string("flying_bullet.wav"));
+      BulletInterface::SoundPack pack(
+          {std::move(p_hitting_building), std::move(p_flying)});
+
     auto texture = experimental::FactoryObjects::Instance().getTexture(
         BULLETS_SPRITES_DIRECTORY + "rocket_1.png");
     bullet = std::shared_ptr<experimental::BulletInterface>(bullets_factory.get(
         "rocket")(world, texture.get(), std::move(pack),
                   experimental::BulletInfo(
-                      {{{0, 0, 56, 18}}, whose, 1.5f, 10, 1.f, 1, 1})));
+                      {{{0, 0, 56, 18}}, whose, 1.5f, 10, 3.f, 1, 1})));
   } else
     throw EXCEPTION("Unknow class name of bullet", nullptr);
 
   return bullet;
 }
 
-std::unique_ptr<Weapon> FactoryObjects::create_weapon( WeaponType type) {
+std::unique_ptr<Weapon> FactoryObjects::create_weapon(WeaponType type) {
   std::shared_ptr<sf::Texture> p_weapon_text;
 
   std::unique_ptr<experimental::Weapon> weapon;

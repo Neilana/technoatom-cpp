@@ -5,10 +5,12 @@
 
 IlluminatiConfirmed::experimental::BaseCharacter::BaseCharacter(
     b2World *world, const sf::Texture *texture,
-    const IlluminatiConfirmed::experimental::CharacterSpriteInfo &sprite_data)
+    const IlluminatiConfirmed::experimental::CharacterSpriteInfo &sprite_data,
+    SoundPack pack)
     : BaseInterface(BaseInterface::CHARACTER),
       m_weapon(nullptr),
-      m_height(sprite_data.size) {
+      m_height(sprite_data.size),
+      m_pack(std::move(pack)) {
   LOG() << "Create Character \n";
   {
     b2BodyDef bd;
@@ -107,17 +109,15 @@ IlluminatiConfirmed::experimental::BaseCharacter::BaseCharacter(
 void IlluminatiConfirmed::experimental::BaseCharacter::draw(
     sf::RenderWindow &window) {
   m_sprite.setPosition(B2Vec2toSfVector2<float>(m_b2_body->GetPosition()));
-  // window.draw(m_sprite);
 
-  // !!!!!!!!!!!
-  auto pos_of_weapon =
-      B2Vec2toSfVector2<float>(getFixtureWorldPosition(m_b2_body_fixture));
+//  auto pos_of_weapon =
+//      B2Vec2toSfVector2<float>(getFixtureWorldPosition(m_b2_body_fixture));
   //мол на 20 пр ниже, чем центр фикстуры
-  pos_of_weapon.y = pos_of_weapon.y + 0.3f * m_height;
+//  pos_of_weapon.y = pos_of_weapon.y + 0.3f * m_height;
 
-  moveWeapon(pos_of_weapon,
-             180 / b2_pi * RadBetweenVectors(pos_of_weapon,
-                                             sf::Mouse::getPosition(window)));
+//  moveWeapon(pos_of_weapon,
+//             180 / b2_pi * RadBetweenVectors(pos_of_weapon,
+//                                             sf::Mouse::getPosition(window)));
   m_sprite.setPosition(B2Vec2toSfVector2<float>(m_b2_body->GetPosition()));
 
   if (m_direction == Direction::Up) {
@@ -169,13 +169,23 @@ void IlluminatiConfirmed::experimental::BaseCharacter::endContact(
     BaseInterface *B) {}
 
 void IlluminatiConfirmed::experimental::BaseCharacter::setWeapon(
-    std::unique_ptr <IlluminatiConfirmed::experimental::Weapon> &&weapon) {
+    std::unique_ptr<IlluminatiConfirmed::experimental::Weapon> &&weapon) {
   m_weapon = std::move(weapon);
 }
 
 void IlluminatiConfirmed::experimental::BaseCharacter::moveWeapon(
     const sf::Vector2f &pos, float rot) {
   if (m_weapon) m_weapon->setPositionRotation(pos, rot);
+}
+
+void IlluminatiConfirmed::experimental::BaseCharacter::setAngleOfWeapon(
+    float angle) {
+  auto pos_of_weapon =
+      B2Vec2toSfVector2<float>(getFixtureWorldPosition(m_b2_body_fixture));
+  //мол на 20 пр ниже, чем центр фикстуры
+  pos_of_weapon.y = pos_of_weapon.y + 0.3f * m_height;
+
+  moveWeapon(pos_of_weapon, angle);
 }
 
 void IlluminatiConfirmed::experimental::BaseCharacter::attack() {
@@ -194,8 +204,9 @@ void IlluminatiConfirmed::experimental::BaseCharacter::updatePhysics(
 
 IlluminatiConfirmed::experimental::CharacterSouthPark::CharacterSouthPark(
     b2World *world, const sf::Texture *texture,
-    const IlluminatiConfirmed::experimental::CharacterSpriteInfo &sprite_data)
-    : BaseCharacter(world, texture, sprite_data) {
+    const IlluminatiConfirmed::experimental::CharacterSpriteInfo &sprite_data,
+    SoundPack pack)
+    : BaseCharacter(world, texture, sprite_data, std::move(pack)) {
   {
     m_type_character = TypeBaseCharacter::CHARACTER_SOUTH_PARK;
     b2PrismaticJointDef jd;
@@ -304,8 +315,9 @@ void IlluminatiConfirmed::experimental::CharacterSouthPark::updatePhysics(
 
 IlluminatiConfirmed::experimental::CharacterAlinasBoys::CharacterAlinasBoys(
     b2World *world, const sf::Texture *texture,
-    const IlluminatiConfirmed::experimental::CharacterSpriteInfo &sprite_data)
-    : BaseCharacter(world, texture, sprite_data) {
+    const IlluminatiConfirmed::experimental::CharacterSpriteInfo &sprite_data,
+    SoundPack pack)
+    : BaseCharacter(world, texture, sprite_data, std::move(pack)) {
   {
     m_type_character = TypeBaseCharacter::ALINAS_BOYS;
     b2PrismaticJointDef jd;

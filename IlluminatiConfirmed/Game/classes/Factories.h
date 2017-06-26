@@ -113,10 +113,11 @@ class FactoryObjects {
   Resource<sf::Texture> m_textures;
   Resource<IlluminatiSound> m_sounds;
   static GenericObjectFactory<std::string, BaseCharacter, b2World *,
-                              sf::Texture *, CharacterSpriteInfo>
+                              sf::Texture *, CharacterSpriteInfo,
+                              BaseCharacter::SoundPack>
   registrationTypesOfCharacters() {
     GenericObjectFactory<std::string, BaseCharacter, b2World *, sf::Texture *,
-                         CharacterSpriteInfo>
+                         CharacterSpriteInfo, BaseCharacter::SoundPack>
         characters_factory;
     characters_factory.add<CharacterSouthPark>("Park");
     characters_factory.add<CharacterAlinasBoys>("Alinas");

@@ -29,14 +29,26 @@ struct CharacterSpriteInfo {
   int y_position;
 };
 
+template <class PlaySound>
+struct SoundPackTCharacter {
+  std::shared_ptr<PlaySound> killed;
+};
+
+template <>
+struct SoundPackTCharacter<QSound> {
+  SoundPackTCharacter(std::shared_ptr<QSound> &&hit) : killed(hit) {}
+  std::shared_ptr<QSound> killed;
+};
+
 class BaseCharacter : public BaseInterface {
  public:
   enum TypeBaseCharacter { CHARACTER_SOUTH_PARK, ALINAS_BOYS };
+  using SoundPack = SoundPackTCharacter<IlluminatiPlaySound>;
 
   //передавать лямбду, которая будет дергаться, когда персу необходимо будет
   //стрелять
   BaseCharacter(b2World *world, const sf::Texture *texture,
-                const CharacterSpriteInfo &sprite_data);
+                const CharacterSpriteInfo &sprite_data, SoundPack pack);
 
   virtual void draw(sf::RenderWindow &window) override;
   virtual void move(b2Vec2 velocity, float deltaTime) override;
@@ -45,12 +57,19 @@ class BaseCharacter : public BaseInterface {
 
   void setWeapon(std::unique_ptr<Weapon> &&weapon);
   void moveWeapon(const sf::Vector2f &pos, float rot);
+  void setAngleOfWeapon(float angle);
 
   virtual void attack();
+
+  void playKilled() {
+    if (m_pack.killed) m_pack.killed->play();
+  }
 
   virtual ~BaseCharacter();
 
   virtual void updatePhysics(float deltaTime);
+
+  TypeBaseCharacter m_type_character;
 
  protected:
   int m_frames;
@@ -70,17 +89,16 @@ class BaseCharacter : public BaseInterface {
 
   sf::Sprite m_sprite;
 
-  TypeBaseCharacter m_type_character;
-
  private:
   std::unique_ptr<Weapon> m_weapon;
   float m_height;
+  SoundPack m_pack;
 };
 
 class CharacterSouthPark : public BaseCharacter {
  public:
   CharacterSouthPark(b2World *world, const sf::Texture *texture,
-                     const CharacterSpriteInfo &sprite_data);
+                     const CharacterSpriteInfo &sprite_data, SoundPack pack);
   void move(b2Vec2 velocity, float deltaTime) override;
   void draw(sf::RenderWindow &window) override;
   void contact(BaseInterface *B) override;
@@ -96,7 +114,7 @@ class CharacterSouthPark : public BaseCharacter {
 class CharacterAlinasBoys : public BaseCharacter {
  public:
   CharacterAlinasBoys(b2World *world, const sf::Texture *texture,
-                      const CharacterSpriteInfo &sprite_data);
+                      const CharacterSpriteInfo &sprite_data, SoundPack pack);
 
   void move(b2Vec2 velocity, float deltaTime) override;
   void draw(sf::RenderWindow &window) override;

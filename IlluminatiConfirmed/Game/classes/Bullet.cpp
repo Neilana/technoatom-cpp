@@ -16,7 +16,6 @@ void IlluminatiConfirmed::experimental::BulletInterface::setTransform(
 
 void IlluminatiConfirmed::experimental::BulletInterface::draw(
     sf::RenderWindow &window) {
-  LOG() << "bullet interface #" << std::endl;
   m_sprite.setPosition(B2Vec2toSfVector2<float>(m_b2_base->GetPosition()));
   m_sprite.setRotation(m_b2_base->GetTransform().q.GetAngle() / 3.14f * 180);
 
@@ -33,7 +32,10 @@ void IlluminatiConfirmed::experimental::BulletInterface::contact(
     m_sound_pack.hitting_building->play();
     is_dead = true;
   } else if (B->getTypeBase() == TypeBase::CHARACTER)
-    if (B != whose()) is_dead = true;
+    if (B != whose()) {
+      is_dead = true;
+      whose()->playKilled();
+    }
 }
 
 void IlluminatiConfirmed::experimental::BulletInterface::endContact(
