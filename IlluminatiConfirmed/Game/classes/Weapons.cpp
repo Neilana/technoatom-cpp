@@ -1,11 +1,13 @@
 #include "Weapons.h"
+#include "Factories.h"
 
 #include <QSound>
 
 IlluminatiConfirmed::experimental::Weapon::Weapon(
     sf::Texture *texture,
     const IlluminatiConfirmed::experimental::WeaponInfo &info)
-    : m_number_of_cartridge(info.number_of_cartridge),
+    : QObject(nullptr),
+      m_number_of_cartridge(info.number_of_cartridge),
       m_type_bullet(info.bullet_type),
       m_whose(nullptr) {
   m_sprite.setTexture(*texture);
@@ -22,8 +24,6 @@ IlluminatiConfirmed::experimental::Weapon::Weapon(
   m_sprite.setOrigin(
       info.rect_weapon.width / 2.f - 0.2f * info.rect_weapon.width / 2.f,
       info.rect_weapon.height / 2.f);
-
-  m_animation.start_time = 30;
 }
 
 void IlluminatiConfirmed::experimental::Weapon::setPositionRotation(
@@ -37,20 +37,14 @@ void IlluminatiConfirmed::experimental::Weapon::setPositionRotation(
     m_sprite.setScale(flip_check.x, -flip_check.y);
   m_sprite.setRotation(rotation);
 }
-/*
-void IlluminatiConfirmed::experimental::Weapon::setWhose(
-    IlluminatiConfirmed::experimental::BaseCharacter *who) {
-  m_whose = who;
-}
-*/
+
 void IlluminatiConfirmed::experimental::Weapon::attack(BaseCharacter *who) {
   if (m_number_of_cartridge > 0) {
     --m_number_of_cartridge;
-    // m_sprite.setTextureRect(m_rect_with_weapon_fire);
 
-    m_animation.start_time = 30;
-    m_animation.time = m_animation.start_time;
-    m_animation.count = m_animation.start_time / m_rects_weapon.size();
+    m_animation.setStartTime(30);
+    m_animation.time = m_animation.getStartTime();
+    m_animation.count = m_animation.getStartTime() / m_rects_weapon.size();
 
     auto a = m_sprite.getRotation();
     auto pos = m_sprite.getPosition();
@@ -66,14 +60,15 @@ void IlluminatiConfirmed::experimental::Weapon::attack(BaseCharacter *who) {
 
     LOG() << "Pos: " << pos << std::endl;
     LOG() << "dir: " << dir << std::endl;
-    event_create_bullet.notifyListeners(
-        {{{SfVector2toB2Vec2(pos)}, {SfVector2toB2Vec2(dir)}},
-         m_type_bullet,
-         who});
+
+    emit create_bullet({{{SfVector2toB2Vec2(pos)}, {SfVector2toB2Vec2(dir)}},
+                        m_type_bullet,
+                        who});
   }
 }
 
 void IlluminatiConfirmed::experimental::Weapon::draw(sf::RenderWindow &window) {
+  LOG() << "bullet interface #" << std::endl;
   if (m_animation.time > 0) {
     auto index = m_animation.time-- / m_animation.count;
     m_sprite.setTextureRect(m_rects_weapon.at(
@@ -87,7 +82,7 @@ void IlluminatiConfirmed::experimental::Weapon::draw(sf::RenderWindow &window) {
 void IlluminatiConfirmed::experimental::Weapon::initTimeAnimation() {}
 
 IlluminatiConfirmed::experimental::ListnerWeapon::ListnerWeapon()
-    : m_world(nullptr), m_bullets(nullptr), m_objs(nullptr) {}
+    : QObject(nullptr), m_world(nullptr), m_bullets(nullptr), m_objs(nullptr) {}
 
 void IlluminatiConfirmed::experimental::ListnerWeapon::setPointers(
     b2World *world,
@@ -102,49 +97,11 @@ void IlluminatiConfirmed::experimental::ListnerWeapon::setPointers(
   m_objs = objs;
 }
 
-void IlluminatiConfirmed::experimental::ListnerWeapon::addWeapon(
-    IlluminatiConfirmed::experimental::Weapon *class_) {
-  auto syncVal = class_->event_create_bullet.createSyncValue();
-
-  auto eventListener = class_->event_create_bullet.createListener(
-      [this](auto bul) { pushBullet(std::move(bul)); });
-
-  m_syncValues_and_eventListener.push_back(
-      {std::move(syncVal), std::move(eventListener)});
-}
-
 void IlluminatiConfirmed::experimental::ListnerWeapon::pushBullet(
-    IlluminatiConfirmed::experimental::BulletSetsInfo &&bullet_sets) {
-  //здесь некая фабрика пулек, причем настройки должны кэшироваться, иначе
-  //каждая пулька запрос к бд, мы же performance freak
+    BulletSetsInfo bullet_sets) {
   if (m_objs != nullptr && m_bullets != nullptr && m_world != nullptr) {
-    auto p_hitting_building = experimental::FactoryObjects::Instance().getSound(
-        SOUNDS_DIRECTORY + std::string("hit_building_bullet.wav"));
-    auto p_flying = experimental::FactoryObjects::Instance().getSound(
-        SOUNDS_DIRECTORY + std::string("flying_bullet.wav"));
-    BulletInterface::SoundPack pack(
-        {std::move(p_hitting_building), std::move(p_flying)});
-
-    std::shared_ptr<experimental::BulletInterface> bullet;
-
-    if (bullet_sets.type == TypeBullet::little_bullet) {
-      auto texture = experimental::FactoryObjects::Instance().getTexture(
-          BULLETS_SPRITES_DIRECTORY + "ak.png");
-      bullet = std::static_pointer_cast<experimental::BulletInterface>(
-          std::make_shared<experimental::LittleBullet>(
-              m_world, texture.get(), std::move(pack),
-              experimental::BulletInfo(
-                  {{{0, 0, 604, 187}}, bullet_sets.whose, 0.1f, 10, 1.f, 1, 1})));
-    }
-    if (bullet_sets.type == TypeBullet::ROCKET) {
-      auto texture = experimental::FactoryObjects::Instance().getTexture(
-          BULLETS_SPRITES_DIRECTORY + "rocket_1.png");
-      bullet = std::static_pointer_cast<
-          experimental::BulletInterface>(std::make_shared<experimental::Rocket>(
-          m_world, texture.get(), std::move(pack),
-          experimental::BulletInfo(
-              {{{0, 0, 56, 18}}, bullet_sets.whose, 1.5f, 10, 1.f, 1, 1})));
-    }
+    auto bullet = FactoryObjects::Instance().create_bullet(
+        bullet_sets.type, m_world, bullet_sets.whose);
 
     bullet->setTransform(std::move(bullet_sets.sets));
 

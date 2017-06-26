@@ -15,8 +15,6 @@
 #define LOG() LOGGER("level")
 #endif
 
-
-
 namespace IlluminatiConfirmed {
 namespace experimental {
 
@@ -45,7 +43,7 @@ class BaseCharacter : public BaseInterface {
   virtual void contact(BaseInterface *B) override;
   virtual void endContact(BaseInterface *B) override;
 
-  void setWeapon(Weapon *weapon);
+  void setWeapon(std::unique_ptr<Weapon> &&weapon);
   void moveWeapon(const sf::Vector2f &pos, float rot);
 
   virtual void attack();
@@ -75,7 +73,7 @@ class BaseCharacter : public BaseInterface {
   TypeBaseCharacter m_type_character;
 
  private:
-  Weapon *m_weapon;
+  std::unique_ptr<Weapon> m_weapon;
   float m_height;
 };
 

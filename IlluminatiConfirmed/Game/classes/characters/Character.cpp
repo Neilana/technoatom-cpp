@@ -169,9 +169,8 @@ void IlluminatiConfirmed::experimental::BaseCharacter::endContact(
     BaseInterface *B) {}
 
 void IlluminatiConfirmed::experimental::BaseCharacter::setWeapon(
-    IlluminatiConfirmed::experimental::Weapon *weapon) {
-  if (m_weapon) delete m_weapon;
-  m_weapon = weapon;
+    std::unique_ptr <IlluminatiConfirmed::experimental::Weapon> &&weapon) {
+  m_weapon = std::move(weapon);
 }
 
 void IlluminatiConfirmed::experimental::BaseCharacter::moveWeapon(
@@ -184,7 +183,6 @@ void IlluminatiConfirmed::experimental::BaseCharacter::attack() {
 }
 
 IlluminatiConfirmed::experimental::BaseCharacter::~BaseCharacter() {
-  if (m_weapon) delete m_weapon;
   m_b2_body->GetWorld()->DestroyBody(m_b2_body);
 }
 

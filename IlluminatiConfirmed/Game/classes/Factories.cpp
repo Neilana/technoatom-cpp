@@ -31,10 +31,7 @@ FactoryObjects::create_map(const std::string &file, b2World *world) {
 
 std::shared_ptr<experimental::BaseInterface> FactoryObjects::create_character(
     int id, b2World *world) {
-  static GenericObjectFactory<std::string, experimental::BaseCharacter,
-                              b2World *, sf::Texture *,
-                              experimental::CharacterSpriteInfo>
-      characters_factory = registrationTypesOfCharacters();
+  static auto characters_factory = registrationTypesOfCharacters();
 
   QString str =
       "SELECT * FROM CharactersImages WHERE Id=" + QString::number(id);
@@ -59,6 +56,69 @@ std::shared_ptr<experimental::BaseInterface> FactoryObjects::create_character(
     return pers;
   }
   throw EXCEPTION("Something wrong", nullptr);
+}
+
+std::shared_ptr<BulletInterface> FactoryObjects::create_bullet(
+    experimental::TypeBullet type, b2World *world, BaseCharacter *whose) {
+  static auto bullets_factory = registrationTypesOfBullets();
+
+  auto p_hitting_building = experimental::FactoryObjects::Instance().getSound(
+      SOUNDS_DIRECTORY + std::string("hit_building_bullet.wav"));
+  auto p_flying = experimental::FactoryObjects::Instance().getSound(
+      SOUNDS_DIRECTORY + std::string("flying_bullet.wav"));
+  BulletInterface::SoundPack pack(
+      {std::move(p_hitting_building), std::move(p_flying)});
+
+  std::shared_ptr<experimental::BulletInterface> bullet;
+
+  if (type == TypeBullet::little_bullet) {
+    auto texture = experimental::FactoryObjects::Instance().getTexture(
+        BULLETS_SPRITES_DIRECTORY + "ak.png");
+    bullet = std::shared_ptr<experimental::BulletInterface>(bullets_factory.get(
+        "little")(world, texture.get(), std::move(pack),
+                  experimental::BulletInfo(
+                      {{{0, 0, 604, 187}}, whose, 0.1f, 10, 1.f, 1, 1})));
+  } else if (type == TypeBullet::ROCKET) {
+    auto texture = experimental::FactoryObjects::Instance().getTexture(
+        BULLETS_SPRITES_DIRECTORY + "rocket_1.png");
+    bullet = std::shared_ptr<experimental::BulletInterface>(bullets_factory.get(
+        "rocket")(world, texture.get(), std::move(pack),
+                  experimental::BulletInfo(
+                      {{{0, 0, 56, 18}}, whose, 1.5f, 10, 1.f, 1, 1})));
+  } else
+    throw EXCEPTION("Unknow class name of bullet", nullptr);
+
+  return bullet;
+}
+
+std::unique_ptr<Weapon> FactoryObjects::create_weapon( WeaponType type) {
+  std::shared_ptr<sf::Texture> p_weapon_text;
+
+  std::unique_ptr<experimental::Weapon> weapon;
+  if (type == WeaponType::BAZOOKA) {
+    p_weapon_text = experimental::FactoryObjects::Instance().getTexture(
+        BULLETS_SPRITES_DIRECTORY + std::string("bazooka.png"));
+    weapon = std::make_unique<experimental::Weapon>(
+        p_weapon_text.get(),
+        experimental::WeaponInfo({experimental::TypeBullet::ROCKET,
+                                  {0, 0, 900, 362},
+                                  4,
+                                  10,
+                                  0.09f}));
+  } else if (type == WeaponType::AK) {
+    p_weapon_text = experimental::FactoryObjects::Instance().getTexture(
+        BULLETS_SPRITES_DIRECTORY + std::string("ak.png"));
+    weapon = std::make_unique<experimental::Weapon>(
+        p_weapon_text.get(),
+        experimental::WeaponInfo({experimental::TypeBullet::little_bullet,
+                                  {0, 0, 663, 187},
+                                  2,
+                                  10,
+                                  0.1f}));
+  } else
+    throw EXCEPTION("Unknow class name of weapon", nullptr);
+
+  return weapon;
 }
 
 std::string FactoryObjects::getList() {

@@ -8,7 +8,6 @@ BaseInterface::BaseInterface(BaseInterface::TypeBase type)
       m_b2_base_fixture(nullptr),
       m_type_base(type),
       is_dead(false) {
-  LOG() << "Create base " << int(m_type_base) << std::endl;
 }
 
 bool BaseInterface::isDead() { return is_dead; }
@@ -19,7 +18,6 @@ float BaseInterface::getY() {
 
 BaseInterface::~BaseInterface() {
   m_b2_base->GetWorld()->DestroyBody(m_b2_base);
-  LOG() << "Destroy base " << int(m_type_base) << std::endl;
 }
 
 Building::Building(b2World *world, const sf::Texture *texture,
@@ -47,7 +45,6 @@ Building::Building(b2World *world, const sf::Texture *texture,
 
     m_b2_base_fixture = m_b2_base->CreateFixture(&fixture);
     m_b2_base_fixture->SetUserData(this);
-    LOG() << "Create building " << std::endl;
   }
 
   for (auto &&it : big_obj.rects_for_draw_sprites) {
@@ -74,5 +71,4 @@ void Building::contact(BaseInterface *B) {
 void Building::endContact(BaseInterface *B) {}
 
 Building::~Building() {
-  LOG() << "Destroy building " << std::endl;
     /*m_b2_base->GetWorld()->DestroyBody(m_b2_base);*/ }

@@ -1,76 +1,24 @@
 #include "Bullet.h"
 
 IlluminatiConfirmed::experimental::BulletInterface::BulletInterface(
-    b2World *world, sf::Texture *texture, SoundPack &&pack,
-    IlluminatiConfirmed::experimental::BulletInfo &&info)
+    b2World *world, sf::Texture *texture, SoundPack pack, BulletInfo info)
     : BaseInterface(TypeBase::BULLET),
       m_info(std::move(info)),
-      m_sound_pack(std::move(pack)) {
-  //  static int count = 0;
-
-  //  LOG() << "Create bullet #" << count++ << std::endl;
-  //  {
-  //    b2BodyDef bd;
-  //    bd.type = b2_dynamicBody;
-  //    bd.bullet = true;
-  //    // bd.position.Set(SfPointtoB2Point(sprite_data.x_position),
-  //    //                SfPointtoB2Point(sprite_data.y_position));
-  //    bd.linearDamping = 0.f;
-  //    bd.fixedRotation = false;
-  //    m_b2_base = world->CreateBody(&bd);
-
-  //    b2PolygonShape polygon;
-  //    // 0.7 - где то читал, что физические размеры должны быть чуть меньше
-  //    // спрайта)
-  //    polygon.SetAsBox(
-  //        SfPointtoB2Point(m_info.scale *
-  //                         m_info.vec_of_rects_with_bullet.at(0).width) /
-  //            2.0f * 0.7f,
-  //        SfPointtoB2Point(m_info.scale *
-  //                         m_info.vec_of_rects_with_bullet.at(0).height) /
-  //            2.0f * 0.7f);
-
-  //    b2FixtureDef fixture;
-  //    fixture.friction = 0.f;
-  //    fixture.density = 0.005f;
-  //    fixture.isSensor = true;
-
-  //    fixture.shape = &polygon;
-
-  //    m_b2_base_fixture = m_b2_base->CreateFixture(&fixture);
-  //    m_b2_base_fixture->SetUserData(this);
-  //  }
-
-  //  m_sprite.setTexture(*texture);
-  //  m_sprite.scale(m_info.scale, m_info.scale);
-  //  m_sprite.setTextureRect(m_info.vec_of_rects_with_bullet.at(0));
-  //  m_sprite.setOrigin(m_sprite.getTextureRect().width / 2.f,
-  //                     m_sprite.getTextureRect().height / 2.f);
-}
+      m_sound_pack(std::move(pack)) {}
 
 void IlluminatiConfirmed::experimental::BulletInterface::setTransform(
     IlluminatiConfirmed::experimental::BulletSets &&sets) {
-  // LOG() << "Dir1 " << sets.dir << std::endl;
   sets.dir.Normalize();
-  // LOG() << "Dir2 " << sets.dir << std::endl;
-  // sets.dir.y *= -1.f;
-
   m_b2_base->SetTransform(sets.position, atanf(sets.dir.y / sets.dir.x));
   sets.dir *= m_info.velocity;
-  // LOG() << "Dir3 " << sets.dir << std::endl;
   m_b2_base->SetLinearVelocity(sets.dir);
-  // LOG() << "Dir4 " << sets.dir << std::endl;
 }
 
 void IlluminatiConfirmed::experimental::BulletInterface::draw(
     sf::RenderWindow &window) {
+  LOG() << "bullet interface #" << std::endl;
   m_sprite.setPosition(B2Vec2toSfVector2<float>(m_b2_base->GetPosition()));
   m_sprite.setRotation(m_b2_base->GetTransform().q.GetAngle() / 3.14f * 180);
-  static int count;
-
-  //  LOG() << "Position of bullet #" << count++ << " : "
-  //        << m_sprite.getPosition().x << " " << m_sprite.getPosition().y
-  //        << std::endl;
 
   window.draw(m_sprite);
 }
@@ -99,9 +47,8 @@ IlluminatiConfirmed::experimental::BulletInterface::whose() const {
 }
 
 IlluminatiConfirmed::experimental::Rocket::Rocket(
-    b2World *world, sf::Texture *texture,
-    IlluminatiConfirmed::experimental::BulletInterface::SoundPack &&pack,
-    IlluminatiConfirmed::experimental::BulletInfo &&info)
+    b2World *world, sf::Texture *texture, SoundPack pack,
+    IlluminatiConfirmed::experimental::BulletInfo info)
     : BulletInterface(world, texture, std::move(pack), std::move(info)) {
   m_type_bullet = TypeBullet::ROCKET;
 
@@ -132,15 +79,13 @@ IlluminatiConfirmed::experimental::Rocket::Rocket(
     b2BodyDef bd;
     bd.type = b2_dynamicBody;
     bd.bullet = true;
-    // bd.position.Set(SfPointtoB2Point(sprite_data.x_position),
-    //                SfPointtoB2Point(sprite_data.y_position));
     bd.linearDamping = 0.f;
     bd.fixedRotation = false;
     m_b2_base = world->CreateBody(&bd);
 
     b2PolygonShape polygon;
-    // 0.7 - где то читал, что физические размеры должны быть чуть
-    // спрайта)
+    // 0.7 - где то читал, что физические размеры должны быть чуть меньше
+    // спрайта
     polygon.SetAsBox(
         SfPointtoB2Point(m_info.scale *
                          m_info.vec_of_rects_with_bullet.at(0).width) /
@@ -175,8 +120,7 @@ IlluminatiConfirmed::experimental::Rocket::Rocket(
 
 void IlluminatiConfirmed::experimental::Rocket::move(b2Vec2 velocity,
                                                      float deltaTime) {
-
-  m_time += float(20.f / 1300.f * dir);  //скорость прыжков
+  m_time += float(20.f / 1300.f * dir);
   if (m_time > 1) {
     m_time = 1;
     dir = -1;
@@ -186,7 +130,7 @@ void IlluminatiConfirmed::experimental::Rocket::move(b2Vec2 velocity,
     dir = 1;
   }
 
-  m_angle += float(20.f / 1300.f * dir_angle);  //скорость прыжков
+  m_angle += float(20.f / 1300.f * dir_angle);
 
   if (m_angle > 1) {
     m_angle = 1;
@@ -205,7 +149,7 @@ void IlluminatiConfirmed::experimental::Rocket::move(b2Vec2 velocity,
   //даже не спрашивай как я к этому пришел
 
   auto s1 = m_b2_center->GetTransform().q.GetAngle();
-  auto ang = getAngle(b2Vec2(1.f, 0.f), b2Vec2(1.f, 0.5f*m_angle));
+  auto ang = getAngle(b2Vec2(1.f, 0.f), b2Vec2(1.f, 0.5f * m_angle));
   auto m1 = acosf(ang);
   auto m2 = float((m_angle > 0) ? (1.f) : (-1.f));
   auto s2 = m1 * m2;
@@ -216,7 +160,6 @@ void IlluminatiConfirmed::experimental::Rocket::move(b2Vec2 velocity,
 }
 
 void IlluminatiConfirmed::experimental::Rocket::draw(sf::RenderWindow &window) {
-  // BulletInterface::draw(window);
   m_sprite.setPosition(B2Vec2toSfVector2<float>(m_b2_base->GetPosition()));
   m_sprite.setRotation(m_b2_base->GetTransform().q.GetAngle() / 3.14f * 180);
   window.draw(m_sprite);
@@ -234,30 +177,15 @@ void IlluminatiConfirmed::experimental::Rocket::playHit() {}
 
 void IlluminatiConfirmed::experimental::Rocket::setTransform(
     IlluminatiConfirmed::experimental::BulletSets &&sets) {
-  //    m_b2_center->SetTransform(sets.position,
-  //                              RadBetweenVectors(sets.dir, b2Vec2(0, 1)));
-  //    m_b2_base->SetTransform(sets.position,
-  //                            RadBetweenVectors(sets.dir, b2Vec2(0, 1)));
-  //    sets.dir *= m_info.velocity;
-  //    m_b2_center->SetLinearVelocity(sets.dir);
-
-  // LOG() << "Dir1 " << sets.dir << std::endl;
   sets.dir.Normalize();
-  // LOG() << "Dir2 " << sets.dir << std::endl;
-  // sets.dir.y *= -1.f;
-
-  LOG() << "Sets: pos " << sets.position << "angle "
-        << atanf(sets.dir.y / sets.dir.x) << std::endl;
   auto angle = atanf(sets.dir.y / sets.dir.x);
 
   if (sets.dir.x < 0) angle -= b2_pi;
   m_b2_base->SetTransform(sets.position, angle);
   m_b2_center->SetTransform(sets.position, angle);
   sets.dir *= m_info.velocity;
-  // LOG() << "Dir3 " << sets.dir << std::endl;
   m_b2_base->SetLinearVelocity(sets.dir);
   m_b2_center->SetLinearVelocity(sets.dir);
-  // LOG() << "Dir4 " << sets.dir << std::endl;
 }
 
 IlluminatiConfirmed::experimental::Rocket::~Rocket() {
@@ -266,23 +194,19 @@ IlluminatiConfirmed::experimental::Rocket::~Rocket() {
 
 IlluminatiConfirmed::experimental::LittleBullet::LittleBullet(
     b2World *world, sf::Texture *texture,
-    IlluminatiConfirmed::experimental::BulletInterface::SoundPack &&pack,
-    IlluminatiConfirmed::experimental::BulletInfo &&info)
+    IlluminatiConfirmed::experimental::BulletInterface::SoundPack pack,
+    IlluminatiConfirmed::experimental::BulletInfo info)
     : BulletInterface(world, texture, std::move(pack), std::move(info)) {
   m_type_bullet = TypeBullet::little_bullet;
 
-  static int count = 0;
-
-  LOG() << "Create bullet #" << count++ << std::endl;
   {
     b2BodyDef bd;
     bd.type = b2_dynamicBody;
     bd.bullet = true;
-    // bd.position.Set(SfPointtoB2Point(sprite_data.x_position),
-    //                SfPointtoB2Point(sprite_data.y_position));
     bd.linearDamping = 0.f;
     bd.fixedRotation = false;
     m_b2_base = world->CreateBody(&bd);
+    m_b2_base->SetUserData(this);
 
     b2PolygonShape polygon;
     // 0.7 - где то читал, что физические размеры должны быть чуть меньше

@@ -28,9 +28,7 @@ SOURCES += main.cpp \
     classes/screens/ScreenMenuSave.cpp \
     classes/MyContactListener.cpp \
     classes/Ground.cpp \
-    classes/Event/EventListener.cpp \
     classes/constants.cpp \
-    classes/Event/Event.cpp \
     classes/Weapons.cpp \
     classes/Factories.cpp \
     classes/screens/ScreenMenuChoseMap.cpp \
@@ -58,8 +56,6 @@ HEADERS += \
     classes/Ground.h \
     classes/Factories.h \
     classes/Weapons.h \
-    classes/Event/Event.h \
-    classes/Event/EventListener.h \
     classes/screens/ScreenMenuChoseMap.h \
     classes/characters/Character.h \
     classes/BigWhile.h
@@ -67,8 +63,7 @@ HEADERS += \
 
 INCLUDEPATH += classes/ \
   classes/screens \
-  classes/characters \
-  classes/Event
+  classes/characters
 
 LIBS += -L$$PWD/../../Libs/Box2D/Build/ -lBox2D
 INCLUDEPATH += $$PWD/../../Libs/Box2D/

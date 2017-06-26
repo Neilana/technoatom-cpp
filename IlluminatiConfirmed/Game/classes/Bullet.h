@@ -47,13 +47,21 @@ struct SoundPackTBullet<sf::Sound> {
   std::shared_ptr<sf::Sound> flying;
 };
 
+template <>
+struct SoundPackTBullet<QSound> {
+  SoundPackTBullet(std::shared_ptr<QSound> &&hit, std::shared_ptr<QSound> &&fly)
+      : hitting_building(hit), flying(fly) {}
+  std::shared_ptr<QSound> hitting_building;
+  std::shared_ptr<QSound> flying;
+};
+
 enum class TypeBullet { ROCKET, little_bullet };
 
 class BulletInterface : public BaseInterface {
  public:
   using SoundPack = SoundPackTBullet<IlluminatiPlaySound>;
-  BulletInterface(b2World *world, sf::Texture *texture, SoundPack &&pack,
-                  BulletInfo &&info);
+  BulletInterface(b2World *world, sf::Texture *texture, SoundPack pack,
+                  BulletInfo info);
   virtual void setTransform(BulletSets &&sets);
   virtual void draw(sf::RenderWindow &window) override;
   virtual void move(b2Vec2 velocity, float deltaTime) override;
@@ -73,15 +81,15 @@ class BulletInterface : public BaseInterface {
 
 class LittleBullet : public BulletInterface {
  public:
-  LittleBullet(b2World *world, sf::Texture *texture, SoundPack &&pack,
-               BulletInfo &&info);
+  LittleBullet(b2World *world, sf::Texture *texture, SoundPack pack,
+               BulletInfo info);
   ~LittleBullet();
 };
 
 class Rocket : public BulletInterface {
  public:
-  Rocket(b2World *world, sf::Texture *texture, SoundPack &&pack,
-         BulletInfo &&info);
+  Rocket(b2World *world, sf::Texture *texture, SoundPack pack,
+         BulletInfo info);
   virtual void move(b2Vec2 velocity, float deltaTime) override;
 
   virtual void draw(sf::RenderWindow &window) override;
@@ -103,28 +111,5 @@ class Rocket : public BulletInterface {
 
   sf::Sprite m_sprite;
 };
-
-// class Bullet : public BaseInterface {
-// public:
-//  Bullet(b2World *world, sf::Texture *texture, BulletInfo &&info);
-//  void setTransform(BulletSets &&sets);
-
-//  virtual void draw(sf::RenderWindow &window);
-
-//  virtual void move(b2Vec2 velocity, float deltaTime);
-
-//  virtual void contact(b2Fixture *B);
-//  virtual void endContact(b2Fixture *B);
-//  virtual ~Bullet() {}
-
-// private:
-//  BulletInfo m_info;
-//  b2Body *m_b2_center;
-//  b2Fixture *m_b2_center_fixture;
-//  b2MotorJoint *m_b2_joint;
-//  float m_angle;
-
-//  sf::Sprite m_sprite;
-//};
 }
 }

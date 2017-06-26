@@ -37,14 +37,12 @@ class BaseMapsStuff : public BaseInterface {
 public:
   enum TypeMap { BUILDING }; //мб какие то коины или жизни или оружее
   BaseMapsStuff(TypeMap type) : BaseInterface(MAPS_STUFF), m_type_map(type) {
-    LOG() << "Create BaseMapsStuff " << int(m_type_base) << std::endl;
   }
   virtual void move(b2Vec2 velocity, float deltaTime) override = 0;
   virtual void draw(sf::RenderWindow &window) override = 0;
   virtual void contact(BaseInterface *B) override = 0;
   virtual void endContact(BaseInterface *B) override = 0;
   virtual ~BaseMapsStuff() {
-    LOG() << "Destroy BaseMapsStuff " << int(m_type_map) << std::endl;
   }
   TypeMap m_type_map;
 };

@@ -13,6 +13,7 @@
 #include "Base.h"
 #include "Character.h"
 #include "Ground.h"
+#include "Weapons.h"
 #include "constants.h"
 
 namespace IlluminatiConfirmed {
@@ -98,6 +99,11 @@ class FactoryObjects {
   std::shared_ptr<experimental::BaseInterface> create_character(int id,
                                                                 b2World *world);
 
+  std::unique_ptr<Weapon> create_weapon(WeaponType type);
+
+  std::shared_ptr<experimental::BulletInterface> create_bullet(
+      experimental::TypeBullet type, b2World *world, BaseCharacter *whose);
+
   std::string getList();
 
   std::shared_ptr<sf::Texture> getTexture(const std::string &file);
@@ -115,6 +121,18 @@ class FactoryObjects {
     characters_factory.add<CharacterSouthPark>("Park");
     characters_factory.add<CharacterAlinasBoys>("Alinas");
     return characters_factory;
+  }
+  static GenericObjectFactory<std::string, BulletInterface, b2World *,
+                              sf::Texture *, BulletInterface::SoundPack,
+                              IlluminatiConfirmed::experimental::BulletInfo>
+  registrationTypesOfBullets() {
+    GenericObjectFactory<std::string, BulletInterface, b2World *, sf::Texture *,
+                         BulletInterface::SoundPack,
+                         IlluminatiConfirmed::experimental::BulletInfo>
+        bullets_factory;
+    bullets_factory.add<experimental::LittleBullet>("little");
+    bullets_factory.add<experimental::Rocket>("rocket");
+    return bullets_factory;
   }
 
  protected:
