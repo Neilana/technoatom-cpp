@@ -15,10 +15,11 @@
 #include "Bullet.h"
 #include "Character.h"
 #include "Ground.h"
+#include "HUD.h"
 #include "Level.h"
+#include "MyContactListener.h"
 #include "Weapons.h"
 #include "constants.h"
-#include "MyContactListener.h"
 
 namespace IlluminatiConfirmed {
 class Game {
@@ -47,12 +48,14 @@ class Game {
   void setMapFileName(const std::string &fileName);
   inline b2World &getWorld() { return *m_world; }
   std::shared_ptr<experimental::BaseCharacter> selectNextHero() {
+    m_HUDs[m_currentHeroId].get()->unselect();
     m_currentHeroId++;
     m_currentHeroId %= m_heroes.size();
+    m_HUDs[m_currentHeroId].get()->select();
     return m_heroes[m_currentHeroId];
   }
 
-  void setNewWeapon(const  std::shared_ptr<experimental::BaseCharacter> & hero);
+  void setNewWeapon(const std::shared_ptr<experimental::BaseCharacter> &hero);
 
  private:
   std::map<std::string, std::shared_ptr<sf::Texture>> m_textures;
@@ -61,6 +64,9 @@ class Game {
   std::string m_mapFileName;
   std::vector<std::shared_ptr<experimental::BaseInterface>> m_vector_of_objs;
   std::vector<std::shared_ptr<experimental::BaseCharacter>> m_heroes;
+
+  //  std::vector<std::shared_ptr<experimental::Bullet>> m_bullets;
+  std::vector<std::shared_ptr<HUD>> m_HUDs;
   std::vector<std::shared_ptr<experimental::BulletInterface>> m_bullets;
 
   experimental::ListnerWeapon listner_of_bullets;

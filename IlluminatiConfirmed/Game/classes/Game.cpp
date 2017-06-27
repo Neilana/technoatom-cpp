@@ -23,6 +23,7 @@ Game::Game(sf::RenderWindow &window) {
   m_world = std::make_shared<b2World>(b2Vec2({0.f, 0.f}));
   MyContactListener *listner = new MyContactListener;
   (*m_world).SetContactListener(listner);
+
   SFMLDebugDraw *debugDraw =
       new SFMLDebugDraw(window);  //утечка памяти, бокс не будет это удалять
   debugDraw->SetFlags(b2Draw::e_shapeBit + b2Draw::e_centerOfMassBit +
@@ -35,6 +36,9 @@ Game::Game(sf::RenderWindow &window) {
 
 void Game::initNewGame(std::set<int> ids, sf::RenderWindow &window) {
   m_heroes.clear();
+  m_HUDs.clear();
+  m_bullets.clear();
+  // listner_of_bullets.clear();
   m_ground.reset();
   m_vector_of_objs.clear();
   m_bullets.clear();
@@ -59,6 +63,7 @@ void Game::initNewGame(std::set<int> ids, sf::RenderWindow &window) {
                           m_heroes.end());
 
   initCharacters(ids);
+  m_currentHeroId = m_heroes.size() - 1;
 
   b2_listner_collision = std::make_unique<MyContactListener>();
 
@@ -76,9 +81,41 @@ void Game::initNewGame(std::set<int> ids, sf::RenderWindow &window) {
 void Game::initObjects(std::set<int> ids) {}
 
 void Game::initCharacters(std::set<int> ids) {
+  // float hudX = 40;
+  // float hudY = 835;
+
+  float hudX = 815;
+  float hudY = 20;
+
   for (auto it : ids) {
     auto hero = experimental::FactoryObjects::Instance().create_character(
         it, m_world.get());
+
+    // hud
+    QString str =
+        "SELECT * FROM CharactersImages WHERE Id=" + QString::number(it);
+    QSqlQuery query;
+    query.exec(str);
+    while (query.next()) {
+      std::string fileName = query.value(1).toString().toStdString();
+      int width = query.value(2).toInt();
+      int height = query.value(3).toInt();
+      int frames = query.value(4).toInt();
+      std::string healthBarFile = query.value(6).toString().toStdString();
+      std::string master = query.value(7).toString().toStdString();
+      int size = query.value(8).toInt();
+
+      // auto bufHUD = std::make_shared<HUD>(
+      //  HUD(fileName, healthBarFile, width, height, hudX, hudY));
+      // hudX += DEFAULT_SPRITE_SIZE_X + BAR_WIDTH + 10;
+
+      auto bufHud = static_pointer_cast<experimental::BaseCharacter>(hero)
+                        .get()
+                        ->getHud();
+      bufHud->setBigHudPosition(hudX, hudY);
+      hudY += DEFAULT_SPRITE_SIZE_Y + BAR_HEIGHT + 10;
+      m_HUDs.push_back(std::move(bufHud));
+    }
 
     auto hero2Character =
         static_pointer_cast<experimental::BaseCharacter>(hero);
@@ -111,6 +148,18 @@ void Game::draw(sf::RenderWindow &window) {
                  vector.end());
   };
 
+  sf::Texture backgroundTexture;
+  sf::Sprite backgroundSprite;
+  if (!backgroundTexture.loadFromFile("E:/Git_ver3000/technoatom-"
+                                      "cpp/IlluminatiConfirmed/Game/resources/m"
+                                      "aps/bars_backgrounds/3.png")) {
+    // std::cout << "Error loading presentation.gif" << std::endl;
+    // return (-1);
+  }
+  backgroundSprite.setTexture(backgroundTexture);
+  backgroundSprite.setPosition(sf::Vector2f(800, 0));
+  window.draw(backgroundSprite);
+
   m_ground->draw_ground(window);
   deleteEverythingDead(m_vector_of_objs);
   deleteEverythingDead(m_heroes);
@@ -120,6 +169,10 @@ void Game::draw(sf::RenderWindow &window) {
   for (auto &&it : m_vector_of_objs) {
     it->draw(window);
   }
+
+  // for (auto &&it : m_HUDs) {
+  //  it->draw(window);
+  //}
 }
 
 void Game::initPhysics() {}
@@ -147,20 +200,23 @@ void Game::setMapFileName(const std::string &fileName) {
   m_mapFileName = fileName;
 }
 
-void Game::setNewWeapon(const std::shared_ptr<experimental::BaseCharacter> &hero) {
-    std::unique_ptr<experimental::Weapon> weapon;
-    static bool type;
-    if (type)
-        weapon = experimental::FactoryObjects::FactoryObjects::Instance()
-                .create_weapon(experimental::WeaponType::AK);
-    else
-        weapon = experimental::FactoryObjects::FactoryObjects::Instance()
-                .create_weapon(experimental::WeaponType::BAZOOKA);
-    type = !type;
+void Game::setNewWeapon(
+    const std::shared_ptr<experimental::BaseCharacter> &hero) {
+  std::unique_ptr<experimental::Weapon> weapon;
+  static bool type;
+  if (type)
+    weapon =
+        experimental::FactoryObjects::FactoryObjects::Instance().create_weapon(
+            experimental::WeaponType::AK);
+  else
+    weapon =
+        experimental::FactoryObjects::FactoryObjects::Instance().create_weapon(
+            experimental::WeaponType::BAZOOKA);
+  type = !type;
 
-    QObject::connect(weapon.get(), &experimental::Weapon::create_bullet,
-                     &listner_of_bullets,
-                     &experimental::ListnerWeapon::pushBullet);
+  QObject::connect(weapon.get(), &experimental::Weapon::create_bullet,
+                   &listner_of_bullets,
+                   &experimental::ListnerWeapon::pushBullet);
 
-    hero->setWeapon(std::move(weapon));
+  hero->setWeapon(std::move(weapon));
 }

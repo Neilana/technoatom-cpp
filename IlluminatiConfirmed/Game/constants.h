@@ -18,7 +18,7 @@
 #endif
 
 const int WINDOW_HEIGHT = 800;
-const int WINDOW_WIDTH = 800;
+const int WINDOW_WIDTH = 980;
 
 const float SCALE = 32.0;
 
@@ -34,11 +34,11 @@ const std::string LAYER_BUILDINGS = "Layer_Buildings";
 const std::string OBJECT_SPRITE = "Buildings_sprite";
 const std::string OBJECT_BODY = "Buildings_body";
 
+const std::string BARS_SPRITES_DIRECTORY = "../Game/resources/sprites/bars/";
 const std::string CHARACTERS_SPRITES_DIRECTORY =
     "../Game/resources/sprites/characters/";
 const std::string BULLETS_SPRITES_DIRECTORY =
     "../Game/resources/sprites/bullets/";
-
 const std::string SOUNDS_DIRECTORY = "../Game/resources/sound/";
 
 const std::string FONT_FILE =
@@ -48,6 +48,14 @@ const std::string MENU_BACKGROUND_FILE =
 
 const int DEFAULT_SPRITE_SIZE_X = 64;
 const int DEFAULT_SPRITE_SIZE_Y = 64;
+
+const int BAR_WIDTH = 86;
+const int BAR_HEIGHT = 12;
+const float SMALL_BAR_SCALE = 0.7;
+// const int SMALL_BAR_WIDTH = 65;
+
+// const int TEAM_MEMBERS_COUNT = 2;
+
 const int TEAM_MEMBERS_COUNT = 6;
 
 template <typename T>

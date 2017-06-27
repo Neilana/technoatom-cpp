@@ -1,17 +1,30 @@
 #include "Character.h"
+#include <SFML/Audio.hpp>
 #include "Weapons.h"
+
+using namespace IlluminatiConfirmed;
+using namespace IlluminatiConfirmed::experimental;
 
 #define SCALE_FOR_BODY 0.6f
 
 IlluminatiConfirmed::experimental::BaseCharacter::BaseCharacter(
     b2World *world, const sf::Texture *texture,
+
     const IlluminatiConfirmed::experimental::CharacterSpriteInfo &sprite_data,
     SoundPack pack)
     : BaseInterface(BaseInterface::CHARACTER),
+      m_HUD(nullptr),
       m_weapon(nullptr),
       m_height(sprite_data.size),
       m_pack(std::move(pack)) {
   LOG() << "Create Character \n";
+
+  m_maxHealth = 100;
+  m_currentHealth = m_maxHealth;
+
+//  if (!m_music.openFromFile(SOUNDS_DIRECTORY + "footsteps1.wav"))
+//    throw EXCEPTION("I can't open audio file (music).", nullptr);
+
   {
     b2BodyDef bd;
     bd.fixedRotation = true;
@@ -109,15 +122,20 @@ IlluminatiConfirmed::experimental::BaseCharacter::BaseCharacter(
 void IlluminatiConfirmed::experimental::BaseCharacter::draw(
     sf::RenderWindow &window) {
   m_sprite.setPosition(B2Vec2toSfVector2<float>(m_b2_body->GetPosition()));
+  window.draw(m_sprite);
+  m_hud.get()->setSmallHudPosition(
+      m_sprite.getGlobalBounds().left,
+      m_sprite.getGlobalBounds().top - BAR_HEIGHT * SMALL_BAR_SCALE - 5);
+  m_hud->draw(window);
 
-//  auto pos_of_weapon =
-//      B2Vec2toSfVector2<float>(getFixtureWorldPosition(m_b2_body_fixture));
+  //  auto pos_of_weapon =
+  //      B2Vec2toSfVector2<float>(getFixtureWorldPosition(m_b2_body_fixture));
   //мол на 20 пр ниже, чем центр фикстуры
-//  pos_of_weapon.y = pos_of_weapon.y + 0.3f * m_height;
+  //  pos_of_weapon.y = pos_of_weapon.y + 0.3f * m_height;
 
-//  moveWeapon(pos_of_weapon,
-//             180 / b2_pi * RadBetweenVectors(pos_of_weapon,
-//                                             sf::Mouse::getPosition(window)));
+  //  moveWeapon(pos_of_weapon,
+  //             180 / b2_pi * RadBetweenVectors(pos_of_weapon,
+  //                                             sf::Mouse::getPosition(window)));
   m_sprite.setPosition(B2Vec2toSfVector2<float>(m_b2_body->GetPosition()));
 
   if (m_direction == Direction::Up) {
@@ -171,6 +189,11 @@ void IlluminatiConfirmed::experimental::BaseCharacter::endContact(
 void IlluminatiConfirmed::experimental::BaseCharacter::setWeapon(
     std::unique_ptr<IlluminatiConfirmed::experimental::Weapon> &&weapon) {
   m_weapon = std::move(weapon);
+
+  m_hud.get()->setWeapon( m_weapon.get()->m_sprite.getTexture(),
+                          m_weapon.get()->m_sprite.getTextureRect(),
+                          m_weapon.get()->m_sprite.getGlobalBounds().width,
+                          m_weapon.get()->m_sprite.getGlobalBounds().height);
 }
 
 void IlluminatiConfirmed::experimental::BaseCharacter::moveWeapon(
@@ -199,8 +222,18 @@ IlluminatiConfirmed::experimental::BaseCharacter::~BaseCharacter() {
 void IlluminatiConfirmed::experimental::BaseCharacter::updatePhysics(
     float deltaTime) {
   m_sprite.setPosition(B2Vec2toSfVector2<float>(m_b2_body->GetPosition()));
+
+  int healthInPercents = m_currentHealth * 100 / m_maxHealth;
+  m_hud.get()->updateHealthSprite(healthInPercents);
+
+  int cartidges = m_weapon->m_number_of_cartridge;
+  m_hud.get()->updateCartidges(cartidges);
   // sprite.setRotation(m_body->GetAngle() * 180 / 3.14159265);
 }
+
+// std::shared_ptr<HUD> BaseCharacter::createHUD() {
+//  //m_HUD = std::make_shared<HUD>();
+//}
 
 IlluminatiConfirmed::experimental::CharacterSouthPark::CharacterSouthPark(
     b2World *world, const sf::Texture *texture,
@@ -264,7 +297,10 @@ void IlluminatiConfirmed::experimental::CharacterSouthPark::move(
     m_time = m_b2_joint_prism->GetLowerLimit();
   m_b2_joint->SetLinearOffset({0, m_time});
 
-  // g_debugDraw.DrawPoint(linearOffset, 4.0f, b2Color(0.9f, 0.9f, 0.9f));
+//  int time = m_music.getPlayingOffset().asMilliseconds();
+//  if (time > 250) m_music.setPlayingOffset(sf::seconds(0));
+//  if (m_music.getStatus() != sf::Sound::Status::Playing) m_music.play();
+//  // g_debugDraw.DrawPoint(linearOffset, 4.0f, b2Color(0.9f, 0.9f, 0.9f));
 }
 
 void IlluminatiConfirmed::experimental::CharacterSouthPark::draw(
@@ -289,7 +325,7 @@ void IlluminatiConfirmed::experimental::CharacterSouthPark::endContact(
 }
 
 IlluminatiConfirmed::experimental::CharacterSouthPark::~CharacterSouthPark() {
-  LOG() << "YOUUURRR HAVE KILLED KYLLLEEE!!/n";
+  LOG() << "YOUUURRR HAVE KILLED KYLLLEEE!!\n";
 }
 
 void IlluminatiConfirmed::experimental::CharacterSouthPark::updatePhysics(

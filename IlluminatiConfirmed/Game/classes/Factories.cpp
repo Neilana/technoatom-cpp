@@ -29,7 +29,7 @@ FactoryObjects::create_map(const std::string &file, b2World *world) {
   return {std::move(vec_of_graund), std::move(p_vec_of_maps_stuff)};
 }
 
-std::shared_ptr<experimental::BaseInterface> FactoryObjects::create_character(
+std::shared_ptr<experimental::BaseCharacter> FactoryObjects::create_character(
     int id, b2World *world) {
   static auto characters_factory = registrationTypesOfCharacters();
 
@@ -38,13 +38,16 @@ std::shared_ptr<experimental::BaseInterface> FactoryObjects::create_character(
   QSqlQuery query;
   query.exec(str);
   while (query.next()) {
-    std::string fileName =
-        CHARACTERS_SPRITES_DIRECTORY + query.value(1).toString().toStdString();
+    std::string fileName = query.value(1).toString().toStdString();
     int width = query.value(2).toInt();
     int height = query.value(3).toInt();
     int frames = query.value(4).toInt();
     std::string master = query.value(7).toString().toStdString();
     int size = query.value(8).toInt();
+    std::string healthBarFile = query.value(6).toString().toStdString();
+
+    auto p_texture =
+        Instance().getTexture(CHARACTERS_SPRITES_DIRECTORY + fileName);
 
     if (master == "Park") {
       auto killed = experimental::FactoryObjects::Instance().getSound(
@@ -52,28 +55,32 @@ std::shared_ptr<experimental::BaseInterface> FactoryObjects::create_character(
 
       BaseCharacter::SoundPack pack({std::move(killed)});
 
-      auto p_texture = Instance().getTexture(fileName);
-
       auto pers =
-          std::shared_ptr<experimental::BaseInterface>(characters_factory.get(
+          std::shared_ptr<experimental::BaseCharacter>(characters_factory.get(
               master)(world, p_texture.get(),
                       experimental::CharacterSpriteInfo(
                           {width, height, size, frames, 300, 300}),
                       std::move(pack)));
+      auto bufHud = std::make_shared<HUD>(
+          HUD(fileName, healthBarFile, width, height, size));
+      pers.get()->setHud(std::move(bufHud));
+
       return pers;
     } else {
       std::shared_ptr<IlluminatiSound> killed;
 
       BaseCharacter::SoundPack pack({std::move(killed)});
 
-      auto p_texture = Instance().getTexture(fileName);
-
       auto pers =
-          std::shared_ptr<experimental::BaseInterface>(characters_factory.get(
+          std::shared_ptr<experimental::BaseCharacter>(characters_factory.get(
               master)(world, p_texture.get(),
                       experimental::CharacterSpriteInfo(
                           {width, height, size, frames, 300, 300}),
                       std::move(pack)));
+
+      auto bufHud = std::make_shared<HUD>(
+          HUD(fileName, healthBarFile, width, height, size));
+      pers.get()->setHud(std::move(bufHud));
       return pers;
     }
   }
@@ -84,17 +91,15 @@ std::shared_ptr<BulletInterface> FactoryObjects::create_bullet(
     experimental::TypeBullet type, b2World *world, BaseCharacter *whose) {
   static auto bullets_factory = registrationTypesOfBullets();
 
-
-
   std::shared_ptr<experimental::BulletInterface> bullet;
 
   if (type == TypeBullet::little_bullet) {
-      auto p_hitting_building = experimental::FactoryObjects::Instance().getSound(
-          SOUNDS_DIRECTORY + std::string("hit_building_bullet.wav"));
-      auto p_flying = experimental::FactoryObjects::Instance().getSound(
-          SOUNDS_DIRECTORY + std::string("flying_bullet.wav"));
-      BulletInterface::SoundPack pack(
-          {std::move(p_hitting_building), std::move(p_flying)});
+    auto p_hitting_building = experimental::FactoryObjects::Instance().getSound(
+        SOUNDS_DIRECTORY + std::string("hit_building_bullet.wav"));
+    auto p_flying = experimental::FactoryObjects::Instance().getSound(
+        SOUNDS_DIRECTORY + std::string("flying_bullet.wav"));
+    BulletInterface::SoundPack pack(
+        {std::move(p_hitting_building), std::move(p_flying)});
 
     auto texture = experimental::FactoryObjects::Instance().getTexture(
         BULLETS_SPRITES_DIRECTORY + "ak.png");
@@ -103,13 +108,12 @@ std::shared_ptr<BulletInterface> FactoryObjects::create_bullet(
                   experimental::BulletInfo(
                       {{{0, 0, 604, 187}}, whose, 0.1f, 10, 7.f, 1, 1})));
   } else if (type == TypeBullet::ROCKET) {
-
-      auto p_hitting_building = experimental::FactoryObjects::Instance().getSound(
-          SOUNDS_DIRECTORY + std::string("expl_rocket.wav"));
-      auto p_flying = experimental::FactoryObjects::Instance().getSound(
-          SOUNDS_DIRECTORY + std::string("flying_bullet.wav"));
-      BulletInterface::SoundPack pack(
-          {std::move(p_hitting_building), std::move(p_flying)});
+    auto p_hitting_building = experimental::FactoryObjects::Instance().getSound(
+        SOUNDS_DIRECTORY + std::string("expl_rocket.wav"));
+    auto p_flying = experimental::FactoryObjects::Instance().getSound(
+        SOUNDS_DIRECTORY + std::string("flying_bullet.wav"));
+    BulletInterface::SoundPack pack(
+        {std::move(p_hitting_building), std::move(p_flying)});
 
     auto texture = experimental::FactoryObjects::Instance().getTexture(
         BULLETS_SPRITES_DIRECTORY + "rocket_1.png");

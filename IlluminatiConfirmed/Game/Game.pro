@@ -22,7 +22,7 @@ SOURCES += main.cpp \
     classes/screens/ScreenChoseCharacters.cpp \
     classes/GameDatabase.cpp \
     classes/Base.cpp \
-    Level.t.cpp \
+    #Level.t.cpp \
     classes/screens/ScreenMenu.cpp \
     classes/screens/ScreenMenuLoad.cpp \
     classes/screens/ScreenMenuSave.cpp \
@@ -33,7 +33,8 @@ SOURCES += main.cpp \
     classes/Factories.cpp \
     classes/screens/ScreenMenuChoseMap.cpp \
     classes/characters/Character.cpp \
-    classes/BigWhile.cpp
+    classes/BigWhile.cpp \
+    classes/HUD.cpp
 
 HEADERS += \
     classes/Level.h \
@@ -58,7 +59,8 @@ HEADERS += \
     classes/Weapons.h \
     classes/screens/ScreenMenuChoseMap.h \
     classes/characters/Character.h \
-    classes/BigWhile.h
+    classes/BigWhile.h \
+    classes/HUD.h
     # ForTestbedCharacter.h
 
 INCLUDEPATH += classes/ \

@@ -1,11 +1,13 @@
 #pragma once
-#include <SFML/Graphics.hpp>
-#include <iostream>
-#include <map>
-//#include "Weapons.h"
 #include "../../Logger/Logger.h"
 #include "Base.h"
 #include "Box2D/Box2D.h"
+#include "HUD.h"
+//#include "Weapons.h"
+//#include <SFML/Audio.hpp>
+#include <SFML/Graphics.hpp>
+#include <iostream>
+#include <map>
 #include "constants.h"
 
 #define DEBUG_ON
@@ -57,6 +59,8 @@ class BaseCharacter : public BaseInterface {
 
   void setWeapon(std::unique_ptr<Weapon> &&weapon);
   void moveWeapon(const sf::Vector2f &pos, float rot);
+
+  std::shared_ptr<HUD> createHUD();
   void setAngleOfWeapon(float angle);
 
   virtual void attack();
@@ -68,6 +72,11 @@ class BaseCharacter : public BaseInterface {
   virtual ~BaseCharacter();
 
   virtual void updatePhysics(float deltaTime);
+
+  std::shared_ptr<HUD> getHud() { return m_hud; }
+  void setHud(std::shared_ptr<HUD> hud) { m_hud = hud; }
+  //  std::shared_ptr<HUD> createHud(float x, float y, float width, float
+  //  height);
 
   TypeBaseCharacter m_type_character;
 
@@ -88,8 +97,20 @@ class BaseCharacter : public BaseInterface {
   b2Fixture *m_2b_weapon_fixture;
 
   sf::Sprite m_sprite;
+  std::shared_ptr<HUD> m_HUD;
+
+  // sounds
+  //  sf::SoundBuffer m_buffer;
+  //  sf::Sound m_sound;
+  //  sf::Music m_music;
+
+  // HUD
+  std::shared_ptr<HUD> m_hud;
 
  private:
+  int m_maxHealth;
+  int m_currentHealth;
+
   std::unique_ptr<Weapon> m_weapon;
   float m_height;
   SoundPack m_pack;

@@ -38,6 +38,10 @@ class Weapon : public QObject {
   void setPositionRotation(const sf::Vector2f &pos, float rotation);
   void attack(BaseCharacter *who);
   void draw(sf::RenderWindow &window);
+
+  sf::Sprite m_sprite;
+  int m_number_of_cartridge;
+
   virtual ~Weapon() {}
 
  signals:
@@ -55,8 +59,7 @@ class Weapon : public QObject {
   };
 
   void initTimeAnimation();
-  sf::Sprite m_sprite;
-  int m_number_of_cartridge;
+
   std::vector<sf::Rect<int>> m_rects_weapon;
   TimeAnimation m_animation;
   TypeBullet m_type_bullet;

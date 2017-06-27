@@ -68,7 +68,6 @@ void IlluminatiConfirmed::experimental::Weapon::attack(BaseCharacter *who) {
 }
 
 void IlluminatiConfirmed::experimental::Weapon::draw(sf::RenderWindow &window) {
-  LOG() << "bullet interface #" << std::endl;
   if (m_animation.time > 0) {
     auto index = m_animation.time-- / m_animation.count;
     m_sprite.setTextureRect(m_rects_weapon.at(
