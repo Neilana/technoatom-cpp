@@ -17,9 +17,10 @@ public:
   BaseInterface(TypeBase type);
   virtual void draw(sf::RenderWindow &window) = 0;
   virtual void move(b2Vec2 velocity, float deltaTime) = 0;
-  virtual void contact(b2Fixture *B) = 0;
-  virtual void endContact(b2Fixture *B) = 0;
+  virtual void contact(BaseInterface *B) = 0;
+  virtual void endContact(BaseInterface *B) = 0;
   virtual bool isDead();
+  TypeBase getTypeBase() const { return  m_type_base;}
 
   float getY();
 
@@ -36,14 +37,12 @@ class BaseMapsStuff : public BaseInterface {
 public:
   enum TypeMap { BUILDING }; //мб какие то коины или жизни или оружее
   BaseMapsStuff(TypeMap type) : BaseInterface(MAPS_STUFF), m_type_map(type) {
-    LOG() << "Create BaseMapsStuff " << int(m_type_base) << std::endl;
   }
   virtual void move(b2Vec2 velocity, float deltaTime) override = 0;
   virtual void draw(sf::RenderWindow &window) override = 0;
-  virtual void contact(b2Fixture *B) override = 0;
-  virtual void endContact(b2Fixture *B) override = 0;
+  virtual void contact(BaseInterface *B) override = 0;
+  virtual void endContact(BaseInterface *B) override = 0;
   virtual ~BaseMapsStuff() {
-    LOG() << "Destroy BaseMapsStuff " << int(m_type_map) << std::endl;
   }
   TypeMap m_type_map;
 };
@@ -53,8 +52,8 @@ class Building : public BaseMapsStuff {
   Building(b2World *world, const sf::Texture *texture, Big_Object &&big_obj);
   virtual void move(b2Vec2 velocity, float deltaTime) override;
   virtual void draw(sf::RenderWindow &window) override;
-  virtual void contact(b2Fixture *B) override;
-  virtual void endContact(b2Fixture *B) override;
+  virtual void contact(BaseInterface *B) override;
+  virtual void endContact(BaseInterface *B) override;
 
   ~Building();
 

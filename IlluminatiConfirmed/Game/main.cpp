@@ -1,8 +1,13 @@
+#include <QCoreApplication>
+#include <QObject>
+#include <QTimer>
+#include <QtConcurrent>
+
 #include "Box2D/Box2D.h"
 #include "SFMLDebugDraw.h"
 
-#include "gtest/gtest.h"
 #include <SFML/Graphics.hpp>
+#include "gtest/gtest.h"
 
 #include <exception>
 #include <iostream>
@@ -24,6 +29,8 @@
 
 #include "GameDatabase.h"
 
+#include "BigWhile.h"
+
 using namespace sf;
 using namespace std;
 
@@ -37,64 +44,29 @@ using namespace IlluminatiConfirmed;
 //      return RUN_ALL_TESTS();
 // }
 
-int main() {
-  try {
-    GameDatabase db = GameDatabase::getInstance();
+int main(int argc, char* argv[]) {
+  IlluminatiConfirmed::experimental::FactoryObjects::Instance();
 
-    std::map<ScreenName, Screen *> screenNameToScreen;
+  QCoreApplication a(argc, argv);
+  auto main_thread = QCoreApplication::instance()->thread();
 
-    // menu = 0
-    ScreenMenuMain screen0;
-    screenNameToScreen[ScreenName::MainMenu] = &screen0;
+  // QThread* thread = new QThread;
+  BigWhile* big_while = new BigWhile();
+  big_while->moveToThread(main_thread);
+  QObject::connect(main_thread, SIGNAL(started()), big_while, SLOT(process()));
+  QObject::connect(big_while, SIGNAL(finished()), main_thread, SLOT(quit()));
+  QObject::connect(big_while, SIGNAL(finished()), big_while,
+                   SLOT(deleteLater()));
+  QObject::connect(main_thread, SIGNAL(finished()), main_thread,
+                   SLOT(deleteLater()));
 
-    // new game = 1
-    ScreenChoseCharacters screen1;
-    screenNameToScreen[ScreenName::ChoseCharacters] = &screen1;
+  QTimer timer;
+  timer.setInterval(2);  // Задаем интервал таймера
+  QObject::connect(
+      &timer, SIGNAL(timeout()), big_while,
+      SLOT(process()));  // Подключаем сигнал таймера к нашему слоту
+  timer.start();
+  // main_thread->start();
 
-    // game = 1
-    ScreenGame screen2;
-    screenNameToScreen[ScreenName::Game] = &screen2;
-
-    // load
-    ScreenMenuLoad screen3;
-    screenNameToScreen[ScreenName::Load] = &screen3;
-
-    // save
-    ScreenMenuSave screen4;
-    screenNameToScreen[ScreenName::Save] = &screen4;
-
-    // chose
-    ScreenMenuChoseMap screen5;
-    screenNameToScreen[ScreenName::ChoseMap] = &screen5;
-
-    sf::RenderWindow window;
-    window.create(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Level.h test");
-    window.setFramerateLimit(60);
-
-    // std::stringstream sstream;
-    sf::Text fpsCounter;
-    sf::Font mainFont;
-    if (!mainFont.loadFromFile(FONT_FILE)) // Set path
-                                           // to your
-                                           // font
-      throw EXCEPTION("I can't open file with font.", nullptr);
-    fpsCounter.setFont(mainFont);
-    fpsCounter.setColor(sf::Color::White);
-
-    // experimental::FactoryObjects::create_factory();
-    Game game(window);
-    // game.initNewGame(MAP_FILE_1);
-
-    Clock clock;
-
-    // while (screenName != ScreenName::Exit) {
-    ScreenName screenName = ScreenName::MainMenu;
-    while (window.isOpen()) {
-      screenName = screenNameToScreen[screenName]->run(game, window);
-    }
-  } catch (IlluminatiConfirmed::Exception &e) {
-    std::cout << e.what();
-  }
-
-  return 0;
+  return a.exec();
 }

@@ -1,17 +1,18 @@
+#include <SFML/Graphics.hpp>
 #include "Box2D/Box2D.h"
 #include "SFMLDebugDraw.h"
-#include <SFML/Graphics.hpp>
-
-#include <algorithm>
-
 #include "b2dJson.h"
 
+#include <algorithm>
 #include <iostream>
+
+#include <QObject>
+#include <QtCore>
 
 #include "Factories.h"
 #include "Game.h"
 #include "GameDatabase.h"
-#include "MyContactListener.h"
+#include "Weapons.h"
 
 using namespace sf;
 using namespace std;
@@ -19,93 +20,40 @@ using namespace std;
 using namespace IlluminatiConfirmed;
 
 Game::Game(sf::RenderWindow &window) {
-
   m_world = std::make_shared<b2World>(b2Vec2({0.f, 0.f}));
-  // MyContactListener *listner = new MyContactListener;
-  // m_world->SetContactListener(listner);
+  MyContactListener *listner = new MyContactListener;
+  (*m_world).SetContactListener(listner);
+
   SFMLDebugDraw *debugDraw =
-      new SFMLDebugDraw(window); //утечка памяти, бокс не будет это удалять
+      new SFMLDebugDraw(window);  //утечка памяти, бокс не будет это удалять
   debugDraw->SetFlags(b2Draw::e_shapeBit + b2Draw::e_centerOfMassBit +
                       b2Draw::e_pairBit);
   m_world->SetDebugDraw(debugDraw);
   //"E:/Git_ver3000/technoatom-cpp/IlluminatiConfirmed/Game/resources/";
   m_running = false;
   m_mapFileName = MAP_DIRECTORY + DEFAULT_MAP_FILE;
-  //}
-
-  // void Game::initNewGame(const std::string &map_puth, const std::string
-  // &file,
-  //                        std::set<int> ids, sf::RenderWindow &window) {
-  //   m_world.release();
-  //   m_world = std::make_unique<b2World>(b2Vec2({0.f, 0.f}));
-  //   m_running = true;
-  //   Level level;
-
-  // !!!
-  // p_texture->loadFromFile(CHARACTERS_SPRITES_DIRECTORY + "kyle.png");
 }
 
-//   m_texture.loadFromFile(map_puth + level.GetMapInfo().m_name_of_tileset);
-//   m_ground = Ground(m_texture, level.GetLayerByName(LAYER_GROUND));
-
-//   auto big_objs =
-//       level.GetVecOfBigObjs(OBJECT_SPRITE, OBJECT_BODY, LAYER_BUILDINGS);
-
-//   int j = 0;
-//   for (auto &&it : big_objs) {
-//     if (j == 0) {
-//       auto temp = experimental::Building(*m_world, m_texture, std::move(it));
-//       m_vec_map.push_back(temp);
-//     }
-//     j = 1;
-//   }
-//   m_bullets.clear();
-//   m_heroes.clear();
-
-//   MyContactListener *listner = new MyContactListener;
-//   // m_world.SetContactListener(listner);  //не работает, здания имеют другой
-//   //базовый класс, крошится если оставить
-//   //прежний
-//   SFMLDebugDraw *debugDraw =
-//       new SFMLDebugDraw(window); //утечка памяти, бокс не будет это удалять
-//   debugDraw->SetFlags(b2Draw::e_shapeBit + b2Draw::e_centerOfMassBit +
-//                       b2Draw::e_pairBit);
-//   (*m_world).SetDebugDraw(debugDraw);
-
-//   initCharacters(ids); // загружаем персонажей
-//   initPhysics();
-// =======
-//   m_world = std::make_shared<b2World>(b2Vec2({0.f, 0.f}));
-//   MyContactListener *listner = new MyContactListener;
-//   // m_world->SetContactListener(listner);
-//   SFMLDebugDraw *debugDraw =
-//       new SFMLDebugDraw(window); //утечка памяти, бокс не будет это удалять
-//   debugDraw->SetFlags(b2Draw::e_shapeBit + b2Draw::e_centerOfMassBit +
-//                       b2Draw::e_pairBit);
-//   m_world->SetDebugDraw(debugDraw);
-// }
-
 void Game::initNewGame(std::set<int> ids, sf::RenderWindow &window) {
-
   m_heroes.clear();
+  m_HUDs.clear();
+  m_bullets.clear();
+  // listner_of_bullets.clear();
   m_ground.reset();
   m_vector_of_objs.clear();
+  m_bullets.clear();
 
   m_world.reset();
   m_world = std::make_unique<b2World>(b2Vec2({0.f, 0.f}));
   m_running = true;
+  listner_of_bullets.setPointers(m_world.get(), &m_bullets, &m_vector_of_objs);
 
-  listner_of_bullets =
-      experimental::ListnerWeapon(m_world.get(), &m_bullets, &m_vector_of_objs);
+  auto ground_and_maps_stuff =
+      experimental::FactoryObjects::Instance().create_map(
+          MAP_DIRECTORY + m_mapFileName, m_world.get());
 
-  auto ground_and_maps_stuff = experimental::FactoryObjects::create_map(
-      MAP_DIRECTORY + m_mapFileName, m_world.get());
-
-  // m_ground = ground_and_maps_stuff.first;
   m_ground = std::move(ground_and_maps_stuff.first);
-  //хз, мб надо присвоить, новая жи игра
 
-  m_vector_of_objs.clear();
   m_vector_of_objs.reserve(ground_and_maps_stuff.second.size() +
                            m_heroes.size());
   m_vector_of_objs.insert(m_vector_of_objs.end(),
@@ -113,64 +61,18 @@ void Game::initNewGame(std::set<int> ids, sf::RenderWindow &window) {
                           ground_and_maps_stuff.second.end());
   m_vector_of_objs.insert(m_vector_of_objs.end(), m_heroes.begin(),
                           m_heroes.end());
-  //   auto hero = experimental::FactoryObjects::create_character(1,
-  //   m_world.get());
-  //   m_vector_of_objs.push_back(hero);
-  //   m_heroes.push_back(static_pointer_cast<experimental::BaseCharacter>(hero));
 
   initCharacters(ids);
+  m_currentHeroId = m_heroes.size() - 1;
 
-  // !!!!!!!1
-  //  auto hero2 = std::static_pointer_cast<experimental::BaseInterface>(
-  //      std::make_shared<experimental::CharacterSouthPark>(
-  //          m_world.get(), p_texture.get(),
-  //          experimental::CharacterSpriteInfo({192, 192, 192, 2, 300, 300})));
-  //  auto hero2Character =
-  //  static_pointer_cast<experimental::BaseCharacter>(hero2);
+  b2_listner_collision = std::make_unique<MyContactListener>();
 
-  //  sf::Texture *text_weapon = new sf::Texture();
-  //  LOG() << "Result: "
-  //        << text_weapon->loadFromFile(
-  //               "E:/Git_ver3000/technoatom-cpp/IlluminatiConfirmed/Game/"
-  //               "resources/sprites/bullets/ak.png")
-  //        << std::endl;
-
-  //  experimental::Weapon *weapon =
-  //      new experimental::Weapon(text_weapon,
-  //                               {experimental::TypeBullet::ROCKET,
-  //                                {0, 0, 604, 187},
-  //                                {607, 0, 727, 187},
-  //                                10,
-  //                                0.3f});
-  //  listner_of_bullets.addWeapon(weapon);
-  //  hero2Character->setWeapon(weapon);
-  //  m_vector_of_objs.push_back(hero2);
-
-  //  m_heroes.push_back(hero2Character);
-
-  // !!!!!!!!!
-
-  {
-    //    p_texture_bullet = experimental::FactoryObjects::getTexture(
-    //        "E:/Git_ver3000/technoatom-cpp/IlluminatiConfirmed/Game/"
-    //        "resources/sprites/bullets/ak.png");
-
-    //    auto bullet = std::make_shared<experimental::Bullet>(
-    //        m_world.get(), p_texture_bullet.get(),
-    //        experimental::BulletInfo({{{0, 0, 604, 187}}, 0.1f, 10, 0.01f, 1,
-    //        1}));
-
-    //    bullet->setTransform({{2.f, 10.f}, {0.5, 0.5}});
-    //    m_bullets.push_back(bullet);
-    //    m_vector_of_objs.push_back(std::move(bullet));
-  }
-
-  MyContactListener *listner = new MyContactListener;
-  // m_world.SetContactListener(listner);  //не работает, здания имеют другой
+  m_world->SetContactListener(
+      b2_listner_collision.get());  //не работает, здания имеют другой
   //базовый класс, крошится если оставить
   //прежний
   SFMLDebugDraw *debugDraw =
-      new SFMLDebugDraw(window); //утечка памяти, бокс не будет это удалять
+      new SFMLDebugDraw(window);  //утечка памяти, бокс не будет это удалять
   debugDraw->SetFlags(b2Draw::e_shapeBit + b2Draw::e_centerOfMassBit +
                       b2Draw::e_pairBit);
   (*m_world).SetDebugDraw(debugDraw);
@@ -179,29 +81,60 @@ void Game::initNewGame(std::set<int> ids, sf::RenderWindow &window) {
 void Game::initObjects(std::set<int> ids) {}
 
 void Game::initCharacters(std::set<int> ids) {
-  for (auto it : ids) {
-    auto hero =
-        experimental::FactoryObjects::create_character(it, m_world.get());
+  // float hudX = 40;
+  // float hudY = 835;
 
-    //  auto hero = experimental::FactoryObjects::create_character("13",
-    //                                                             m_world.get());
+  float hudX = 815;
+  float hudY = 20;
+
+  for (auto it : ids) {
+    auto hero = experimental::FactoryObjects::Instance().create_character(
+        it, m_world.get());
+
+    // hud
+    QString str =
+        "SELECT * FROM CharactersImages WHERE Id=" + QString::number(it);
+    QSqlQuery query;
+    query.exec(str);
+    while (query.next()) {
+      std::string fileName = query.value(1).toString().toStdString();
+      int width = query.value(2).toInt();
+      int height = query.value(3).toInt();
+      int frames = query.value(4).toInt();
+      std::string healthBarFile = query.value(6).toString().toStdString();
+      std::string master = query.value(7).toString().toStdString();
+      int size = query.value(8).toInt();
+
+      // auto bufHUD = std::make_shared<HUD>(
+      //  HUD(fileName, healthBarFile, width, height, hudX, hudY));
+      // hudX += DEFAULT_SPRITE_SIZE_X + BAR_WIDTH + 10;
+
+      auto bufHud = static_pointer_cast<experimental::BaseCharacter>(hero)
+                        .get()
+                        ->getHud();
+      bufHud->setBigHudPosition(hudX, hudY);
+      hudY += DEFAULT_SPRITE_SIZE_Y + BAR_HEIGHT + 10;
+      m_HUDs.push_back(std::move(bufHud));
+    }
 
     auto hero2Character =
         static_pointer_cast<experimental::BaseCharacter>(hero);
-    sf::Texture *text_weapon = new sf::Texture();
-    LOG() << "Result: "
-          << text_weapon->loadFromFile(BULLETS_SPRITES_DIRECTORY + "ak.png")
-          << std::endl;
 
-    experimental::Weapon *weapon =
-        new experimental::Weapon(text_weapon,
-                                 {experimental::TypeBullet::ROCKET,
-                                  {0, 0, 604, 187},
-                                  {607, 0, 727, 187},
-                                  10,
-                                  0.3f});
-    listner_of_bullets.addWeapon(weapon);
-    hero2Character->setWeapon(weapon);
+    static bool type;
+    std::unique_ptr<experimental::Weapon> weapon;
+    if (type)
+      weapon = experimental::FactoryObjects::FactoryObjects::Instance()
+                   .create_weapon(experimental::WeaponType::AK);
+    else
+      weapon = experimental::FactoryObjects::FactoryObjects::Instance()
+                   .create_weapon(experimental::WeaponType::BAZOOKA);
+    type = !type;
+
+    QObject::connect(weapon.get(), &experimental::Weapon::create_bullet,
+                     &listner_of_bullets,
+                     &experimental::ListnerWeapon::pushBullet);
+
+    hero2Character->setWeapon(std::move(weapon));
 
     m_vector_of_objs.push_back(hero);
     m_heroes.push_back(static_pointer_cast<experimental::BaseCharacter>(hero));
@@ -209,52 +142,46 @@ void Game::initCharacters(std::set<int> ids) {
 }
 
 void Game::draw(sf::RenderWindow &window) {
-  // рисуем землю
-  // <<<<<<< HEAD
-  //   m_ground.draw_ground(window);
+  auto deleteEverythingDead = [](auto &vector) {
+    vector.erase(std::remove_if(vector.begin(), vector.end(),
+                                [](auto it) -> bool { return it->isDead(); }),
+                 vector.end());
+  };
 
-  //   //рисуем здания
-  //   for (auto &&it : m_vec_map) {
-  //     it.draw(window);
-  //   }
+  sf::Texture backgroundTexture;
+  sf::Sprite backgroundSprite;
+  if (!backgroundTexture.loadFromFile("E:/Git_ver3000/technoatom-"
+                                      "cpp/IlluminatiConfirmed/Game/resources/m"
+                                      "aps/bars_backgrounds/3.png")) {
+    // std::cout << "Error loading presentation.gif" << std::endl;
+    // return (-1);
+  }
+  backgroundSprite.setTexture(backgroundTexture);
+  backgroundSprite.setPosition(sf::Vector2f(800, 0));
+  window.draw(backgroundSprite);
 
-  //   // рисуем всех персонажей
-  //   for (auto &&it : m_heroes)
-  //     it->draw(window);
-
-  //   // рисуем пули
-  //   for (auto &&it : m_bullets)
-  //     it->draw(window);
-  // =======
   m_ground->draw_ground(window);
-
+  deleteEverythingDead(m_vector_of_objs);
+  deleteEverythingDead(m_heroes);
+  deleteEverythingDead(m_bullets);
   std::sort(m_vector_of_objs.begin(), m_vector_of_objs.end(),
             [](auto &&lhs, auto &&rhs) { return lhs->getY() < rhs->getY(); });
-  //>>>>>>> task7_kyle3
-
   for (auto &&it : m_vector_of_objs) {
     it->draw(window);
   }
+
+  // for (auto &&it : m_HUDs) {
+  //  it->draw(window);
+  //}
 }
 
-void Game::initPhysics() {
-  // sf::Vector2i tileSize = m_level.GetTileSize();
-
-  // загружаем в Box2D стены
-  // std::vector<Object> walls = m_level.GetObjectsByType("Wall");
-  // buildBarriers(walls);
-
-  // загружаем здания
-  // walls = m_level.GetObjectsByType("Building");
-  // buildBarriers(walls);
-}
+void Game::initPhysics() {}
 
 void Game::updatePhysics(float time) {
   m_world->Step(1 / 60.f, 8, 3);
   for (auto &&it : m_heroes)
-    it->updatePhysics(time); //я не понимаю зачем нужен этот метод)
-  for (auto &&it : m_bullets)
-    it->move({0, 0}, time);
+    it->updatePhysics(time);  //я не понимаю зачем нужен этот метод)
+  for (auto &&it : m_bullets) it->move({0, 0}, time);
   //  static bool k = 1;
   //  if (k) {
   //    k = false;
@@ -271,4 +198,25 @@ void Game::loadGame(const std::string &fileName) {}
 
 void Game::setMapFileName(const std::string &fileName) {
   m_mapFileName = fileName;
+}
+
+void Game::setNewWeapon(
+    const std::shared_ptr<experimental::BaseCharacter> &hero) {
+  std::unique_ptr<experimental::Weapon> weapon;
+  static bool type;
+  if (type)
+    weapon =
+        experimental::FactoryObjects::FactoryObjects::Instance().create_weapon(
+            experimental::WeaponType::AK);
+  else
+    weapon =
+        experimental::FactoryObjects::FactoryObjects::Instance().create_weapon(
+            experimental::WeaponType::BAZOOKA);
+  type = !type;
+
+  QObject::connect(weapon.get(), &experimental::Weapon::create_bullet,
+                   &listner_of_bullets,
+                   &experimental::ListnerWeapon::pushBullet);
+
+  hero->setWeapon(std::move(weapon));
 }

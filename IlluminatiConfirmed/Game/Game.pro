@@ -1,4 +1,4 @@
-QT += core gui sql
+QT += core gui sql multimedia concurrent
 TEMPLATE = app
 CONFIG += console c++14
 CONFIG -= app_bundle
@@ -22,19 +22,19 @@ SOURCES += main.cpp \
     classes/screens/ScreenChoseCharacters.cpp \
     classes/GameDatabase.cpp \
     classes/Base.cpp \
-    Level.t.cpp \
+    #Level.t.cpp \
     classes/screens/ScreenMenu.cpp \
     classes/screens/ScreenMenuLoad.cpp \
     classes/screens/ScreenMenuSave.cpp \
     classes/MyContactListener.cpp \
     classes/Ground.cpp \
-    classes/Event/EventListener.cpp \
     classes/constants.cpp \
-    classes/Event/Event.cpp \
     classes/Weapons.cpp \
     classes/Factories.cpp \
     classes/screens/ScreenMenuChoseMap.cpp \
-    classes/characters/Сharacter.cpp
+    classes/characters/Character.cpp \
+    classes/BigWhile.cpp \
+    classes/HUD.cpp
 
 HEADERS += \
     classes/Level.h \
@@ -57,16 +57,15 @@ HEADERS += \
     classes/Ground.h \
     classes/Factories.h \
     classes/Weapons.h \
-    classes/Event/Event.h \
-    classes/Event/EventListener.h \
     classes/screens/ScreenMenuChoseMap.h \
-    classes/characters/Character.h
+    classes/characters/Character.h \
+    classes/BigWhile.h \
+    classes/HUD.h
     # ForTestbedCharacter.h
 
 INCLUDEPATH += classes/ \
   classes/screens \
-  classes/characters \
-  classes/Event
+  classes/characters
 
 LIBS += -L$$PWD/../../Libs/Box2D/Build/ -lBox2D
 INCLUDEPATH += $$PWD/../../Libs/Box2D/

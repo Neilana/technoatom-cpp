@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0.0" orientation="orthogonal" renderorder="right-down" width="25" height="25" tilewidth="32" tileheight="32" nextobjectid="42">
+ <imagelayer name="BackgroundImage">
+  <image source="../sprites/backgrounds/menu3_1.png" width="1280" height="800"/>
+ </imagelayer>
+ <objectgroup name="ChoseCharacters" visible="0">
+  <object id="1" name="Text" x="0" y="0" width="800" height="96">
+   <text fontfamily="Franchise" wrap="1" color="#ffffff" bold="1" halign="center" valign="center">Chose Characters</text>
+  </object>
+  <object id="2" name="1" x="96" y="128" width="96" height="96"/>
+  <object id="4" name="2" x="224" y="128" width="96" height="96"/>
+  <object id="5" name="3" x="352" y="128" width="96" height="96"/>
+  <object id="6" name="4" x="480" y="128" width="96" height="96"/>
+  <object id="7" name="5" x="608" y="128" width="96" height="96"/>
+  <object id="8" name="6" x="96" y="288" width="96" height="96"/>
+  <object id="9" name="7" x="224" y="288" width="96" height="96"/>
+  <object id="10" name="8" x="352" y="288" width="96" height="96"/>
+  <object id="11" name="9" x="480" y="288" width="96" height="96"/>
+  <object id="12" name="10" x="608" y="288" width="96" height="96"/>
+  <object id="13" name="11" x="96" y="448" width="96" height="96"/>
+  <object id="14" name="12" x="224" y="448" width="96" height="96"/>
+  <object id="15" name="13" x="352" y="448" width="96" height="96"/>
+  <object id="16" name="15" x="608" y="448" width="96" height="96"/>
+  <object id="17" name="14" x="480" y="448" width="96" height="96"/>
+  <object id="18" name="19" x="480" y="608" width="96" height="96"/>
+  <object id="19" name="18" x="352" y="608" width="96" height="96"/>
+  <object id="20" name="17" x="224" y="608" width="96" height="96"/>
+  <object id="21" name="16" x="96" y="608" width="96" height="96"/>
+  <object id="22" name="20" x="608" y="608" width="96" height="96"/>
+ </objectgroup>
+ <objectgroup name="MainMenu">
+  <object id="24" name="Text" x="0" y="0" width="800" height="96">
+   <text fontfamily="Franchise" wrap="1" color="#ffffff" bold="1" halign="center" valign="center">Main Menu</text>
+  </object>
+  <object id="37" name="1" x="128" y="128" width="544" height="64">
+   <properties>
+    <property name="Screen" value="ChoseCharacters"/>
+   </properties>
+   <text fontfamily="Franchise" color="#ffffff" bold="1" halign="center" valign="center">New Game</text>
+  </object>
+  <object id="38" x="128" y="192" width="544" height="64">
+   <properties>
+    <property name="Screen" value="Name"/>
+   </properties>
+   <text fontfamily="Franchise" wrap="1" color="#ffffff" bold="1" halign="center" valign="center">Continue</text>
+  </object>
+  <object id="39" x="128" y="320" width="544" height="64">
+   <text fontfamily="Franchise" wrap="1" color="#ffffff" bold="1" halign="center" valign="center">Load</text>
+  </object>
+  <object id="40" x="128" y="384" width="544" height="64">
+   <text fontfamily="Franchise" wrap="1" color="#ffffff" bold="1" halign="center" valign="center">Exit</text>
+  </object>
+  <object id="41" x="128" y="256" width="544" height="64">
+   <text fontfamily="Franchise" wrap="1" color="#ffffff" bold="1" halign="center" valign="center">Save</text>
+  </object>
+ </objectgroup>
+</map>
