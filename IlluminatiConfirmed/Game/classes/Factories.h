@@ -96,7 +96,7 @@ class FactoryObjects {
             std::vector<std::shared_ptr<experimental::BaseInterface>>>
   create_map(const std::string &file, b2World *world);
 
-  std::shared_ptr<experimental::BaseInterface> create_character(int id,
+  std::shared_ptr<experimental::BaseCharacter> create_character(int id,
                                                                 b2World *world);
 
   std::unique_ptr<Weapon> create_weapon(WeaponType type);
