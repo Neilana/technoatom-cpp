@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="2017.05.16" orientation="orthogonal" renderorder="right-down" width="5" height="5" tilewidth="32" tileheight="32" nextobjectid="4">
+ <tileset firstgid="1" name="tiles_2_cut" tilewidth="32" tileheight="32" tilecount="6250" columns="25">
+  <image source="tiles_2_cut.png" width="800" height="8000"/>
+ </tileset>
+ <layer name="Ground" width="5" height="5">
+  <data>
+   <tile gid="2077"/>
+   <tile gid="2077"/>
+   <tile gid="2077"/>
+   <tile gid="2077"/>
+   <tile gid="2077"/>
+   <tile gid="2077"/>
+   <tile gid="2077"/>
+   <tile gid="2077"/>
+   <tile gid="2077"/>
+   <tile gid="2077"/>
+   <tile gid="2077"/>
+   <tile gid="2077"/>
+   <tile gid="2077"/>
+   <tile gid="2077"/>
+   <tile gid="2077"/>
+   <tile gid="2077"/>
+   <tile gid="2077"/>
+   <tile gid="2077"/>
+   <tile gid="2077"/>
+   <tile gid="2077"/>
+   <tile gid="2077"/>
+   <tile gid="2077"/>
+   <tile gid="2077"/>
+   <tile gid="2077"/>
+   <tile gid="2077"/>
+  </data>
+ </layer>
+ <layer name="Building_layer" width="5" height="5">
+  <data>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="2984"/>
+   <tile gid="2985"/>
+   <tile gid="2986"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="3009"/>
+   <tile gid="3010"/>
+   <tile gid="3011"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="3034"/>
+   <tile gid="3035"/>
+   <tile gid="3036"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+  </data>
+ </layer>
+ <objectgroup name="Buildings_sprite">
+  <object id="2" x="40" y="38" width="80" height="79"/>
+ </objectgroup>
+ <objectgroup name="Buildings_obj">
+  <object id="1" x="40" y="65" width="80" height="38"/>
+ </objectgroup>
+</map>

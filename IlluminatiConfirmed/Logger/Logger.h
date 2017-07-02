@@ -1,5 +1,4 @@
 #pragma once
-#include <direct.h>
 #include <chrono>
 #include <ctime>
 #include <fstream>
@@ -10,9 +9,9 @@
 
 #define INIT_LOG(mode, puth, className) \
   IlluminatiConfirmed::Logger logger =  \
-      ManagerLoggers::Instance(mode, puth).getLogger(className);
+      IlluminatiConfirmed::ManagerLoggers::Instance(mode, puth).getLogger(className);
 #define LOGGER(className) \
-  ManagerLoggers::Instance().getLogger(className) << __PRETTY_FUNCTION__ << "\n"
+  IlluminatiConfirmed::ManagerLoggers::Instance().getLogger(className) << __PRETTY_FUNCTION__ << "\n"
 
 namespace IlluminatiConfirmed {
 enum ModeSave { oneStream, multiStream };
