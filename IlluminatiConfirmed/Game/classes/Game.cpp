@@ -19,16 +19,14 @@ using namespace std;
 
 using namespace IlluminatiConfirmed;
 
-Game::Game(sf::RenderWindow &window) {
+Game::Game(sf::RenderWindow &window)
+    : debugDraw(std::make_unique<SFMLDebugDraw>(window)) {
   m_world = std::make_shared<b2World>(b2Vec2({0.f, 0.f}));
-  MyContactListener *listner = new MyContactListener;
-  (*m_world).SetContactListener(listner);
 
-  SFMLDebugDraw *debugDraw =
-      new SFMLDebugDraw(window);  //утечка памяти, бокс не будет это удалять
   debugDraw->SetFlags(b2Draw::e_shapeBit + b2Draw::e_centerOfMassBit +
                       b2Draw::e_pairBit);
-  m_world->SetDebugDraw(debugDraw);
+  m_world->SetDebugDraw(debugDraw.get());
+
   //"E:/Git_ver3000/technoatom-cpp/IlluminatiConfirmed/Game/resources/";
   m_running = false;
   m_mapFileName = MAP_DIRECTORY + DEFAULT_MAP_FILE;
@@ -67,15 +65,8 @@ void Game::initNewGame(std::set<int> ids, sf::RenderWindow &window) {
 
   b2_listner_collision = std::make_unique<MyContactListener>();
 
-  m_world->SetContactListener(
-      b2_listner_collision.get());  //не работает, здания имеют другой
-  //базовый класс, крошится если оставить
-  //прежний
-  SFMLDebugDraw *debugDraw =
-      new SFMLDebugDraw(window);  //утечка памяти, бокс не будет это удалять
-  debugDraw->SetFlags(b2Draw::e_shapeBit + b2Draw::e_centerOfMassBit +
-                      b2Draw::e_pairBit);
-  (*m_world).SetDebugDraw(debugDraw);
+  m_world->SetContactListener(b2_listner_collision.get());
+  m_world->SetDebugDraw(debugDraw.get());
 }
 
 void Game::initObjects(std::set<int> ids) {}
@@ -199,7 +190,8 @@ void Game::loadGame(const std::string &fileName) {}
 void Game::setMapFileName(const std::string &fileName) {
   m_mapFileName = fileName;
 }
-
+// FIXME: игра выдергивает у перса оружие и дает новое, чот как то
+//несправедливо, не по-людски
 void Game::setNewWeapon(
     const std::shared_ptr<experimental::BaseCharacter> &hero) {
   std::unique_ptr<experimental::Weapon> weapon;
@@ -219,4 +211,9 @@ void Game::setNewWeapon(
                    &experimental::ListnerWeapon::pushBullet);
 
   hero->setWeapon(std::move(weapon));
+}
+
+void Game::setNewWeapon(
+    const std::weak_ptr<experimental::BaseCharacter> &hero) {
+  if (auto sh_hero = hero.lock()) setNewWeapon(sh_hero);
 }

@@ -18,6 +18,7 @@
 #include "HUD.h"
 #include "Level.h"
 #include "MyContactListener.h"
+#include "SFMLDebugDraw.h"
 #include "Weapons.h"
 #include "constants.h"
 
@@ -47,17 +48,20 @@ class Game {
   void loadGame(const std::string &fileName);
   void setMapFileName(const std::string &fileName);
   inline b2World &getWorld() { return *m_world; }
-  std::shared_ptr<experimental::BaseCharacter> selectNextHero() {
+  auto selectNextHero() {
     m_HUDs[m_currentHeroId].get()->unselect();
     m_currentHeroId++;
     m_currentHeroId %= m_heroes.size();
     m_HUDs[m_currentHeroId].get()->select();
-    return m_heroes[m_currentHeroId];
+    return std::weak_ptr<experimental::BaseCharacter>(
+        m_heroes[m_currentHeroId]);
   }
 
   void setNewWeapon(const std::shared_ptr<experimental::BaseCharacter> &hero);
+  void setNewWeapon(const std::weak_ptr<experimental::BaseCharacter> &hero);
 
  private:
+  std::unique_ptr<SFMLDebugDraw> debugDraw;
   std::map<std::string, std::shared_ptr<sf::Texture>> m_textures;
   std::shared_ptr<b2World> m_world;
   std::shared_ptr<Ground> m_ground;

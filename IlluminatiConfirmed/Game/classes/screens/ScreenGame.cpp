@@ -8,6 +8,7 @@
 #include <vector>
 
 #include "../Exceptions/Exception.h"
+#include "Character.h"
 #include "Screen.h"
 #include "ScreenGame.h"
 #include "ScreenMenuMain.h"
@@ -26,13 +27,11 @@ ScreenName ScreenGame::run(Game &game, sf::RenderWindow &window) {
   if (!game.isRunning()) return ScreenName::MainMenu;
 
   Clock clock;
-  bool running = true;
+
   auto currentHero1 = game.selectNextHero();
   auto currentHero2 = game.selectNextHero();
 
   while (game.isRunning() && window.isOpen()) {
-    if (currentHero1->isDead() || currentHero2->isDead())
-      return ScreenName::MainMenu;
     auto timeSf = clock.restart();
     auto time = timeSf.asMicroseconds();
     time = time / 800;
@@ -47,6 +46,12 @@ ScreenName ScreenGame::run(Game &game, sf::RenderWindow &window) {
     sf::Event event;
     sf::Mouse::getPosition();
 
+    auto call_method_of_weak = [](auto &weak, auto method) {
+      return [=](auto &&... param) {
+        if (auto ptr = weak.lock()) (*ptr.*method)(param...);
+      };
+    };
+
     while (window.pollEvent(event)) {
       if (event.type == sf::Event::Closed) window.close();
 
@@ -55,10 +60,12 @@ ScreenName ScreenGame::run(Game &game, sf::RenderWindow &window) {
         //          currentHero = game.selectNextHero();
         //        }
         if (event.key.code == sf::Keyboard::Space) {
-          currentHero1->attack();
+          call_method_of_weak(currentHero1,
+                              &experimental::BaseCharacter::attack)();
         }
         if (event.key.code == sf::Keyboard::Numpad0) {
-          currentHero2->attack();
+          call_method_of_weak(currentHero2,
+                              &experimental::BaseCharacter::attack)();
         }
 
         if (event.key.code == sf::Keyboard::RControl) {
@@ -93,7 +100,8 @@ ScreenName ScreenGame::run(Game &game, sf::RenderWindow &window) {
       velocity1 += b2Vec2({0.f, +1.f});
     }
     if (velocity1.Length() > 0.0) {
-      currentHero1->move(velocity1, time);
+      call_method_of_weak(currentHero1, &experimental::BaseCharacter::move)(
+          velocity1, time);
     }
 
     b2Vec2 velocity2 = {0.f, 0.f};
@@ -110,7 +118,8 @@ ScreenName ScreenGame::run(Game &game, sf::RenderWindow &window) {
       velocity2 += b2Vec2({0.f, +1.f});
     }
     if (velocity2.Length() > 0.0) {
-      currentHero2->move(velocity2, time);
+      call_method_of_weak(currentHero2, &experimental::BaseCharacter::move)(
+          velocity2, time);
     }
 
     static float angle1 = 0;
@@ -120,7 +129,8 @@ ScreenName ScreenGame::run(Game &game, sf::RenderWindow &window) {
     if (Keyboard::isKeyPressed(Keyboard::Numpad6)) {
       angle1 -= 2.5f;
     }
-    currentHero2->setAngleOfWeapon(angle1);
+    call_method_of_weak(currentHero2,
+                        &experimental::BaseCharacter::setAngleOfWeapon)(angle1);
     static float angle2 = 0;
     if (Keyboard::isKeyPressed(Keyboard::Left)) {
       angle2 += 2.5f;
@@ -128,7 +138,8 @@ ScreenName ScreenGame::run(Game &game, sf::RenderWindow &window) {
     if (Keyboard::isKeyPressed(Keyboard::Right)) {
       angle2 -= 2.5f;
     }
-    currentHero1->setAngleOfWeapon(angle2);
+    call_method_of_weak(currentHero1,
+                        &experimental::BaseCharacter::setAngleOfWeapon)(angle2);
 
     game.updatePhysics(time);
     window.clear();
